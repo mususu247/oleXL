@@ -3,7 +3,6 @@ package oleXL
 import "strconv"
 
 // version 2026-01-04
-// VBA style like: FileSystemObject(FSO)
 
 func Color2RGB(value float64) map[string]int {
 	var rgb map[string]int

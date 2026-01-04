@@ -7,6 +7,7 @@ import (
 )
 
 // version 2025-12-19
+// version 2026-01-04
 // VBA style like
 
 type workBorder struct {
