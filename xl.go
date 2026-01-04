@@ -12,7 +12,7 @@ import (
 // version 2026-01-04
 // VBA style like
 
-type any = interface{}
+//type any = interface{}
 
 type Excel struct {
 	worker    Worker
