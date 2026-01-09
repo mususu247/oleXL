@@ -4,11 +4,9 @@ import (
 	"log"
 )
 
-// version 2025-12-19
-// version 2026-01-04
+// version 2026-01-05
 // VBA style like
 
-type any = interface{}
 type application struct {
 	app *Excel
 	mx  int

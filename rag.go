@@ -8,7 +8,7 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
-// version 2026-01-04
+// version 2026-01-05
 // VBA style like
 
 type workRag struct {

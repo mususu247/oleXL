@@ -7,7 +7,7 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
-// version 2026-01-04
+// version 2026-01-06
 // VBA style like
 
 type workBooks struct {
@@ -477,6 +477,8 @@ func (wb *workBook) SaveAs(fileName string, option ...any) error {
 		case string:
 			z = GetEnumFileFormatNum(x)
 		}
+	} else {
+		z = GetEnumFileFormatNum("Default")
 	}
 	opt = append(opt, z)
 

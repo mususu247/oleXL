@@ -2,7 +2,7 @@ package oleXL
 
 import "log"
 
-// version 2026-01-04
+// version 2026-01-05
 
 func EnumToStrings(enum map[string]int32) []string {
 	var results []string

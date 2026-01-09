@@ -1,6 +1,6 @@
 package oleXL
 
-// version 2026-01-04
+// version 2026-01-05
 
 import (
 	"crypto/rand"

@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// version 2026-01-04
+// version 2026-01-05
 // VBA style like: FileSystemObject(FSO)
 
 func FileExists(fileName string) bool {
