@@ -2,7 +2,7 @@ package oleXL
 
 import "log"
 
-// version 2026-01-05
+// version 2026-01-09
 
 func EnumToStrings(enum map[string]int32) []string {
 	var results []string
@@ -84,7 +84,7 @@ func GetEnumFileFormatNum(enumType string) int32 {
 	if v, ok := enum[enumType]; ok {
 		result = v
 	} else {
-		result = enum["xlWorkbookNormal"]
+		result = enum["xlWorkbookDefault"]
 	}
 	return result
 }
