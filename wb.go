@@ -7,7 +7,7 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
-// version 2026-01-06
+// version 2026-01-09
 // VBA style like
 
 type workBooks struct {
