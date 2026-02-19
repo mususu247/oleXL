@@ -1,6 +1,6 @@
 package oleXL
 
-// version 2026-01-05
+// version 2026-01-26
 
 import (
 	"crypto/rand"
@@ -22,10 +22,11 @@ type msg struct {
 }
 
 type Worker struct {
-	sendQ chan msg
-	recvQ chan msg
-	mux   sync.Mutex
-	loop  bool
+	parent *Cores
+	sendQ  chan msg
+	recvQ  chan msg
+	mux    sync.Mutex
+	loop   bool
 }
 
 func (w *Worker) Loop() error {
@@ -44,14 +45,15 @@ func (w *Worker) Loop() error {
 	for {
 		sendMsg, ok := <-w.sendQ
 		if !ok {
-			log.Printf("Loop.Exit\n")
+			if w.parent.debug {
+				log.Printf("Loop.Exit\n")
+			}
 			break
 		}
 
 		switch sendMsg.Cmd {
 		case "Create":
 			recvMsg = sendMsg
-			//log.Printf("crt sendMsg: %v", sendMsg)
 
 			if app != nil {
 				return fmt.Errorf("already created.")
@@ -82,11 +84,9 @@ func (w *Worker) Loop() error {
 			}
 
 			recvMsg.Args = []any{app}
-			//log.Printf("crt recvMsg: %v", recvMsg)
 			w.recvQ <- recvMsg
 		case "Get":
 			recvMsg = sendMsg
-			//log.Printf("get sendMsg: %v", sendMsg)
 
 			arg, err = oleutil.GetProperty(sendMsg.Disp, sendMsg.Name, sendMsg.Args...)
 			if err != nil {
@@ -95,13 +95,16 @@ func (w *Worker) Loop() error {
 				continue
 			}
 
-			x := arg.Value()
-			recvMsg.Args = []any{x}
-			//log.Printf("get recvMsg: %v", recvMsg)
+			if arg.VT == ole.VT_ERROR {
+				recvMsg.Args = []any{arg}
+			} else {
+				x := arg.Value()
+				recvMsg.Args = []any{x}
+			}
+
 			w.recvQ <- recvMsg
 		case "Put":
 			recvMsg = sendMsg
-			//log.Printf("put sendMsg: %v", sendMsg)
 
 			arg, err = oleutil.PutProperty(sendMsg.Disp, sendMsg.Name, sendMsg.Args...)
 			if err != nil {
@@ -112,11 +115,9 @@ func (w *Worker) Loop() error {
 
 			x := arg.Value()
 			recvMsg.Args = []any{x}
-			//log.Printf("put recvMsg: %v", recvMsg)
 			w.recvQ <- recvMsg
 		case "Method":
 			recvMsg = sendMsg
-			//log.Printf("met sendMsg: %v", sendMsg)
 
 			arg, err := oleutil.CallMethod(sendMsg.Disp, sendMsg.Name, sendMsg.Args...)
 			if err != nil {
@@ -127,11 +128,9 @@ func (w *Worker) Loop() error {
 
 			x := arg.Value()
 			recvMsg.Args = []any{x}
-			//log.Printf("met recvMsg: %v", recvMsg)
 			w.recvQ <- recvMsg
 		case "Release":
 			recvMsg = sendMsg
-			//log.Printf("rls sendMsg: %v", sendMsg)
 
 			if app != sendMsg.Disp {
 				ans := sendMsg.Disp.Release()
@@ -145,19 +144,18 @@ func (w *Worker) Loop() error {
 				recvMsg.Args = []any{ans1, ans2}
 			}
 
-			//log.Printf("rls recvMsg: %v", recvMsg)
 			w.recvQ <- recvMsg
 		default:
 			recvMsg = sendMsg
-			//log.Printf("err sendMsg: %v", sendMsg)
 
 			err = fmt.Errorf("not found Cmd: %v", sendMsg.Cmd)
 			recvMsg.Args = []any{err}
 			w.recvQ <- recvMsg
 		}
 	}
-	log.Printf("Loop.Quit\n")
-
+	if w.parent.debug {
+		log.Printf("Loop.Quit\n")
+	}
 	return nil
 }
 
@@ -171,25 +169,32 @@ func (w *Worker) Start() error {
 	}
 
 	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
 	if !w.loop {
 		w.loop = true
 
-		log.Printf("queue.Open.\n")
+		if w.parent.debug {
+			log.Printf("queue.Open.\n")
+		}
 		w.sendQ = make(chan msg)
 		w.recvQ = make(chan msg)
 
 		go func() {
 			runtime.LockOSThread()
-			log.Printf("Loop.Start \n")
+			defer runtime.UnlockOSThread()
+
+			if w.parent.debug {
+				log.Printf("Loop.Start \n")
+			}
 			w.Loop()
-			log.Printf("Loop.Stop \n")
-			runtime.UnlockOSThread()
+			if w.parent.debug {
+				log.Printf("Loop.Stop \n")
+			}
 		}()
 	} else {
 		return fmt.Errorf("queue.Opened.")
 	}
-	runtime.UnlockOSThread()
-
 	return nil
 }
 
@@ -198,7 +203,6 @@ func (w *Worker) Stop() error {
 		return fmt.Errorf("(w *Worker) is NULL\n")
 	}
 
-	runtime.LockOSThread()
 	if w.loop {
 		w.loop = false
 
@@ -206,9 +210,10 @@ func (w *Worker) Stop() error {
 		close(w.sendQ)
 		close(w.recvQ)
 		w.mux.Unlock()
-		log.Printf("queue.Close.\n")
+		if w.parent.debug {
+			log.Printf("queue.Close.\n")
+		}
 	}
-	runtime.UnlockOSThread()
 	return nil
 }
 
@@ -225,7 +230,7 @@ func (w *Worker) Send(cmd string, disp *ole.IDispatch, name string, args []any) 
 
 	if disp == nil {
 		if cmd != "Create" {
-			log.Printf("disp is NULL\n")
+			//log.Printf("disp is NULL\n")
 			return nil
 		}
 	}

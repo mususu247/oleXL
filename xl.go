@@ -1,440 +1,222 @@
 package oleXL
 
+// version 2026-01-26
+
 import (
-	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/go-ole/go-ole"
 )
 
-// version 2026-01-05
-// VBA style like
-
-//type any = interface{}
-
 type Excel struct {
-	worker    Worker
-	WorkCores workCores
-	mx        int
-	hWnd      int32
+	cores *Cores
+	num   int
 }
 
-func (xl *Excel) Init() error {
-	xl.WorkCores.app = xl
-	xl.WorkCores.cores = make(map[int]*Core)
+func (xl *Excel) Init(debug ...bool) error {
+	var cores Cores
+	if len(debug) > 0 {
+		cores.Init(debug[0])
+	} else {
+		cores.Init(false)
+	}
 
-	err := xl.worker.Start()
+	xl.num = 1
+	xl.cores = &cores
+	xl.cores.Start()
+	return nil
+}
+
+func (xl *Excel) CreateObject() error {
+	cmd := "Create"
+	name := "Excel.Application"
+
+	core, num := xl.cores.Add(name, 0)
+	core.lock = 1 //lockOn
+	ans, err := xl.cores.SendNum(cmd, name, num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return nil
+	}
+	switch x := ans.(type) {
+	case *ole.IDispatch:
+		core.disp = x
+		core.lock = 1 //lockOn
+	}
+
+	xl.num = num
+	return nil
+}
+
+func (xl *Excel) Quit() error {
+	count := xl.Workbooks().Count()
+	for i := count; i > 0; i-- {
+		xl.Workbookz(i).Close(false)
+	}
+	xl.cores.releaseChild(xl.num)
+
+	cmd := "Method"
+	name := "Quit"
+	ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
 	if err != nil {
 		return err
 	}
+
+	switch x := ans.(type) {
+	case nil:
+		//ok
+	default:
+		log.Printf("Quit(): %v", x)
+	}
+
+	xl.cores.Release(xl.num, true)
 	return nil
 }
 
 func (xl *Excel) Nothing() error {
-	xl.Release(xl.mx)
+	xl.cores.Release(xl.num, true)
 
-	err := xl.worker.Stop()
+	err := xl.cores.worker.Stop()
 	if err != nil {
 		log.Printf("%v", err)
 		return err
 	}
 
 	for {
-		if xl.worker.IsOpened() {
+		if xl.cores.worker.IsOpened() {
 			time.Sleep(1 * time.Millisecond)
 		} else {
-			log.Printf("worker.IsOpened: false")
+			if xl.cores.debug {
+				log.Printf("worker.IsOpened: false")
+			}
 			time.Sleep(1 * time.Millisecond)
-			return nil
+			break
 		}
 	}
 
-	//return nil
-}
-
-func (xl *Excel) CreateObject() error {
-	const cmd = "Create"
-	const name = "Excel.Application"
-
-	args := xl.worker.Send(cmd, nil, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, nil, name, x, nil, nil)
-			xl.Nothing()
-			return x
-		case *ole.IDispatch:
-			log.Printf("%v ans (object) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, "", name, x, nil, nil)
-			xl.mx, _ = xl.addCore(-1, x, name, 0)
-			xl.hand()
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, "", name, x, nil, nil)
-		}
-	}
 	return nil
 }
 
-func (xl *Excel) hand() int32 {
-	var result int32
-	_core, err := xl.getCore(xl.mx)
+func (xl *Excel) Hand() int32 {
+	cmd := "Get"
+	name := "hWnd"
+
+	ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
 	if err != nil {
-		return -1
+		log.Printf("(Error) .Hand:%v", err)
+		return -1 //err
 	}
-	const cmd = "Get"
-	const name = "hWnd"
-
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		case int32:
-			log.Printf("%v ans (int32) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-			result = x
-			xl.hWnd = x
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		}
+	switch x := ans.(type) {
+	case int32:
+		return x
 	}
-
-	return result
+	return -1 //err
 }
 
 func (xl *Excel) Visible(value bool) error {
-	_core, err := xl.getCore(xl.mx)
-	if err != nil {
-		return err
-	}
-	const cmd = "Put"
-	const name = "Visible"
+	cmd := "Put"
+	name := "Visible"
 	var opt []any
 	opt = append(opt, value)
 
-	args := xl.worker.Send(cmd, _core.disp, name, opt)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			return x
-		case nil:
-			log.Printf("%v ans (nil) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		}
-	}
-	return nil
-}
-
-func (xl *Excel) Quit() error {
-	_core, err := xl.getCore(xl.mx)
+	_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
 	if err != nil {
-		return fmt.Errorf("(Error) %v", err)
-	}
-	const cmd = "Method"
-	const name = "Quit"
-
-	// all Book.Close
-	var wb workBook
-	for mx, v := range xl.WorkCores.cores {
-		if v.kind == "Workbook" {
-			wb.app = xl
-			wb.mx = mx
-			wb.Close(false)
-		}
-	}
-
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-			return x
-		case nil:
-			log.Printf("%v ans (nil) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-			xl.ReleaseAll()
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		}
+		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 	}
 	return nil
 }
 
-func (xl *Excel) subList(mx int, level int) {
-	lv := level + 1
-	h := strings.Repeat(" ", lv)
+func (xl *Excel) DisplayAlerts(value ...bool) bool {
+	var opt []any
 
-	for i := range xl.WorkCores.cores {
-		if xl.WorkCores.cores[i].px == mx {
-			core := xl.WorkCores.cores[i]
-			fmt.Printf("%v kind:%v index:%v values:%v mx:%v\n", h, core.kind, core.index, core.values, i)
-			xl.subList(i, lv)
-		}
-	}
-}
-
-func (xl *Excel) List() {
-	var level int = 1
-	h := strings.Repeat(" ", level)
-
-	fmt.Println("[Excel]")
-	if _, ok := xl.WorkCores.cores[xl.mx]; ok {
-		core := xl.WorkCores.cores[xl.mx]
-		fmt.Printf("%v kind:%v index:%v values:%v mx:%v\n", h, core.kind, core.index, core.values, xl.mx)
-		xl.subList(xl.mx, level)
-	}
-}
-
-func (xl *Excel) ActiveWorkbook(value ...bool) *workBook {
-	var wb workBook
-	wb.app = xl
-	_core, _ := xl.getCore(xl.mx)
-
-	if mz, ok := _core.values["ActiveWorkbook"]; ok {
-		switch z := mz.(type) {
-		case int:
-			if _, ok := xl.WorkCores.cores[z]; ok {
-				wb.mx = z
-				return &wb
-			} else {
-				delete(_core.values, "ActiveWorkbook")
-			}
-		}
-	}
-
-	const cmd = "Get"
-	const name = "ActiveWorkbook"
-
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		case *ole.IDispatch:
-			log.Printf("%v ans (object) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-
-			for j := range xl.WorkCores.cores {
-				if xl.WorkCores.cores[j].kind == "Workbook" {
-					if xl.WorkCores.cores[j].disp == x {
-						wb.mx = j
-						return &wb
-					}
-				}
-			}
-
-			var wbs workBooks
-			wbs.app = xl
-			wbs.mx = xl.Workbooks().mx
-
-			wb.mx, _ = xl.addCore(wbs.mx, x, "Workbook", 0)
-			wb.Name()
-			wbs.List()
-			xl.setCoreValue(xl.mx, "ActiveWorkbook", wb.mx)
-			return &wb
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		}
-	}
-	return &wb
-}
-
-func (xl *Excel) ActiveSheet(value ...bool) *workSheet {
-	var ws workSheet
-	ws.app = xl
-	_core, _ := xl.getCore(xl.mx)
-
-	if len(value) == 0 {
-		if mz, ok := _core.values["ActiveSheet"]; ok {
-			switch z := mz.(type) {
-			case int:
-				if _, ok := xl.WorkCores.cores[z]; ok {
-					ws.mx = z
-					return &ws
-				} else {
-					delete(_core.values, "ActiveSheet")
-				}
-			}
-		}
-	}
-
-	const cmd = "Get"
-	const name = "ActiveSheet"
-
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		case *ole.IDispatch:
-			log.Printf("%v ans (object) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-			ws.mx, _ = xl.findDisp(x)
-			if ws.mx >= 0 {
-				ws.app = xl
-				_core.values["ActiveSheet"] = ws.mx
-				return &ws
-			} else {
-				wss := xl.ActiveWorkbook().Worksheets()
-				ws.mx, _ = xl.addCore(wss.mx, x, "Worksheet", 0)
-				wss.List()
-				xl.setCoreValue(xl.mx, "ActiveSheet", ws.mx)
-				return &ws
-			}
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		}
-	}
-	return &ws
-}
-
-func (xl *Excel) ActiveCell(value ...bool) *workRag {
-	var rg workRag
-	rg.app = xl
-	_core, _ := xl.getCore(xl.mx)
-
-	if len(value) == 0 {
-		if mz, ok := _core.values["ActiveCell"]; ok {
-			switch z := mz.(type) {
-			case int:
-				if _, ok := xl.WorkCores.cores[z]; ok {
-					rg.mx = z
-					return &rg
-				} else {
-					delete(_core.values, "ActiveCell")
-				}
-			}
-		}
-	}
-
-	const cmd = "Get"
-	const name = "ActiveCell"
-
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		case *ole.IDispatch:
-			log.Printf("%v ans (object) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-			rg.mx, _ = xl.findDisp(x)
-			if rg.mx >= 0 {
-				//rg.app = xl
-				_core.values["ActiveCell"] = rg.mx
-				return &rg
-			} else {
-				ws := xl.ActiveSheet()
-				rg.mx, _ = xl.addCore(ws.mx, x, "Range", 0)
-				xl.setCoreValue(xl.mx, "ActiveCell", rg.mx)
-				return &rg
-			}
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		}
-	}
-	return &rg
-}
-
-func (xl *Excel) ActiveChart(value ...bool) *workChart {
-	var co workChart
-	co.app = xl
-	_core, _ := xl.getCore(xl.mx)
-
+	name := "DisplayAlerts"
 	if len(value) > 0 {
-		if mz, ok := _core.values["ActiveChart"]; ok {
-			switch z := mz.(type) {
-			case int:
-				if _, ok := xl.WorkCores.cores[z]; ok {
-					co.mx = z
-					return &co
-				} else {
-					delete(_core.values, "ActiveChart")
-				}
-			}
+		//Set
+		cmd := "Put"
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	}
 
-	const cmd = "Get"
-	const name = "ActiveChart"
-
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		case nil:
-			log.Printf("%v ans %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		case *ole.IDispatch:
-			log.Printf("%v ans (object) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-			co.mx, _ = xl.findDisp(x)
-			if co.mx >= 0 {
-				//co.app = xl
-				_core.values["ActiveChart"] = co.mx
-				return &co
-			} else {
-				cos := xl.ActiveSheet().ChartObjects()
-				co.mx, _ = xl.addCore(cos.mx, x, "ChartObject", 0)
-				xl.setCoreValue(xl.mx, "ActiveChart", co.mx)
-				return &co
-			}
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		}
+	cmd := "Get"
+	ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+	if err != nil {
+		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 	}
-	return &co
+
+	switch x := ans.(type) {
+	case bool:
+		return x
+	}
+	return false
 }
 
-func (xl *Excel) Selection(value ...bool) *workRag {
-	var rg workRag
-	rg.app = xl
-	_core, _ := xl.getCore(xl.mx)
+func (xl *Excel) ScreenUpdating(value ...bool) bool {
+	var opt []any
 
-	if len(value) == 0 {
-		if mz, ok := _core.values["Selection"]; ok {
-			switch z := mz.(type) {
-			case int:
-				if _, ok := xl.WorkCores.cores[z]; ok {
-					rg.mx = z
-					return &rg
-				} else {
-					delete(_core.values, "Selection")
-				}
-			}
+	name := "ScreenUpdating"
+	if len(value) > 0 {
+		//Set
+		cmd := "Put"
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	}
 
-	const cmd = "Get"
-	const name = "Selection"
+	cmd := "Get"
+	ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+	if err != nil {
+		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
+	}
 
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
+	switch x := ans.(type) {
+	case bool:
+		return x
+	}
+	return false
+}
 
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		case *ole.IDispatch:
-			log.Printf("%v ans (object) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-			rg.mx, _ = xl.findDisp(x)
-			if rg.mx >= 0 {
-				rg.app = xl
-				_core.values["Selection"] = rg.mx
-				return &rg
-			} else {
-				ws := xl.ActiveSheet()
-				rg.mx, _ = xl.addCore(ws.mx, x, "Range", 0)
-				xl.setCoreValue(xl.mx, "Selection", rg.mx)
-				return &rg
-			}
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
+func (xl *Excel) Calculation(value ...any) int32 {
+	var opt []any
+
+	name := "Calculation"
+	if len(value) > 0 {
+		//Set
+		cmd := "Put"
+
+		var z int32
+		switch x := value[0].(type) {
+		case int:
+			z = SetEnumCalculation(int32(x))
+		case int32:
+			z = SetEnumCalculation(x)
+		case string:
+			z = GetEnumCalculationNum(x)
+		}
+		opt = append(opt, z)
+
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	}
-	return &rg
+
+	cmd := "Get"
+	ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+	if err != nil {
+		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
+	}
+
+	switch x := ans.(type) {
+	case int32:
+		return x
+	}
+	return -1
 }

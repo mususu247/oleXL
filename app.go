@@ -2,443 +2,264 @@ package oleXL
 
 import (
 	"log"
+	"time"
+
+	"github.com/go-ole/go-ole"
 )
 
-// version 2026-01-05
-// VBA style like
-
-type application struct {
+type workApp struct {
 	app *Excel
-	mx  int
+	num int
 }
 
-func (xl *Excel) Application() *application {
-	var app application
-	app.app = xl
-	app.mx = xl.mx
+func (xl *Excel) Application() *workApp {
+	var wa workApp
 
-	return &app
+	kind := "Application"
+	_, num := xl.cores.FindAdd(kind, xl.num)
+	wa.app = xl
+	wa.num = num
+	return &wa
 }
 
-func (ap *application) Hand() int32 {
-	xl := ap.app
-	return xl.hand()
-}
-
-func (ap *application) WindowState(value any) int32 {
-	var result int32
-	xl := ap.app
-	_core, err := xl.getCore(ap.mx)
-	if err != nil {
-		return -1
-	}
-	var cmd = "Get"
-	const name = "WindowState"
-	var opt []any
-
-	if value != nil {
-		switch x := value.(type) {
-		case int:
-			result = SetEnumWindowState(int32(x))
-		case int32:
-			result = SetEnumWindowState(x)
-		case string:
-			result = GetEnumWindowStateNum(x)
-		}
-		opt = append(opt, result)
-
-		cmd = "Put"
-		args := xl.worker.Send(cmd, _core.disp, name, opt)
-
-		for i := range args {
-			switch x := args[i].(type) {
-			case error:
-				log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			case nil:
-				log.Printf("%v ans (nil) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			default:
-				log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			}
-		}
-	}
-
-	result = -1
-	cmd = "Get"
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		case int32:
-			log.Printf("%v ans (int32) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-			result = x
-			_core.values["WindowState"] = result
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, nil, _core.values)
-		}
-	}
-
-	return result
-}
-
-func (ap *application) Left(value any) float64 {
-	var result float64
-	xl := ap.app
-	_core, err := xl.getCore(ap.mx)
-	if err != nil {
-		return -1
-	}
-	var cmd string
-	const name = "Left"
-	var opt []any
-
-	switch x := value.(type) {
-	case float64:
-		opt = append(opt, x)
-	default:
-		opt = nil
-	}
-
-	if opt != nil {
-		cmd = "Put"
-		args := xl.worker.Send(cmd, _core.disp, name, opt)
-
-		for i := range args {
-			switch x := args[i].(type) {
-			case error:
-				log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			case nil:
-				log.Printf("%v ans (nil) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			default:
-				log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			}
-		}
-	}
-
-	result = -1
-	cmd = "Get"
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		case float64:
-			log.Printf("%v ans (float64) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			result = x
-			_core.values["Left"] = result
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		}
-	}
-	return result
-}
-
-func (ap *application) Top(value any) float64 {
-	var result float64
-	xl := ap.app
-	_core, err := xl.getCore(ap.mx)
-	if err != nil {
-		return -1
-	}
-	var cmd string
-	const name = "Top"
-	var opt []any
-
-	switch x := value.(type) {
-	case float64:
-		opt = append(opt, x)
-	default:
-		opt = nil
-	}
-
-	if opt != nil {
-		cmd = "Put"
-		args := xl.worker.Send(cmd, _core.disp, name, opt)
-
-		for i := range args {
-			switch x := args[i].(type) {
-			case error:
-				log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			case nil:
-				log.Printf("%v ans (nil) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			default:
-				log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			}
-		}
-	}
-
-	result = -1
-	cmd = "Get"
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		case float64:
-			log.Printf("%v ans (float64) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			result = x
-			_core.values["Top"] = result
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		}
-	}
-	return result
-}
-
-func (ap *application) Width(value any) float64 {
-	var result float64
-	xl := ap.app
-	_core, err := xl.getCore(ap.mx)
-	if err != nil {
-		return -1
-	}
-	var cmd string
-	const name = "Width"
-	var opt []any
-
-	switch x := value.(type) {
-	case float64:
-		opt = append(opt, x)
-	default:
-		opt = nil
-	}
-
-	if opt != nil {
-		cmd = "Put"
-		args := xl.worker.Send(cmd, _core.disp, name, opt)
-
-		for i := range args {
-			switch x := args[i].(type) {
-			case error:
-				log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			case nil:
-				log.Printf("%v ans (nil) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			default:
-				log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			}
-		}
-	}
-
-	result = -1
-	cmd = "Get"
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		case float64:
-			log.Printf("%v ans (float64) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			result = x
-			_core.values["Width"] = result
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		}
-	}
-	return result
-}
-
-func (ap *application) Height(value any) float64 {
-	var result float64
-	xl := ap.app
-	_core, err := xl.getCore(ap.mx)
-	if err != nil {
-		return -1
-	}
-	var cmd string
-	const name = "Height"
-	var opt []any
-
-	switch x := value.(type) {
-	case float64:
-		opt = append(opt, x)
-	default:
-		opt = nil
-	}
-
-	if opt != nil {
-		cmd = "Put"
-		args := xl.worker.Send(cmd, _core.disp, name, opt)
-
-		for i := range args {
-			switch x := args[i].(type) {
-			case error:
-				log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			case nil:
-				log.Printf("%v ans (nil) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			default:
-				log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			}
-		}
-	}
-
-	result = -1
-	cmd = "Get"
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		case float64:
-			log.Printf("%v ans (float64) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			result = x
-			_core.values["Height"] = result
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		}
-	}
-	return result
-}
-
-func (ap *application) SetWindowRect(left, top, width, height float64) {
-	ap.Left(left)
-	ap.Top(top)
-	ap.Width(width)
-	ap.Height(height)
-}
-
-func (ap *application) ScreenUpdating(value ...bool) bool {
-	var result bool
-	xl := ap.app
-	_core, err := xl.getCore(ap.mx)
-	if err != nil {
-		return false
-	}
-	var cmd string
-	const name = "ScreenUpdating"
-	var opt []any
+func (wa *workApp) Left(value ...float64) float64 {
+	xl := wa.app
 
 	if len(value) > 0 {
-		opt = append(opt, value)
-	} else {
-		opt = nil
-	}
-
-	if opt != nil {
-		cmd = "Put"
-		args := xl.worker.Send(cmd, _core.disp, name, opt)
-
-		for i := range args {
-			switch x := args[i].(type) {
-			case error:
-				log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			case nil:
-				log.Printf("%v ans (nil) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			default:
-				log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			}
-		}
-	}
-
-	result = false
-	cmd = "Get"
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		case bool:
-			log.Printf("%v ans (bool) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			result = x
-			_core.values["ScreenUpdating"] = result
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		}
-	}
-	return result
-}
-
-func (ap *application) DisplayAlerts(value ...bool) bool {
-	var result bool
-	xl := ap.app
-	_core, err := xl.getCore(ap.mx)
-	if err != nil {
-		return false
-	}
-	var cmd string
-	const name = "DisplayAlerts"
-	var opt []any
-
-	if len(value) > 0 {
+		cmd := "Put"
+		name := "Left"
+		var opt []any
 		opt = append(opt, value[0])
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
 	} else {
-		opt = nil
-	}
-
-	if opt != nil {
-		cmd = "Put"
-		args := xl.worker.Send(cmd, _core.disp, name, opt)
-
-		for i := range args {
-			switch x := args[i].(type) {
-			case error:
-				log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			case nil:
-				log.Printf("%v ans (nil) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			default:
-				log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			}
+		cmd := "Get"
+		name := "Left"
+		ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
 		}
 	}
-
-	result = false
-	cmd = "Get"
-	args := xl.worker.Send(cmd, _core.disp, name, nil)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		case bool:
-			log.Printf("%v ans (bool) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			result = x
-			_core.values["DisplayAlerts"] = result
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		}
-	}
-	return result
+	return 0
 }
 
-func (ap *application) Run(macroName string, macroArgs ...any) any {
-	xl := ap.app
-	_core, err := xl.getCore(ap.mx)
-	if err != nil {
-		return err
-	}
-	const cmd = "Method"
-	const name = "Run"
-	var opt []any
+func (wa *workApp) Top(value ...float64) float64 {
+	xl := wa.app
 
-	opt = append(opt, macroName)
-	for i := range macroArgs {
-		if i > 30 {
-			break
+	if len(value) > 0 {
+		cmd := "Put"
+		name := "Top"
+		var opt []any
+		opt = append(opt, value[0])
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
 		}
-		opt = append(opt, macroArgs[i])
-	}
-
-	args := xl.worker.Send(cmd, _core.disp, name, opt)
-
-	for i := range args {
-		switch x := args[i].(type) {
-		case error:
-			log.Printf("%v err %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-		case any:
-			log.Printf("%v ans (any) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			return x
-		case nil:
-			log.Printf("%v ans (nil) %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
-			return x
-		default:
-			log.Printf("%v def %v.%v.%v: %v v:%v, opt: %v\n", xl.hWnd, cmd, _core.kind, name, x, opt, _core.values)
+	} else {
+		cmd := "Get"
+		name := "Top"
+		ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
 			return x
 		}
+	}
+	return 0
+}
+
+func (wa *workApp) Width(value ...float64) float64 {
+	xl := wa.app
+
+	if len(value) > 0 {
+		cmd := "Put"
+		name := "Width"
+		var opt []any
+		opt = append(opt, value[0])
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+		name := "Width"
+		ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
+		}
+	}
+	return 0
+}
+
+func (wa *workApp) Height(value ...float64) float64 {
+	xl := wa.app
+
+	if len(value) > 0 {
+		cmd := "Put"
+		name := "Height"
+		var opt []any
+		opt = append(opt, value[0])
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+		name := "Height"
+		ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
+		}
+	}
+	return 0
+}
+
+func (wa *workApp) WindowState(value ...any) int32 {
+	xl := wa.app
+
+	if len(value) > 0 {
+		cmd := "Put"
+		name := "WindowState"
+		var opt []any
+
+		var v int32
+		switch x := value[0].(type) {
+		case int:
+			v = SetEnumWindowState(int32(x))
+		case int32:
+			v = SetEnumWindowState(x)
+		case string:
+			v = GetEnumWindowStateNum(x)
+		}
+		opt = append(opt, v)
+
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+		name := "WindowState"
+		ans, err := xl.cores.SendNum(cmd, name, wa.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case int32:
+			return x
+		}
+	}
+	return 0
+}
+
+func (wa *workApp) SetWindowRect(left, top, height, width float64) error {
+	xl := wa.app
+	wa.WindowState("xlNormal")
+	wa.Left(left)
+	wa.Top(top)
+	wa.Height(height)
+	wa.Width(width)
+
+	if xl.cores.debug {
+		log.Printf(".WindowRect(%v,%v,%v,%v)", wa.Left(), wa.Top(), wa.Height(), wa.Width())
 	}
 	return nil
+}
+
+func (wa *workApp) Run(Macro string, Args ...any) any {
+	xl := wa.app
+
+	cmd := "Method"
+	name := "Run"
+	var opt []any
+	opt = append(opt, Macro)
+
+	if len(Args) > 0 {
+		for i := range Args {
+			if i > 29 {
+				break
+			}
+			switch x := Args[i].(type) {
+			case int:
+				opt = append(opt, int32(x))
+			case int32:
+				opt = append(opt, x)
+			case float64:
+				opt = append(opt, x)
+			case string:
+				opt = append(opt, x)
+			case bool:
+				opt = append(opt, x)
+			case time.Time:
+				opt = append(opt, x)
+			case nil:
+				opt = append(opt, x)
+			}
+		}
+	}
+	ans, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return nil
+	}
+	switch x := ans.(type) {
+	case int32:
+		return x
+	case float64:
+		return x
+	case string:
+		return x
+	case bool:
+		return x
+	case time.Time:
+		return x
+	case nil:
+		return x
+	case *ole.VARIANT:
+		switch x.Val {
+		case 2148141008:
+			return "#NULL!"
+		case 2148141015:
+			return "#DIV/0!"
+		case 2148141023:
+			return "#VALUE!"
+		case 2148141031:
+			return "#REF!"
+		case 2148141037:
+			return "#NAME?"
+		case 2148141044:
+			return "#NUM!"
+		case 2148141050:
+			return "#N/A"
+		}
+		return x.Val
+	default:
+		return x
+	}
 }
