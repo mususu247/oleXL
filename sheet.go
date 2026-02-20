@@ -280,6 +280,19 @@ func (ws *workSheet) Activate() error {
 	return nil
 }
 
+func (ws *workSheet) Select() error {
+	xl := ws.app
+
+	cmd := "Method"
+	name := "Select"
+
+	_, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (ws *workSheet) Parent() *workBook {
 	wb := ws.parent
 	xl := ws.app

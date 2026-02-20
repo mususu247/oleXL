@@ -315,7 +315,7 @@ func (wb *workBook) SaveAs(fileName string, fileFormat ...any) error {
 	var opt []any
 	opt = append(opt, fn)
 
-	var ff int32 = -4143 // xlWorkbookDefault
+	var ff int32 = 51 // xlWorkbookDefault
 	if len(fileFormat) > 0 {
 		switch x := fileFormat[0].(type) {
 		case int:
