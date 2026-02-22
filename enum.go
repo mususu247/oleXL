@@ -1,9 +1,5 @@
 package oleXL
 
-import "log"
-
-// version 2025-11-03
-
 func EnumToStrings(enum map[string]int32) []string {
 	var results []string
 
@@ -68,7 +64,7 @@ func EnumFileFormat() map[string]int32 {
 	enum["xlWK3FM3"] = 32
 	enum["xlWK4"] = 38
 	enum["xlWKS"] = 4
-	enum["xlWorkbookDefault"] = 51
+	enum["xlWorkbookDefault"] = 51 //default
 	enum["xlWorkbookNormal"] = -4143
 	enum["xlWorks2FarEast"] = 28
 	enum["xlWQ1"] = 34
@@ -84,7 +80,7 @@ func GetEnumFileFormatNum(enumType string) int32 {
 	if v, ok := enum[enumType]; ok {
 		result = v
 	} else {
-		result = enum["xlWorkbookNormal"]
+		result = enum["xlWorkbookDefault"]
 	}
 	return result
 }
@@ -92,7 +88,7 @@ func GetEnumFileFormatNum(enumType string) int32 {
 func GetEnumFileFormatStr(enumNum int32) string {
 	var result string
 	enum := EnumFileFormat()
-	result = "xlWorkbookNormal"
+	result = "xlWorkbookDefault"
 
 	for k, v := range enum {
 		if v == enumNum {
@@ -108,9 +104,8 @@ func SetEnumFileFormat(enumNum int32) int32 {
 	enum := EnumFileFormat()
 	result = enum["xlWorkbookDefault"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumNum {
-			log.Printf("check: %v %v\n", enumNum, k)
 			result = v
 			break
 		}
@@ -169,9 +164,8 @@ func SetEnumPaste(enumNum int32) int32 {
 	enum := EnumPaste()
 	result = enum["xlPasteAll"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumNum {
-			log.Printf("check: %v %v\n", enumNum, k)
 			result = v
 			break
 		}
@@ -223,9 +217,8 @@ func SetEnumPasteOperation(enumType int32) int32 {
 	enum := EnumPasteOperation()
 	result = enum["xlPasteSpecialOperationNone"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -276,9 +269,8 @@ func SetEnumDirection(enumType int32) int32 {
 	enum := EnumDirection()
 	result = enum["xlShiftDown"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -327,9 +319,8 @@ func SetEnumInsertShift(enumType int32) int32 {
 	enum := EnumInsertShift()
 	result = enum["xlShiftDown"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -379,10 +370,8 @@ func SetEnumWindowState(enumType int32) int32 {
 	enum := EnumWindowState()
 	result = enum["xlNormal"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -432,9 +421,8 @@ func SetEnumCalculation(enumType int32) int32 {
 	enum := EnumCalculation()
 	result = enum["xlCalculationAutomatic"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -490,9 +478,8 @@ func SetEnumBorders(enumType int32) int32 {
 	enum := EnumBorders()
 	result = enum["default"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -504,7 +491,7 @@ func SetEnumBorders(enumType int32) int32 {
 func EnumLineStyle() map[string]int32 {
 	enum := make(map[string]int32)
 
-	enum["xlContinuous"] = 1
+	enum["xlContinuous"] = 1 //Def
 	enum["xlDash"] = -4115
 	enum["xlDashDot"] = 4
 	enum["xlDashDotDot"] = 5
@@ -547,9 +534,8 @@ func SetEnumLineStyle(enumType int32) int32 {
 	enum := EnumLineStyle()
 	result = enum["xlContinuous"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -600,9 +586,8 @@ func SetEnumWeight(enumType int32) int32 {
 	enum := EnumWeight()
 	result = enum["xlMedium"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -669,9 +654,8 @@ func SetEnumPattern(enumType int32) int32 {
 	enum := EnumPattern()
 	result = enum["xlPatternAutomatic"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -750,9 +734,8 @@ func SetEnumShapeType(enumType int32) int32 {
 	enum := EnumShapeType()
 	result = enum["msoAutoShape"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -812,9 +795,8 @@ func SetEnumLineDash(enumType int32) int32 {
 	enum := EnumLineDash()
 	result = enum["msoLineSolid"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -867,9 +849,8 @@ func SetEnumAlignCmd(enumType int32) int32 {
 	enum := EnumAlignCmd()
 	result = enum["msoAlignLefts"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -918,9 +899,8 @@ func SetEnumFlipCmd(enumType int32) int32 {
 	enum := EnumAlignCmd()
 	result = enum["msoFlipHorizontal"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -973,9 +953,8 @@ func SetEnumZOrderCmd(enumType int32) int32 {
 	enum := EnumZOrderCmd()
 	result = enum["msoBringToFront"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -1206,9 +1185,8 @@ func SetEnumAutoShape(enumType int32) int32 {
 	enum := EnumAutoShape()
 	result = enum["msoShapeRectangle"]
 
-	for k, v := range enum {
+	for _, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
 			result = v
 			break
 		}
@@ -1259,9 +1237,495 @@ func SetEnumUpdateLinks(enumType int32) int32 {
 	enum := EnumAutoShape()
 	result = enum["xlUpdateLinks"]
 
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// Alignment XlHAlign
+func EnumHAlign() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlHAlignCenter"] = -4108 //Default
+	enum["xlHAlignCenterAcrossSelection"] = 7
+	enum["xlHAlignDistributed"] = -4117
+	enum["xlHAlignFill"] = 5
+	enum["xlHAlignGeneral"] = 1
+	enum["xlHAlignJustify"] = -4130
+	enum["xlHAlignLeft"] = -4131
+	enum["xlHAlignRight"] = -4152
+
+	return enum
+}
+
+func GetEnumHAlignNum(enumType string) int32 {
+	var result int32
+	enum := EnumHAlign()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlHAlignCenter"]
+	}
+	return result
+}
+
+func GetEnumHAlignStr(enumType int32) string {
+	var result string
+	enum := EnumHAlign()
+	result = "xlHAlignCenter"
+
 	for k, v := range enum {
 		if v == enumType {
-			log.Printf("check: %v %v\n", enumType, k)
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumHAlign(enumType int32) int32 {
+	var result int32
+	enum := EnumHAlign()
+	result = enum["xlHAlignCenter"]
+
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// Alignment XlVAlign
+func EnumVAlign() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlVAlignBottom"] = -4107 //Default
+	enum["xlVAlignCenter"] = -4108
+	enum["xlVAlignDistributed"] = -4117
+	enum["xlVAlignJustify"] = -4130
+	enum["xlVAlignTop"] = -4160
+
+	return enum
+}
+
+func GetEnumVAlignNum(enumType string) int32 {
+	var result int32
+	enum := EnumVAlign()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlVAlignBottom"]
+	}
+	return result
+}
+
+func GetEnumVAlignStr(enumType int32) string {
+	var result string
+	enum := EnumVAlign()
+	result = "xlVAlignBottom"
+
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumVAlign(enumType int32) int32 {
+	var result int32
+	enum := EnumVAlign()
+	result = enum["xlVAlignBottom"]
+
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// Alignment XlOrientation
+func EnumOrientation() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlDownward"] = -4170
+	enum["xlHorizontal"] = -4128 //Default
+	enum["xlUpward"] = -4171
+	enum["xlVertical"] = -4166
+
+	return enum
+}
+
+func GetEnumOrientationNum(enumType string) int32 {
+	var result int32
+	enum := EnumOrientation()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlHorizontal"]
+	}
+	return result
+}
+
+func GetEnumOrientationStr(enumType int32) string {
+	var result string
+	enum := EnumOrientation()
+	result = "xlHorizontal"
+
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumOrientation(enumType int32) int32 {
+	var result int32
+	enum := EnumOrientation()
+	result = enum["xlHorizontal"]
+
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// Alignment XlReadingOrder
+func EnumReadingOrder() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlContext"] = -5002 //Default
+	enum["xlLTR"] = -5003
+	enum["xlRTL"] = -5004
+
+	return enum
+}
+
+func GetEnumReadingOrderNum(enumType string) int32 {
+	var result int32
+	enum := EnumReadingOrder()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlContext"]
+	}
+	return result
+}
+
+func GetEnumReadingOrderStr(enumType int32) string {
+	var result string
+	enum := EnumReadingOrder()
+	result = "xlContext"
+
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumReadingOrder(enumType int32) int32 {
+	var result int32
+	enum := EnumReadingOrder()
+	result = enum["xlContext"]
+
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// Alignment XlUnderlineStyle
+func EnumUnderlineStyle() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlUnderlineStyleDouble"] = -4119
+	enum["xlUnderlineStyleDoubleAccounting"] = 5
+	enum["xlUnderlineStyleNone"] = -4142 //Default
+	enum["xlUnderlineStyleSingle"] = 2
+	enum["xlUnderlineStyleSingleAccounting"] = 4
+
+	return enum
+}
+
+func GetEnumUnderlineStyleNum(enumType string) int32 {
+	var result int32
+	enum := EnumUnderlineStyle()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlUnderlineStyleNone"]
+	}
+	return result
+}
+
+func GetEnumUnderlineStyleStr(enumType int32) string {
+	var result string
+	enum := EnumUnderlineStyle()
+	result = "xlUnderlineStyleNone"
+
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumUnderlineStyle(enumType int32) int32 {
+	var result int32
+	enum := EnumUnderlineStyle()
+	result = enum["xlUnderlineStyleNone"]
+
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// Color XlRgbColor
+func EnumRgbColor() map[string]float64 {
+	enum := make(map[string]float64)
+
+	enum["rgbAliceBlue"] = 16775408
+	enum["rgbAntiqueWhite"] = 14150650
+	enum["rgbAqua"] = 16776960
+	enum["rgbAquamarine"] = 13959039
+	enum["rgbAzure"] = 16777200
+	enum["rgbBeige"] = 14480885
+	enum["rgbBisque"] = 12903679
+	enum["rgbBlack"] = 0 //Default
+	enum["rgbBlanchedAlmond"] = 13495295
+	enum["rgbBlue"] = 16711680
+	enum["rgbBlueViolet"] = 14822282
+	enum["rgbBrown"] = 2763429
+	enum["rgbBurlyWood"] = 8894686
+	enum["rgbCadetBlue"] = 10526303
+	enum["rgbChartreuse"] = 65407
+	enum["rgbCoral"] = 5275647
+	enum["rgbCornflowerBlue"] = 15570276
+	enum["rgbCornsilk"] = 14481663
+	enum["rgbCrimson"] = 3937500
+	enum["rgbDarkBlue"] = 9109504
+	enum["rgbDarkCyan"] = 9145088
+	enum["rgbDarkGoldenrod"] = 755384
+	enum["rgbDarkGray"] = 11119017
+	enum["rgbDarkGreen"] = 25600
+	enum["rgbDarkGrey"] = 11119017
+	enum["rgbDarkKhaki"] = 7059389
+	enum["rgbDarkMagenta"] = 9109643
+	enum["rgbDarkOliveGreen"] = 3107669
+	enum["rgbDarkOrange"] = 36095
+	enum["rgbDarkOrchid"] = 13382297
+	enum["rgbDarkRed"] = 139
+	enum["rgbDarkSalmon"] = 8034025
+	enum["rgbDarkSeaGreen"] = 9419919
+	enum["rgbDarkSlateBlue"] = 9125192
+	enum["rgbDarkSlateGray"] = 5197615
+	enum["rgbDarkSlateGrey"] = 5197615
+	enum["rgbDarkTurquoise"] = 13749760
+	enum["rgbDarkViolet"] = 13828244
+	enum["rgbDeepPink"] = 9639167
+	enum["rgbDeepSkyBlue"] = 16760576
+	enum["rgbDimGray"] = 6908265
+	enum["rgbDimGrey"] = 6908265
+	enum["rgbDodgerBlue"] = 16748574
+	enum["rgbFireBrick"] = 2237106
+	enum["rgbFloralWhite"] = 15792895
+	enum["rgbForestGreen"] = 2263842
+	enum["rgbFuchsia"] = 16711935
+	enum["rgbGainsboro"] = 14474460
+	enum["rgbGhostWhite"] = 16775416
+	enum["rgbGold"] = 55295
+	enum["rgbGoldenrod"] = 2139610
+	enum["rgbGray"] = 8421504
+	enum["rgbGreen"] = 32768
+	enum["rgbGreenYellow"] = 3145645
+	enum["rgbGrey"] = 8421504
+	enum["rgbHoneydew"] = 15794160
+	enum["rgbHotPink"] = 11823615
+	enum["rgbIndianRed"] = 6053069
+	enum["rgbIndigo"] = 8519755
+	enum["rgbIvory"] = 15794175
+	enum["rgbKhaki"] = 9234160
+	enum["rgbLavender"] = 16443110
+	enum["rgbLavenderBlush"] = 16118015
+	enum["rgbLawnGreen"] = 64636
+	enum["rgbLemonChiffon"] = 13499135
+	enum["rgbLightBlue"] = 15128749
+	enum["rgbLightCoral"] = 8421616
+	enum["rgbLightCyan"] = 9145088
+	enum["rgbLightGoldenrodYellow"] = 13826810
+	enum["rgbLightGray"] = 13882323
+	enum["rgbLightGreen"] = 9498256
+	enum["rgbLightGrey"] = 13882323
+	enum["rgbLightPink"] = 12695295
+	enum["rgbLightSalmon"] = 8036607
+	enum["rgbLightSeaGreen"] = 11186720
+	enum["rgbLightSkyBlue"] = 16436871
+	enum["rgbLightSlateGray"] = 10061943
+	enum["rgbLightSteelBlue"] = 14599344
+	enum["rgbLightYellow"] = 14745599
+	enum["rgbLime"] = 65280
+	enum["rgbLimeGreen"] = 3329330
+	enum["rgbLinen"] = 15134970
+	enum["rgbMaroon"] = 128
+	enum["rgbMediumAquamarine"] = 11206502
+	enum["rgbMediumBlue"] = 13434880
+	enum["rgbMediumOrchid"] = 13850042
+	enum["rgbMediumPurple"] = 14381203
+	enum["rgbMediumSeaGreen"] = 7451452
+	enum["rgbMediumSlateBlue"] = 15624315
+	enum["rgbMediumSpringGreen"] = 10156544
+	enum["rgbMediumTurquoise"] = 13422920
+	enum["rgbMediumVioletRed"] = 8721863
+	enum["rgbMidnightBlue"] = 7346457
+	enum["rgbMintCream"] = 16449525
+	enum["rgbMistyRose"] = 14804223
+	enum["rgbMoccasin"] = 11920639
+	enum["rgbNavajoWhite"] = 11394815
+	enum["rgbNavy"] = 8388608
+	enum["rgbNavyBlue"] = 8388608
+	enum["rgbOldLace"] = 15136253
+	enum["rgbOlive"] = 32896
+	enum["rgbOliveDrab"] = 2330219
+	enum["rgbOrange"] = 42495
+	enum["rgbOrangeRed"] = 17919
+	enum["rgbOrchid"] = 14053594
+	enum["rgbPaleGoldenrod"] = 7071982
+	enum["rgbPaleGreen"] = 10025880
+	enum["rgbPaleTurquoise"] = 15658671
+	enum["rgbPaleVioletRed"] = 9662683
+	enum["rgbPapayaWhip"] = 14020607
+	enum["rgbPeachPuff"] = 12180223
+	enum["rgbPeru"] = 4163021
+	enum["rgbPink"] = 13353215
+	enum["rgbPlum"] = 14524637
+	enum["rgbPowderBlue"] = 15130800
+	enum["rgbPurple"] = 8388736
+	enum["rgbRed"] = 255
+	enum["rgbRosyBrown"] = 9408444
+	enum["rgbRoyalBlue"] = 14772545
+	enum["rgbSalmon"] = 7504122
+	enum["rgbSandyBrown"] = 6333684
+	enum["rgbSeaGreen"] = 5737262
+	enum["rgbSeashell"] = 15660543
+	enum["rgbSienna"] = 2970272
+	enum["rgbSilver"] = 12632256
+	enum["rgbSkyBlue"] = 15453831
+	enum["rgbSlateBlue"] = 13458026
+	enum["rgbSlateGray"] = 9470064
+	enum["rgbSnow"] = 16448255
+	enum["rgbSpringGreen"] = 8388352
+	enum["rgbSteelBlue"] = 11829830
+	enum["rgbTan"] = 9221330
+	enum["rgbTeal"] = 8421376
+	enum["rgbThistle"] = 14204888
+	enum["rgbTomato"] = 4678655
+	enum["rgbTurquoise"] = 13688896
+	enum["rgbViolet"] = 15631086
+	enum["rgbWheat"] = 11788021
+	enum["rgbWhite"] = 16777215
+	enum["rgbWhiteSmoke"] = 16119285
+	enum["rgbYellow"] = 65535
+	enum["rgbYellowGreen"] = 3329434
+
+	return enum
+}
+
+func GetEnumRgbColorNum(enumType string) float64 {
+	var result float64
+	enum := EnumRgbColor()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["rgbBlack"]
+	}
+	return result
+}
+
+// Color XlThemeColor
+func EnumThemeColor() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlThemeColorAccent1"] = 5
+	enum["xlThemeColorAccent2"] = 6
+	enum["xlThemeColorAccent3"] = 7
+	enum["xlThemeColorAccent4"] = 8
+	enum["xlThemeColorAccent5"] = 9
+	enum["xlThemeColorAccent6"] = 10
+	enum["xlThemeColorDark1"] = 1
+	enum["xlThemeColorDark2"] = 3
+	enum["xlThemeColorFollowedHyperlink"] = 12
+	enum["xlThemeColorHyperlink"] = 11
+	enum["xlThemeColorLight1"] = 2 //Def
+	enum["xlThemeColorLight2"] = 4
+
+	return enum
+}
+
+func GetEnumUThemeColorNum(enumType string) int32 {
+	var result int32
+	enum := EnumThemeColor()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlThemeColorLight1"]
+	}
+	return result
+}
+
+func GetEnumThemeColorStr(enumType int32) string {
+	var result string
+	enum := EnumThemeColor()
+	result = "xlThemeColorLight1"
+
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumThemeColor(enumType int32) int32 {
+	var result int32
+	enum := EnumThemeColor()
+	result = enum["xlThemeColorLight1"]
+
+	for _, v := range enum {
+		if v == enumType {
 			result = v
 			break
 		}

@@ -1,7 +1,5 @@
 package oleXL
 
-// version 2026-01-26
-
 import (
 	"fmt"
 	"log"

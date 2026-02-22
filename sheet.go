@@ -236,9 +236,9 @@ func (ws *workSheet) Nothing() error {
 func (ws *workSheet) Name(value ...any) string {
 	xl := ws.app
 
+	name := "Name"
 	if len(value) > 0 {
 		cmd := "Put"
-		name := "Name"
 		var opt []any
 		switch x := value[0].(type) {
 		case string:
@@ -252,7 +252,6 @@ func (ws *workSheet) Name(value ...any) string {
 		}
 	} else {
 		cmd := "Get"
-		name := "Name"
 		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -419,4 +418,30 @@ func (ws *workSheet) Move(value ...any) *workSheet {
 		core.parent = wb.num
 	}
 	return &xs
+}
+
+func (ws *workSheet) Delete() error {
+	xl := ws.app
+	cmd := "Method"
+	name := "Delete"
+
+	_, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+	if err != nil {
+		log.Printf("(Error) cmd:%v name:%v ", cmd, name)
+	}
+	return nil
+}
+
+func (ws *workSheet) Visible(value bool) error {
+	xl := ws.app
+	cmd := "Put"
+	name := "Visible"
+	var opt []any
+	opt = append(opt, value)
+
+	_, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+	if err != nil {
+		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
+	}
+	return nil
 }

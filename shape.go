@@ -198,9 +198,9 @@ func (sp *workShape) Set() *workShape {
 func (sp *workShape) Name(value ...any) string {
 	xl := sp.app
 
+	name := "Name"
 	if len(value) > 0 {
 		cmd := "Put"
-		name := "Name"
 		var opt []any
 		switch x := value[0].(type) {
 		case string:
@@ -214,7 +214,7 @@ func (sp *workShape) Name(value ...any) string {
 		}
 	} else {
 		cmd := "Get"
-		name := "Name"
+
 		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -227,4 +227,17 @@ func (sp *workShape) Name(value ...any) string {
 	}
 
 	return ""
+}
+
+func (sp *workShape) Delete() error {
+	xl := sp.app
+
+	name := "Delete"
+	cmd := "Method"
+	_, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return err
+	}
+	return nil
 }

@@ -6,7 +6,6 @@ import (
 	"strings"
 )
 
-// version 2025-10-17
 // VBA style like: FileSystemObject(FSO)
 
 func FileExists(fileName string) bool {

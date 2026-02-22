@@ -259,7 +259,7 @@ func (wb *workBook) RefreshAll() error {
 	return nil
 }
 
-func (wbs *workBooks) Open(fileName string) *workBook {
+func (wbs *workBooks) Open(fileName string, options ...any) *workBook {
 	var wb workBook
 	xl := wbs.app
 
@@ -281,6 +281,119 @@ func (wbs *workBooks) Open(fileName string) *workBook {
 		name := "Open"
 		var opt []any
 		opt = append(opt, fn)
+
+		if len(options) > 0 {
+			for i := range options {
+				switch i {
+				case 0:
+					//UpdateLinks bool
+					switch x := options[i].(type) {
+					case bool:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 1:
+					//ReadOnly bool
+					switch x := options[i].(type) {
+					case bool:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 2:
+					//Format int32 (or string)
+					switch x := options[i].(type) {
+					case int32:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 3:
+					//Password string
+					switch x := options[i].(type) {
+					case string:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 4:
+					//WriteResPassword string
+					switch x := options[i].(type) {
+					case string:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 5:
+					//IgnoreReadOnlyRecommended bool
+					switch x := options[i].(type) {
+					case bool:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 6:
+					//Origin int32
+					switch x := options[i].(type) {
+					case int32:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 7:
+					//Delimiter string
+					switch x := options[i].(type) {
+					case string:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 8:
+					//Editable bool
+					switch x := options[i].(type) {
+					case bool:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 9:
+					//Notify bool
+					switch x := options[i].(type) {
+					case bool:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 10:
+					//FileConverter int32
+					switch x := options[i].(type) {
+					case int32:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 11:
+					//AddToMenu bool
+					switch x := options[i].(type) {
+					case bool:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 12:
+					//Local bool
+					switch x := options[i].(type) {
+					case bool:
+						opt = append(opt, x)
+					default:
+						opt = append(opt, nil)
+					}
+				case 13:
+					//CorruptLoad int32 xlCorruptLoad
+				}
+			}
+		}
 
 		ans, err := xl.cores.SendNum(cmd, name, wbs.num, opt)
 		if err != nil {
@@ -383,4 +496,17 @@ func (wb *workBook) Activate() error {
 		return err
 	}
 	return nil
+}
+
+func (wb *workBook) ReadOnly() bool {
+	xl := wb.app
+
+	cmd := "Get"
+	name := "ReadOnly"
+	ans, _ := xl.cores.SendNum(cmd, name, wb.num, nil)
+	switch x := ans.(type) {
+	case bool:
+		return x
+	}
+	return false
 }
