@@ -1732,3 +1732,204 @@ func SetEnumThemeColor(enumType int32) int32 {
 	}
 	return result
 }
+
+// XlChartType
+func EnumChartType() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xl3DArea"] = -4098
+	enum["xl3DAreaStacked"] = 78
+	enum["xl3DAreaStacked100"] = 79
+	enum["xl3DBarClustered"] = 60
+	enum["xl3DBarStacked"] = 61
+	enum["xl3DBarStacked100"] = 62
+	enum["xl3DColumn"] = -4100
+	enum["xl3DColumnClustered"] = 54
+	enum["xl3DColumnStacked"] = 55
+	enum["xl3DColumnStacked100"] = 56
+	enum["xl3DLine"] = -4101
+	enum["xl3DPie"] = -4102
+	enum["xl3DPieExploded"] = 70
+	enum["xlArea"] = 1
+	enum["xlAreaEx"] = 135
+	enum["xlAreaStacked"] = 76
+	enum["xlAreaStacked100"] = 77
+	enum["xlAreaStacked100Ex"] = 137
+	enum["xlAreaStackedEx"] = 136
+	enum["xlBarClustered"] = 57
+	enum["xlBarClusteredEx"] = 132
+	enum["xlBarOfPie"] = 71
+	enum["xlBarStacked"] = 58
+	enum["xlBarStacked100"] = 59
+	enum["xlBarStacked100Ex"] = 134
+	enum["xlBarStackedEx"] = 133
+	enum["xlBoxwhisker"] = 121
+	enum["xlBubble"] = 15
+	enum["xlBubble3DEffect"] = 87
+	enum["xlBubbleEx"] = 139
+	enum["xlColumnClustered"] = 51
+	enum["xlColumnClusteredEx"] = 124
+	enum["xlColumnStacked"] = 52
+	enum["xlColumnStacked100"] = 53
+	enum["xlColumnStacked100Ex"] = 126
+	enum["xlColumnStackedEx"] = 125
+	enum["xlCombo"] = -4152
+	enum["xlComboAreaStackedColumnClustered"] = 115
+	enum["xlComboColumnClusteredLine"] = 113
+	enum["xlComboColumnClusteredLineSecondaryAxis"] = 114
+	enum["xlConeBarClustered"] = 102
+	enum["xlConeBarStacked"] = 103
+	enum["xlConeBarStacked100"] = 104
+	enum["xlConeCol"] = 105
+	enum["xlConeColClustered"] = 99
+	enum["xlConeColStacked"] = 100
+	enum["xlConeColStacked100"] = 101
+	enum["xlCylinderBarClustered"] = 95
+	enum["xlCylinderBarStacked"] = 96
+	enum["xlCylinderBarStacked100"] = 97
+	enum["xlCylinderCol"] = 98
+	enum["xlCylinderColClustered"] = 92
+	enum["xlCylinderColStacked"] = 93
+	enum["xlCylinderColStacked100"] = 94
+	enum["xlDoughnut"] = -4120
+	enum["xlDoughnutEx"] = 131
+	enum["xlDoughnutExploded"] = 80
+	enum["xlFunnel"] = 123
+	enum["xlHistogram"] = 118
+	enum["xlLine"] = 4 //Def
+	enum["xlLineEx"] = 127
+	enum["xlLineMarkers"] = 65
+	enum["xlLineMarkersStacked"] = 66
+	enum["xlLineMarkersStacked100"] = 67
+	enum["xlLineStacked"] = 63
+	enum["xlLineStacked100"] = 64
+	enum["xlLineStacked100Ex"] = 129
+	enum["xlLineStackedEx"] = 128
+	enum["xlOtherCombinations"] = 116
+	enum["xlPareto"] = 122
+	enum["xlPie"] = 5
+	enum["xlPieEx"] = 130
+	enum["xlPieExploded"] = 69
+	enum["xlPieOfPie"] = 68
+	enum["xlPyramidBarClustered"] = 109
+	enum["xlPyramidBarStacked"] = 110
+	enum["xlPyramidBarStacked100"] = 111
+	enum["xlPyramidCol"] = 112
+	enum["xlPyramidColClustered"] = 106
+	enum["xlPyramidColStacked"] = 107
+	enum["xlPyramidColStacked100"] = 108
+	enum["xlRadar"] = -4151
+	enum["xlRadarFilled"] = 82
+	enum["xlRadarMarkers"] = 81
+	enum["xlRegionMap"] = 140
+	enum["xlStockHLC"] = 88
+	enum["xlStockOHLC"] = 89
+	enum["xlStockVHLC"] = 90
+	enum["xlStockVOHLC"] = 91
+	enum["xlSuggestedChart"] = -2
+	enum["xlSunburst"] = 120
+	enum["xlSurface"] = 83
+	enum["xlSurfaceTopView"] = 85
+	enum["xlSurfaceTopViewWireframe"] = 86
+	enum["xlSurfaceWireframe"] = 84
+	enum["xlTreemap"] = 117
+	enum["xlWaterfall"] = 119
+	enum["xlXYScatter"] = -4169
+	enum["xlXYScatterEx"] = 138
+	enum["xlXYScatterLines"] = 74
+	enum["xlXYScatterLinesNoMarkers"] = 75
+	enum["xlXYScatterSmooth"] = 72
+	enum["xlXYScatterSmoothNoMarkers"] = 73
+
+	return enum
+}
+
+func GetEnumChartTypeNum(enumType string) int32 {
+	var result int32
+	enum := EnumChartType()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlLine"]
+	}
+	return result
+}
+
+func GetEnumChartTypeStr(enumType int32) string {
+	var result string
+	enum := EnumChartType()
+	result = "xlLine"
+
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumChartType(enumType int32) int32 {
+	var result int32
+	enum := EnumChartType()
+	result = enum["xlLine"]
+
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// XlRowCol
+func EnumRowCol() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlColumns"] = 2
+	enum["xlRows"] = 1 //Def
+
+	return enum
+}
+
+func GetEnumRowColNum(enumType string) int32 {
+	var result int32
+	enum := EnumRowCol()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlRows"]
+	}
+	return result
+}
+
+func GetEnumRowColStr(enumType int32) string {
+	var result string
+	enum := EnumRowCol()
+	result = "xlRows"
+
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumRowCol(enumType int32) int32 {
+	var result int32
+	enum := EnumRowCol()
+	result = enum["xlRows"]
+
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}

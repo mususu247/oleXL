@@ -241,3 +241,54 @@ func (sp *workShape) Delete() error {
 	}
 	return nil
 }
+
+func (sps *workShapes) AddPicture(fileName string, LinkToFile bool, SaveWithDocument bool, left, top, width, height float64) *workShape {
+	var sp workShape
+	xl := sps.app
+
+	if !FileExists(fileName) {
+		log.Printf("(Error) not found: %v", fileName)
+		return nil
+	}
+
+	kind := "Shape"
+	core, num := xl.cores.FindAdd(kind, sps.num)
+	if core.disp == nil {
+		cmd := "Method"
+		name := "AddPicture"
+		var opt []any
+		opt = append(opt, fileName)
+
+		var z int32
+		z = 0 //msoFalse:0
+		if LinkToFile {
+			z = -1 //msoTrue:-1
+		}
+		opt = append(opt, z)
+
+		z = 0 //msoFalse:0
+		if SaveWithDocument {
+			z = -1 //msoTrue:-1
+		}
+		opt = append(opt, z)
+
+		opt = append(opt, left)
+		opt = append(opt, top)
+		opt = append(opt, width)
+		opt = append(opt, height)
+		ans, err := xl.cores.SendNum(cmd, name, sps.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	sp.app = xl
+	sp.num = num
+	sp.parent = sps.parent
+	return &sp
+}
