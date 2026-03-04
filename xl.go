@@ -3,7 +3,9 @@ package oleXL
 // version 2026-01-26
 
 import (
+	"fmt"
 	"log"
+	"runtime/debug"
 	"time"
 
 	"github.com/go-ole/go-ole"
@@ -15,6 +17,7 @@ type Excel struct {
 }
 
 func (xl *Excel) Init(debug ...bool) error {
+	xl.getVersion()
 	var cores Cores
 	if len(debug) > 0 {
 		cores.Init(debug[0])
@@ -219,4 +222,22 @@ func (xl *Excel) Calculation(value ...any) int32 {
 		return x
 	}
 	return -1
+}
+
+func (xl *Excel) getVersion() {
+	info, _ := debug.ReadBuildInfo()
+
+	targetModule := "github.com/go-ole/go-ole"
+	for _, dep := range info.Deps {
+		if dep.Path == targetModule {
+			fmt.Printf("Module .Name: %s .Version: %s\n", dep.Path, dep.Version)
+		}
+	}
+
+	targetModule = "github.com/mususu247/oleXL"
+	for _, dep := range info.Deps {
+		if dep.Path == targetModule {
+			fmt.Printf("Module .Name: %s .Version: %s\n", dep.Path, dep.Version)
+		}
+	}
 }

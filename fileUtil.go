@@ -1,6 +1,8 @@
 package oleXL
 
 import (
+	"bytes"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -130,4 +132,27 @@ func FindFiles(find string, dir string, deep int) ([]string, error) {
 	}
 
 	return results, nil
+}
+
+func AddBOM(fileName string) error {
+	bom := []byte{0xEF, 0xBB, 0xBF}
+
+	content, err := os.ReadFile(fileName)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return err
+	}
+
+	if len(content) >= 3 && bytes.Equal(content[:3], bom) {
+		log.Printf("(Info) BOM already exists.")
+		return nil
+	}
+
+	newContent := append(bom, content...)
+	err = os.WriteFile(fileName, newContent, 0644)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return err
+	}
+	return nil
 }
