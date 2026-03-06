@@ -247,6 +247,25 @@ func (wb *workBook) Name() string {
 	return result
 }
 
+func (wb *workBook) Path() string {
+	var result string
+	xl := wb.app
+
+	cmd := "Get"
+	name := "Path"
+	ans, err := xl.cores.SendNum(cmd, name, wb.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return result
+	}
+
+	switch x := ans.(type) {
+	case string:
+		result = x
+	}
+	return result
+}
+
 func (wb *workBook) RefreshAll() error {
 	xl := wb.app
 
@@ -259,7 +278,7 @@ func (wb *workBook) RefreshAll() error {
 	return nil
 }
 
-func (wbs *workBooks) Open(fileName string, options ...any) *workBook {
+func (wbs *workBooks) Open(fileName string, options ...map[string]any) *workBook {
 	var wb workBook
 	xl := wbs.app
 
@@ -283,114 +302,129 @@ func (wbs *workBooks) Open(fileName string, options ...any) *workBook {
 		opt = append(opt, fn)
 
 		if len(options) > 0 {
-			for i := range options {
-				switch i {
-				case 0:
-					//UpdateLinks bool
-					switch x := options[i].(type) {
-					case bool:
-						opt = append(opt, x)
-					default:
-						opt = append(opt, nil)
-					}
-				case 1:
-					//ReadOnly bool
-					switch x := options[i].(type) {
-					case bool:
-						opt = append(opt, x)
-					default:
-						opt = append(opt, nil)
-					}
-				case 2:
-					//Format int32 (or string)
-					switch x := options[i].(type) {
+			for range 14 {
+				opt = append(opt, nil)
+			}
+
+			for k, v := range options[0] {
+				switch k {
+				case "UpdateLinks":
+					switch x := v.(type) {
 					case int32:
-						opt = append(opt, x)
+						switch x {
+						case 0, 1, 2, 3:
+							opt[1] = x
+						default:
+							opt[1] = int32(0) // Default value if not in range
+						}
 					default:
-						opt = append(opt, nil)
+						opt[1] = int32(0)
 					}
-				case 3:
-					//Password string
-					switch x := options[i].(type) {
-					case string:
-						opt = append(opt, x)
-					default:
-						opt = append(opt, nil)
-					}
-				case 4:
-					//WriteResPassword string
-					switch x := options[i].(type) {
-					case string:
-						opt = append(opt, x)
-					default:
-						opt = append(opt, nil)
-					}
-				case 5:
-					//IgnoreReadOnlyRecommended bool
-					switch x := options[i].(type) {
+				case "ReadOnly":
+					switch x := v.(type) {
 					case bool:
-						opt = append(opt, x)
+						opt[2] = x
 					default:
-						opt = append(opt, nil)
+						opt[2] = nil
 					}
-				case 6:
-					//Origin int32
-					switch x := options[i].(type) {
+				case "Format":
+					switch x := v.(type) {
 					case int32:
-						opt = append(opt, x)
+						switch x {
+						case 1, 2, 3, 4, 5, 6:
+							opt[3] = x
+						default:
+							opt[3] = int32(1) // Default value if not in range
+						}
 					default:
-						opt = append(opt, nil)
+						opt[3] = int32(1) // Default value if not in range
 					}
-				case 7:
-					//Delimiter string
-					switch x := options[i].(type) {
+				case "Password":
+					switch x := v.(type) {
 					case string:
-						opt = append(opt, x)
+						opt[4] = x
 					default:
-						opt = append(opt, nil)
+						opt[4] = nil
 					}
-				case 8:
-					//Editable bool
-					switch x := options[i].(type) {
+				case "WriteResPassword":
+					switch x := v.(type) {
 					case bool:
-						opt = append(opt, x)
+						opt[5] = x
 					default:
-						opt = append(opt, nil)
+						opt[5] = nil
 					}
-				case 9:
-					//Notify bool
-					switch x := options[i].(type) {
+				case "IgnoreReadOnlyRecommended":
+					switch x := v.(type) {
 					case bool:
-						opt = append(opt, x)
+						opt[6] = x
 					default:
-						opt = append(opt, nil)
+						opt[6] = nil
 					}
-				case 10:
-					//FileConverter int32
-					switch x := options[i].(type) {
+				case "Origin":
+					var z int32
+					switch x := v.(type) {
 					case int32:
-						opt = append(opt, x)
-					default:
-						opt = append(opt, nil)
+						z = SetEnumPlatform(x)
+					case int:
+						z = SetEnumPlatform(int32(x))
+					case string:
+						z = GetEnumPlatformNum(x)
 					}
-				case 11:
-					//AddToMenu bool
-					switch x := options[i].(type) {
+					opt[7] = z
+				case "Delimiter":
+					switch x := v.(type) {
+					case string:
+						opt[8] = x
+					default:
+						opt[8] = ","
+					}
+				case "Editable":
+					switch x := v.(type) {
 					case bool:
-						opt = append(opt, x)
+						opt[9] = x
 					default:
-						opt = append(opt, nil)
+						opt[9] = false
 					}
-				case 12:
-					//Local bool
-					switch x := options[i].(type) {
+				case "Notify":
+					switch x := v.(type) {
 					case bool:
-						opt = append(opt, x)
+						opt[10] = x
 					default:
-						opt = append(opt, nil)
+						opt[10] = false
 					}
-				case 13:
-					//CorruptLoad int32 xlCorruptLoad
+				case "Converter":
+					switch x := v.(type) {
+					case int32:
+						opt[11] = x
+					default:
+						opt[11] = int32(0)
+					}
+				case "AddToMru":
+					switch x := v.(type) {
+					case bool:
+						opt[12] = x
+					default:
+						opt[12] = false
+					}
+				case "Local":
+					switch x := v.(type) {
+					case bool:
+						opt[13] = x
+					default:
+						opt[13] = false
+					}
+				case "CorruptLoad":
+					opt[14] = v
+					switch x := v.(type) {
+					case int32:
+						opt[14] = SetEnumCorruptLoad(x)
+					case int:
+						opt[14] = SetEnumCorruptLoad(int32(x))
+					case string:
+						opt[14] = GetEnumCorruptLoadNum(x)
+					default:
+						opt[14] = nil
+					}
 				}
 			}
 		}
@@ -411,7 +445,7 @@ func (wbs *workBooks) Open(fileName string, options ...any) *workBook {
 	return &wb
 }
 
-func (wb *workBook) SaveAs(fileName string, fileFormat ...any) error {
+func (wb *workBook) SaveAs(fileName string, options ...map[string]any) error {
 	xl := wb.app
 
 	fn, err := GetAbsolutePathName(fileName)
@@ -428,18 +462,97 @@ func (wb *workBook) SaveAs(fileName string, fileFormat ...any) error {
 	var opt []any
 	opt = append(opt, fn)
 
-	var ff int32 = 51 // xlWorkbookDefault
-	if len(fileFormat) > 0 {
-		switch x := fileFormat[0].(type) {
-		case int:
-			ff = SetEnumFileFormat(int32(x))
-		case int32:
-			ff = SetEnumFileFormat(x)
-		case string:
-			ff = GetEnumFileFormatNum(x)
+	if len(options) > 0 {
+		for range 11 {
+			opt = append(opt, nil)
+		}
+
+		for k, v := range options[0] {
+			switch k {
+			case "FileFormat":
+				var z int32
+				switch x := v.(type) {
+				case int:
+					z = SetEnumFileFormat(int32(x))
+				case int32:
+					z = SetEnumFileFormat(x)
+				case string:
+					z = GetEnumFileFormatNum(x)
+				}
+				opt[1] = z
+			case "Password":
+				switch x := v.(type) {
+				case string:
+					opt[2] = x
+				default:
+					opt[2] = nil
+				}
+			case "WriteResPassword":
+				switch x := v.(type) {
+				case string:
+					opt[3] = x
+				default:
+					opt[3] = nil
+				}
+			case "ReadOnlyRecommended":
+				switch x := v.(type) {
+				case bool:
+					opt[4] = x
+				default:
+					opt[4] = nil
+				}
+			case "CreateBackup":
+				switch x := v.(type) {
+				case bool:
+					opt[5] = x
+				default:
+					opt[5] = nil
+				}
+			case "AccessMode":
+				switch x := v.(type) {
+				case int32:
+					switch x {
+					case 1, 2, 3:
+						opt[6] = x
+					default:
+						opt[6] = int32(1) // Default value if not in range
+					}
+				default:
+					opt[6] = int32(1) // Default value if not in range
+				}
+			case "ConflictResolution":
+				switch x := v.(type) {
+				case int32:
+					switch x {
+					case 1, 2, 3:
+						opt[7] = x
+					default:
+						opt[7] = int32(1) // Default value if not in range
+					}
+				default:
+					opt[7] = int32(1) // Default value if not in range
+				}
+			case "AddToMru":
+				switch x := v.(type) {
+				case bool:
+					opt[8] = x
+				default:
+					opt[8] = nil
+				}
+			case "TextCodepage":
+				opt[9] = v
+			case "TextVisualLayout":
+				opt[10] = v
+			case "Local":
+				switch x := v.(type) {
+				case bool:
+					opt[11] = x
+				default:
+					opt[11] = nil
+				}
+			}
 		}
 	}
-	opt = append(opt, ff)
 
 	_, err = xl.cores.SendNum(cmd, name, wb.num, opt)
 	if err != nil {

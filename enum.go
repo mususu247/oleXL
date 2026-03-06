@@ -113,6 +113,108 @@ func SetEnumFileFormat(enumNum int32) int32 {
 	return result
 }
 
+// XlPlatform
+func EnumPlatform() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlMacintosh"] = 1
+	enum["xlMSDOS"] = 2
+	enum["xlWindows"] = 3 //Default
+
+	return enum
+}
+
+func GetEnumPlatformNum(enumType string) int32 {
+	var result int32
+	enum := EnumPlatform()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlWindows"]
+	}
+	return result
+}
+
+func GetEnumPlatformStr(enumNum int32) string {
+	var result string
+	enum := EnumPlatform()
+	result = "xlWindows"
+
+	for k, v := range enum {
+		if v == enumNum {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumPlatform(enumNum int32) int32 {
+	var result int32
+	enum := EnumPlatform()
+	result = enum["xlWindows"]
+
+	for _, v := range enum {
+		if v == enumNum {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// XlCorruptLoad
+func EnumCorruptLoad() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlExtractData"] = 2
+	enum["xlNormalLoad"] = 0 //Default
+	enum["xlRepairFile"] = 1
+
+	return enum
+}
+
+func GetEnumCorruptLoadNum(enumType string) int32 {
+	var result int32
+	enum := EnumCorruptLoad()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlNormalLoad"]
+	}
+	return result
+}
+
+func GetEnumCorruptLoadStr(enumNum int32) string {
+	var result string
+	enum := EnumCorruptLoad()
+	result = "xlNormalLoad"
+
+	for k, v := range enum {
+		if v == enumNum {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumCorruptLoad(enumNum int32) int32 {
+	var result int32
+	enum := EnumCorruptLoad()
+	result = enum["xlNormalLoad"]
+
+	for _, v := range enum {
+		if v == enumNum {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
 // Paste
 func EnumPaste() map[string]int32 {
 	enum := make(map[string]int32)

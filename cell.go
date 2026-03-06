@@ -1485,3 +1485,116 @@ func (wr *workRange) MergeCells(value ...bool) bool {
 
 	return false
 }
+
+func (wr *workRange) RowHeight(value ...float64) float64 {
+	xl := wr.app
+
+	name := "RowHeight"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
+		}
+	}
+
+	return 0
+}
+
+func (wr *workRange) ColumnWidth(value ...float64) float64 {
+	xl := wr.app
+
+	name := "ColumnWidth"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
+		}
+	}
+
+	return 0
+}
+
+func (wr *workRange) Height() float64 {
+	xl := wr.app
+
+	name := "Height"
+	cmd := "Get"
+
+	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return 0
+	}
+	switch x := ans.(type) {
+	case float64:
+		return x
+	}
+
+	return 0
+}
+
+func (wr *workRange) Width() float64 {
+	xl := wr.app
+
+	name := "Width"
+	cmd := "Get"
+
+	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return 0
+	}
+	switch x := ans.(type) {
+	case float64:
+		return x
+	}
+
+	return 0
+}
+
+func (wr *workRange) AutoFit() error {
+	xl := wr.app
+
+	cmd := "Method"
+	name := "AutoFit"
+
+	_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}

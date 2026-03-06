@@ -2,6 +2,8 @@ package oleXL
 
 import (
 	"bytes"
+	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -10,11 +12,110 @@ import (
 
 // VBA style like: FileSystemObject(FSO)
 
+func CopyFile(src string, dst string, overwrite ...bool) error {
+	var ow bool = true
+	if len(overwrite) > 0 {
+		ow = overwrite[0]
+	}
+
+	var _copyFile func(src string, dst string) error
+
+	_copyFile = func(src string, dst string) error {
+		c, err := os.Create(dst)
+		if err != nil {
+			return err
+		}
+		defer c.Close()
+
+		r, err := os.Open(src)
+		if err != nil {
+			return err
+		}
+		defer r.Close()
+
+		_, err = io.Copy(c, r)
+		if err != nil {
+			return err
+		}
+
+		fi, _ := os.Stat(src)
+		err = os.Chtimes(dst, fi.ModTime(), fi.ModTime())
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	if FileExists(src) {
+		//mode Single FIle
+		if FolderExists(dst) {
+			fn := filepath.Base(src)
+			dst = filepath.Join(dst, fn)
+		}
+
+		if FileExists(dst) {
+			if ow {
+				err := DeleteFile(dst)
+				if err != nil {
+					return err
+				}
+			} else {
+				return fmt.Errorf("file already exists: %s", dst)
+			}
+		}
+
+		err := _copyFile(src, dst)
+		if err != nil {
+			return err
+		}
+	} else {
+		//mode Multi Files
+		srcPath := GetFilePath(src)
+		find := filepath.Base(src)
+		files, err := FindFiles(find, srcPath, 0)
+		if err != nil {
+			return err
+		}
+
+		var errs error
+		for i := range files {
+			fn := filepath.Base(files[i])
+			dstFile := filepath.Join(dst, fn)
+
+			if FileExists(dstFile) {
+				if ow {
+					err := DeleteFile(dstFile)
+					if err != nil {
+						errs = err
+					} else {
+						err := _copyFile(files[i], dstFile)
+						if err != nil {
+							errs = err
+						}
+					}
+				}
+			} else {
+				err := _copyFile(files[i], dstFile)
+				if err != nil {
+					errs = err
+				}
+			}
+		}
+		if errs != nil {
+			return errs
+		}
+	}
+	return nil
+}
+
 func FileExists(fileName string) bool {
-	_, err := os.Stat(fileName)
+	fi, err := os.Stat(fileName)
 	if err != nil {
 		return false
 	} else {
+		if fi.IsDir() {
+			return false
+		}
 		return true
 	}
 }
