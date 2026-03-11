@@ -7,8 +7,9 @@ import (
 )
 
 type workChart struct {
-	app *Excel
-	num int
+	app    *Excel
+	parent any
+	num    int
 }
 
 func (sps *workShapes) AddChart2(style int32, ChartType any, left, top, width, height float64, newLayout bool) *workChart {
@@ -54,6 +55,7 @@ func (sps *workShapes) AddChart2(style int32, ChartType any, left, top, width, h
 	}
 	ct.app = xl
 	ct.num = num
+	ct.parent = sps
 	return &ct
 }
 
@@ -145,4 +147,45 @@ func (xl *Excel) ActiveChart() *workChart {
 	ct.num = num
 	ws.Release()
 	return &ct
+}
+
+func (ct *workChart) Select() error {
+	xl := ct.app
+
+	cmd := "Method"
+	name := "Select"
+
+	_, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ct *workChart) HasTitle(value ...bool) bool {
+	xl := ct.app
+
+	name := "HasTitle"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return false
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return false
+		}
+		switch x := ans.(type) {
+		case bool:
+			return x
+		}
+	}
+	return false
 }

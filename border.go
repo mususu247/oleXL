@@ -7,8 +7,9 @@ import (
 )
 
 type workBorder struct {
-	app *Excel
-	num int
+	app    *Excel
+	parent any
+	num    int
 }
 
 func (wr *workRange) Borders(value ...any) *workBorder {

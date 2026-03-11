@@ -14,8 +14,35 @@ type workShapes struct {
 
 type workShape struct {
 	app    *Excel
-	parent *workSheet
+	parent any
 	num    int
+}
+
+func (nt *workNote) Shape() *workShape {
+	var sp workShape
+	xl := nt.app
+
+	kind := "Shape"
+	core, num := xl.cores.FindAdd(kind, nt.num)
+	if core.disp == nil {
+		cmd := "Get"
+		name := "Shape"
+
+		ans, err := xl.cores.SendNum(cmd, name, nt.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	sp.app = xl
+	sp.num = num
+	sp.parent = nt
+	return &sp
 }
 
 func (ws *workSheet) Shapes() *workShapes {

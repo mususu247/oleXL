@@ -12,8 +12,9 @@ type workBooks struct {
 }
 
 type workBook struct {
-	app *Excel
-	num int
+	app    *Excel
+	parent *workBooks
+	num    int
 }
 
 func (xl *Excel) Workbooks() *workBooks {
@@ -43,7 +44,7 @@ func (xl *Excel) Workbooks() *workBooks {
 
 func (xl *Excel) ActiveWorkbook() *workBook {
 	var wb workBook
-	//wbs := xl.Workbooks()
+	wbs := xl.Workbooks()
 
 	kind := "Workbook"
 	core, num := xl.cores.FindAdd(kind, xl.num)
@@ -63,7 +64,7 @@ func (xl *Excel) ActiveWorkbook() *workBook {
 	}
 	wb.app = xl
 	wb.num = num
-	//wbs.Release()
+	wb.parent = wbs
 	return &wb
 }
 

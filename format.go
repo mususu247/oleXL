@@ -6,22 +6,22 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
-type workFrame struct {
+type workFormat struct {
 	app    *Excel
-	parent any
+	parent *workTitle
 	num    int
 }
 
-func (sp *workShape) TextFrame() *workFrame {
-	var wf workFrame
-	xl := sp.app
+func (wt *workTitle) Format() *workFormat {
+	var wf workFormat
+	xl := wt.app
 
 	name := "TextFrame"
-	core, num := xl.cores.FindAdd(name, sp.num)
+	core, num := xl.cores.FindAdd(name, wt.num)
 	if core.disp == nil {
 		cmd := "Get"
 
-		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, wt.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -35,16 +35,16 @@ func (sp *workShape) TextFrame() *workFrame {
 	}
 	wf.app = xl
 	wf.num = num
-	wf.parent = sp
+	wf.parent = wt
 	return &wf
 }
 
-func (wf *workFrame) Release() error {
+func (wf *workFormat) Release() error {
 	xl := wf.app
 	return xl.cores.Release(wf.num, false)
 }
 
-func (wf *workFrame) Nothing() error {
+func (wf *workFormat) Nothing() error {
 	xl := wf.app
 	xl.cores.releaseChild(wf.num)
 

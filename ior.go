@@ -7,8 +7,9 @@ import (
 )
 
 type workInterior struct {
-	app *Excel
-	num int
+	app    *Excel
+	parent any
+	num    int
 }
 
 func (wr *workRange) Interior() *workInterior {
@@ -33,6 +34,7 @@ func (wr *workRange) Interior() *workInterior {
 	}
 	wi.app = xl
 	wi.num = num
+	wi.parent = wr
 	return &wi
 }
 

@@ -7,8 +7,9 @@ import (
 )
 
 type workColor struct {
-	app *Excel
-	num int
+	app    *Excel
+	parent any
+	num    int
 }
 
 func (wl *workFill) ForeColor() *workColor {
@@ -34,6 +35,7 @@ func (wl *workFill) ForeColor() *workColor {
 	}
 	wc.app = xl
 	wc.num = num
+	wc.parent = wl
 	return &wc
 }
 
@@ -60,6 +62,7 @@ func (wl *workFill) BackColor() *workColor {
 	}
 	wc.app = xl
 	wc.num = num
+	wc.parent = wl
 	return &wc
 }
 
@@ -86,6 +89,7 @@ func (wl *workLine) ForeColor() *workColor {
 	}
 	wc.app = xl
 	wc.num = num
+	wc.parent = wl
 	return &wc
 }
 
@@ -123,6 +127,35 @@ func (wc *workColor) RGB(value ...any) float64 {
 			z = GetEnumRgbColorNum(x)
 		}
 		opt = append(opt, z)
+
+		_, err := xl.cores.SendNum(cmd, name, wc.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, wc.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
+		}
+	}
+	return 0
+}
+
+func (wc *workColor) Brightness(value ...float64) float64 {
+	xl := wc.app
+
+	name := "Brightness"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
 
 		_, err := xl.cores.SendNum(cmd, name, wc.num, opt)
 		if err != nil {

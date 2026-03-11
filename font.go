@@ -7,8 +7,9 @@ import (
 )
 
 type workFont struct {
-	app *Excel
-	num int
+	app    *Excel
+	parent any
+	num    int
 }
 
 func (wr *workRange) Font() *workFont {
@@ -33,6 +34,7 @@ func (wr *workRange) Font() *workFont {
 	}
 	wf.app = xl
 	wf.num = num
+	wf.parent = wr
 	return &wf
 }
 
@@ -58,6 +60,59 @@ func (ch *workChar) Font() *workFont {
 	}
 	wf.app = xl
 	wf.num = num
+	wf.parent = ch
+	return &wf
+}
+
+func (wt *workTitle) Font() *workFont {
+	var wf workFont
+	xl := wt.app
+
+	name := "Font"
+	core, num := xl.cores.FindAdd(name, wt.num)
+	if core.disp == nil {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, wt.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 1 //Lock.on
+		}
+	}
+	wf.app = xl
+	wf.num = num
+	wf.parent = wt
+	return &wf
+}
+
+func (tr *workTextRange) Font() *workFont {
+	var wf workFont
+	xl := tr.app
+
+	name := "Font"
+	core, num := xl.cores.FindAdd(name, tr.num)
+	if core.disp == nil {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, tr.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 1 //Lock.on
+		}
+	}
+	wf.app = xl
+	wf.num = num
+	wf.parent = tr
 	return &wf
 }
 
