@@ -6,6 +6,12 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
+type workCharts struct {
+	app    *Excel
+	parent any
+	num    int
+}
+
 type workChart struct {
 	app    *Excel
 	parent any
@@ -145,6 +151,7 @@ func (xl *Excel) ActiveChart() *workChart {
 	}
 	ct.app = xl
 	ct.num = num
+	ct.parent = ws
 	ws.Release()
 	return &ct
 }
@@ -188,4 +195,29 @@ func (ct *workChart) HasTitle(value ...bool) bool {
 		}
 	}
 	return false
+}
+
+func (ct *workChart) Parent() *chartObject {
+	var co chartObject
+	xl := ct.app
+
+	kind := "Chart"
+	core, num := xl.cores.FindAdd(kind, ct.num)
+	if core.disp == nil {
+		cmd := "Get"
+		name := "Parent"
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	co.app = xl
+	co.num = num
+	return &co
 }
