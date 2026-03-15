@@ -18,16 +18,63 @@ type chartObject struct {
 	num    int
 }
 
-func (ws *workSheet) ChartObjects() *chartObjects {
+func (sps *workShapes) AddChart2(style int32, ChartType any, left, top, width, height float64, newLayout bool) *chartObject {
+	var co chartObject
+	xl := sps.app
+
+	kind := "Shape"
+	core, num := xl.cores.FindAdd(kind, sps.num)
+	if core.disp == nil {
+		cmd := "Method"
+		name := "AddChart2"
+		var opt []any
+
+		var z int32
+		opt = append(opt, style)
+
+		switch x := ChartType.(type) {
+		case int:
+			z = SetEnumChartType(int32(x))
+		case int32:
+			z = SetEnumChartType(x)
+		case string:
+			z = GetEnumChartTypeNum(x)
+		}
+		opt = append(opt, z)
+
+		opt = append(opt, left)
+		opt = append(opt, top)
+		opt = append(opt, width)
+		opt = append(opt, height)
+		opt = append(opt, newLayout)
+
+		ans, err := xl.cores.SendNum(cmd, name, sps.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	co.app = xl
+	co.num = num
+	co.parent = sps
+	return &co
+}
+
+func (ct *workChart) ChartObjects() *chartObjects {
 	var cos chartObjects
-	xl := ws.app
+	xl := ct.app
 
 	kind := "ChartObjects"
-	core, num := xl.cores.FindAdd(kind, ws.num)
+	core, num := xl.cores.FindAdd(kind, ct.num)
 	if core.disp == nil {
-		cmd := "Get"
+		cmd := "Method"
 		name := "ChartObjects"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -40,7 +87,7 @@ func (ws *workSheet) ChartObjects() *chartObjects {
 	}
 	cos.app = xl
 	cos.num = num
-	cos.parent = ws
+	cos.parent = ct
 	return &cos
 }
 
@@ -72,6 +119,19 @@ func (cos *chartObjects) Set() *chartObjects {
 	xl := cos.app
 	xl.cores.Lock(cos.num)
 	return cos
+}
+
+func (cos *chartObject) Select() error {
+	xl := cos.app
+
+	cmd := "Method"
+	name := "Select"
+
+	_, err := xl.cores.SendNum(cmd, name, cos.num, nil)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (cos *chartObjects) ChartObjectz(value any) *chartObject {
@@ -111,6 +171,46 @@ func (cos *chartObjects) ChartObjectz(value any) *chartObject {
 	co.app = xl
 	co.num = num
 	co.parent = cos
+	return &co
+}
+
+func (ct *workChart) ChartObjectz(value any) *chartObject {
+	var co chartObject
+	xl := ct.app
+
+	kind := "ChartObject"
+	core, num := xl.cores.FindAdd(kind, ct.num)
+	if core.disp == nil {
+		cmd := "Get"
+		name := "ChartObjects"
+		var opt []any
+		switch x := value.(type) {
+		case int:
+			if x > 0 {
+				opt = append(opt, int32(x))
+			}
+		case int32:
+			if x > 0 {
+				opt = append(opt, x)
+			}
+		case string:
+			opt = append(opt, x)
+		}
+
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	co.app = xl
+	co.num = num
+	co.parent = ct
 	return &co
 }
 
@@ -157,43 +257,21 @@ func (co *chartObject) Activate() error {
 	return nil
 }
 
-func (co *chartObject) Select() error {
-	xl := co.app
+func (cos *chartObjects) Count() int32 {
+	xl := cos.app
 
-	cmd := "Method"
-	name := "Select"
-
-	_, err := xl.cores.SendNum(cmd, name, co.num, nil)
+	name := "Count"
+	cmd := "Get"
+	ans, err := xl.cores.SendNum(cmd, name, cos.num, nil)
 	if err != nil {
-		return err
+		log.Printf("(Error) %v", err)
+		return 0
 	}
-	return nil
-}
-
-func (co *chartObject) Chart() *workChart {
-	var ct workChart
-	xl := co.app
-
-	kind := "Chart"
-	core, num := xl.cores.FindAdd(kind, co.num)
-	if core.disp == nil {
-		cmd := "Get"
-		name := "Chart"
-		ans, err := xl.cores.SendNum(cmd, name, co.num, nil)
-		if err != nil {
-			log.Printf("(Error) %v", err)
-			return nil
-		}
-		switch x := ans.(type) {
-		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
-		}
+	switch x := ans.(type) {
+	case int32:
+		return x
 	}
-	ct.app = xl
-	ct.num = num
-	ct.parent = co
-	return &ct
+	return 0
 }
 
 func (co *chartObject) Copy() error {
@@ -260,4 +338,34 @@ func (co *chartObject) Duplicate() *chartObject {
 	xo.num = num
 	xo.parent = co.parent
 	return &xo
+}
+
+func (co *chartObject) Name(value ...string) string {
+	xl := co.app
+
+	name := "Name"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, co.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, co.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+		switch x := ans.(type) {
+		case string:
+			return x
+		}
+	}
+	return ""
 }

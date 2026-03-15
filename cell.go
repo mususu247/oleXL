@@ -13,7 +13,7 @@ type workRange struct {
 	num    int
 }
 
-func (ws *workSheet) Range(cell ...string) *workRange {
+func (ws *workSheet) Range(cell ...any) *workRange {
 	var wr workRange
 	xl := ws.app
 
@@ -23,7 +23,12 @@ func (ws *workSheet) Range(cell ...string) *workRange {
 		cmd := "Get"
 		var opt []any
 		for i := range cell {
-			opt = append(opt, cell[i])
+			switch x := cell[i].(type) {
+			case string:
+				opt = append(opt, x)
+			case *workRange:
+				opt = append(opt, xl.cores.getCore(x.num).disp)
+			}
 		}
 
 		ans, err := xl.cores.SendNum(cmd, name, ws.num, opt)
@@ -476,13 +481,53 @@ func (wr *workRange) Resize(RowSize int32, ColumnSize int32) *workRange {
 	return &xr
 }
 
-func (wr *workRange) Address() string {
+func (wr *workRange) Address(options ...map[string]any) string {
 	xl := wr.app
 
 	name := "Address"
 	cmd := "Get"
+	var opt []any
 
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	//Default: RowAbsolute:=True, ColumnAbsolute:=True, ReferenceStyle:=xlA1, External:=True, RelativeTo:=Nothing
+	opt = append(opt, true)                             //RowAbsolute
+	opt = append(opt, true)                             //ColumnAbsolute
+	opt = append(opt, GetEnumReferenceStyleNum("xlA1")) //ReferenceStyle
+	opt = append(opt, false)                            //External
+	opt = append(opt, nil)                              //RelativeTo
+
+	if len(options) > 0 {
+		for k, v := range options[0] {
+			switch k {
+			case "RowAbsolute":
+				switch x := v.(type) {
+				case bool:
+					opt[0] = x
+				}
+			case "ColumnAbsolute":
+				switch x := v.(type) {
+				case bool:
+					opt[1] = x
+				}
+			case "ReferenceStyle":
+				switch x := v.(type) {
+				case string:
+					opt[2] = GetEnumReferenceStyleNum(x)
+				}
+			case "External":
+				switch x := v.(type) {
+				case bool:
+					opt[3] = x
+				}
+			case "RelativeTo":
+				switch x := v.(type) {
+				case *workRange:
+					opt[4] = xl.cores.getCore(x.num).disp
+				}
+			}
+		}
+	}
+
+	ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return ""
@@ -595,7 +640,7 @@ func (xl *Excel) Selection() *workRange {
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			core.disp = x
-			core.lock = 0
+			core.lock = 1 //Lock on
 		}
 	}
 	wr.app = xl
@@ -925,6 +970,10 @@ func (wr *workRange) Activate() error {
 }
 
 func (wr *workRange) Select() error {
+	if wr == nil {
+		log.Printf("(Error) Object is NULL.")
+		return nil
+	}
 	xl := wr.app
 
 	cmd := "Method"

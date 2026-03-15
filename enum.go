@@ -2035,3 +2035,462 @@ func SetEnumRowCol(enumType int32) int32 {
 	}
 	return result
 }
+
+// XlReferenceStyle
+func EnumReferenceStyle() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlA1"] = 1 //Default
+	enum["xlR1C1"] = -4150
+
+	return enum
+}
+
+func GetEnumReferenceStyleNum(enumType string) int32 {
+	var result int32
+	enum := EnumReferenceStyle()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlA1"]
+	}
+	return result
+}
+
+func GetEnumReferenceStyleStr(enumType int32) string {
+	var result string
+	enum := EnumReferenceStyle()
+	result = "xlA1"
+
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumReferenceStyle(enumType int32) int32 {
+	var result int32
+	enum := EnumReferenceStyle()
+	result = enum["xlA1"]
+
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// XlLegendPosition
+func EnumLegendPosition() map[string]int32 {
+	enum := make(map[string]int32)
+
+	enum["xlLegendPositionBottom"] = -4107
+	enum["xlLegendPositionCorner"] = 2
+	enum["xlLegendPositionCustom"] = -4161
+	enum["xlLegendPositionLeft"] = -4131
+	enum["xlLegendPositionRight"] = -4152
+	enum["xlLegendPositionTop"] = -4160 //Default
+
+	return enum
+}
+
+func GetEnumLegendPositionNum(enumType string) int32 {
+	var result int32
+	enum := EnumLegendPosition()
+
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlLegendPositionTop"]
+	}
+	return result
+}
+
+func GetEnumLegendPositionStr(enumType int32) string {
+	var result string
+	enum := EnumLegendPosition()
+	result = "xlLegendPositionTop"
+
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumLegendPosition(enumType int32) int32 {
+	var result int32
+	enum := EnumLegendPosition()
+	result = enum["xlLegendPositionTop"]
+
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// XlAxisGroup
+func EnumAxisGroup() map[string]int32 {
+	enum := make(map[string]int32)
+	enum["xlPrimary"] = 1 //Default
+	enum["xlSecondary"] = 2
+	return enum
+}
+
+func GetEnumAxisGroupNum(enumType string) int32 {
+	var result int32
+	enum := EnumAxisGroup()
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlPrimary"]
+	}
+	return result
+}
+
+func GetEnumAxisGroupStr(enumType int32) string {
+	var result string
+	enum := EnumAxisGroup()
+	result = "xlPrimary"
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumAxisGroup(enumType int32) int32 {
+	var result int32
+	enum := EnumAxisGroup()
+	result = enum["xlPrimary"]
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// XlAxisType
+func EnumAxisType() map[string]int32 {
+	enum := make(map[string]int32)
+	enum["xlCategory"] = 1 //Default
+	enum["xlSeriesAxis"] = 2
+	enum["xlValue"] = 3
+	return enum
+}
+
+func GetEnumAxisTypeNum(enumType string) int32 {
+	var result int32
+	enum := EnumAxisType()
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlCategory"]
+	}
+	return result
+}
+
+func GetEnumAxisTypeStr(enumType int32) string {
+	var result string
+	enum := EnumAxisType()
+	result = "xlCategory"
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumAxisType(enumType int32) int32 {
+	var result int32
+	enum := EnumAxisType()
+	result = enum["xlCategory"]
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// XlTickLabelPosition
+func EnumTickLabelPosition() map[string]int32 {
+	enum := make(map[string]int32)
+	enum["xlTickLabelPositionHigh"] = -4127
+	enum["xlTickLabelPositionLow"] = -4134
+	enum["xlTickLabelPositionNextToAxis"] = 4 //Default
+	enum["xlTickLabelPositionNone"] = -4142
+	return enum
+}
+
+func GetEnumTickLabelPositionNum(enumType string) int32 {
+	var result int32
+	enum := EnumTickLabelPosition()
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlTickLabelPositionNextToAxis"]
+	}
+	return result
+}
+
+func GetEnumTickLabelPositionStr(enumType int32) string {
+	var result string
+	enum := EnumTickLabelPosition()
+	result = "xlTickLabelPositionNextToAxis"
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumTickLabelPosition(enumType int32) int32 {
+	var result int32
+	enum := EnumTickLabelPosition()
+	result = enum["xlTickLabelPositionNextToAxis"]
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// msoChartElementType
+func EnumChartElementType() map[string]int32 {
+	enum := make(map[string]int32)
+	enum["msoElementChartFloorNone"] = 1200
+	enum["msoElementChartFloorShow"] = 1201
+	enum["msoElementChartTitleAboveChart"] = 2
+	enum["msoElementChartTitleCenteredOverlay"] = 1
+	enum["msoElementChartTitleNone"] = 0 //Def
+	enum["msoElementChartWallNone"] = 1100
+	enum["msoElementChartWallShow"] = 1101
+	enum["msoElementDataLabelBestFit"] = 210
+	enum["msoElementDataLabelBottom"] = 209
+	enum["msoElementDataLabelCallout"] = 211
+	enum["msoElementDataLabelCenter"] = 202
+	enum["msoElementDataLabelInsideBase"] = 204
+	enum["msoElementDataLabelInsideEnd"] = 203
+	enum["msoElementDataLabelLeft"] = 206
+	enum["msoElementDataLabelNone"] = 200
+	enum["msoElementDataLabelOutSideEnd"] = 205
+	enum["msoElementDataLabelRight"] = 207
+	enum["msoElementDataLabelShow"] = 201
+	enum["msoElementDataLabelTop"] = 208
+	enum["msoElementDataTableNone"] = 500
+	enum["msoElementDataTableShow"] = 501
+	enum["msoElementDataTableWithLegendKeys"] = 502
+	enum["msoElementErrorBarNone"] = 700
+	enum["msoElementErrorBarPercentage"] = 702
+	enum["msoElementErrorBarStandardDeviation"] = 703
+	enum["msoElementErrorBarStandardError"] = 701
+	enum["msoElementLegendBottom"] = 104
+	enum["msoElementLegendLeft"] = 103
+	enum["msoElementLegendLeftOverlay"] = 106
+	enum["msoElementLegendNone"] = 100
+	enum["msoElementLegendRight"] = 101
+	enum["msoElementLegendRightOverlay"] = 105
+	enum["msoElementLegendTop"] = 102
+	enum["msoElementLineDropHiLoLine"] = 804
+	enum["msoElementLineDropLine"] = 801
+	enum["msoElementLineHiLoLine"] = 802
+	enum["msoElementLineNone"] = 800
+	enum["msoElementLineSeriesLine"] = 803
+	enum["msoElementPlotAreaNone"] = 1000
+	enum["msoElementPlotAreaShow"] = 1001
+	enum["msoElementPrimaryCategoryAxisBillions"] = 374
+	enum["msoElementPrimaryCategoryAxisLogScale"] = 375
+	enum["msoElementPrimaryCategoryAxisMillions"] = 373
+	enum["msoElementPrimaryCategoryAxisNone"] = 348
+	enum["msoElementPrimaryCategoryAxisReverse"] = 351
+	enum["msoElementPrimaryCategoryAxisShow"] = 349
+	enum["msoElementPrimaryCategoryAxisThousands"] = 372
+	enum["msoElementPrimaryCategoryAxisTitleAdjacentToAxis"] = 301
+	enum["msoElementPrimaryCategoryAxisTitleBelowAxis"] = 302
+	enum["msoElementPrimaryCategoryAxisTitleHorizontal"] = 305
+	enum["msoElementPrimaryCategoryAxisTitleNone"] = 300
+	enum["msoElementPrimaryCategoryAxisTitleRotated"] = 303
+	enum["msoElementPrimaryCategoryAxisTitleVertical"] = 304
+	enum["msoElementPrimaryCategoryAxisWithoutLabels"] = 350
+	enum["msoElementPrimaryCategoryGridLinesMajor"] = 334
+	enum["msoElementPrimaryCategoryGridLinesMinor"] = 333
+	enum["msoElementPrimaryCategoryGridLinesMinorMajor"] = 335
+	enum["msoElementPrimaryCategoryGridLinesNone"] = 332
+	enum["msoElementPrimaryValueAxisBillions"] = 356
+	enum["msoElementPrimaryValueAxisLogScale"] = 357
+	enum["msoElementPrimaryValueAxisMillions"] = 355
+	enum["msoElementPrimaryValueAxisNone"] = 352
+	enum["msoElementPrimaryValueAxisShow"] = 353
+	enum["msoElementPrimaryValueAxisThousands"] = 354
+	enum["msoElementPrimaryValueAxisTitleAdjacentToAxis"] = 307
+	enum["msoElementPrimaryValueAxisTitleBelowAxis"] = 308
+	enum["msoElementPrimaryValueAxisTitleHorizontal"] = 311
+	enum["msoElementPrimaryValueAxisTitleNone"] = 306
+	enum["msoElementPrimaryValueAxisTitleRotated"] = 309
+	enum["msoElementPrimaryValueAxisTitleVertical"] = 310
+	enum["msoElementPrimaryValueGridLinesMajor"] = 330
+	enum["msoElementPrimaryValueGridLinesMinor"] = 329
+	enum["msoElementPrimaryValueGridLinesMinorMajor"] = 331
+	enum["msoElementPrimaryValueGridLinesNone"] = 328
+	enum["msoElementSecondaryCategoryAxisBillions"] = 378
+	enum["msoElementSecondaryCategoryAxisLogScale"] = 379
+	enum["msoElementSecondaryCategoryAxisMillions"] = 377
+	enum["msoElementSecondaryCategoryAxisNone"] = 358
+	enum["msoElementSecondaryCategoryAxisReverse"] = 361
+	enum["msoElementSecondaryCategoryAxisShow"] = 359
+	enum["msoElementSecondaryCategoryAxisThousands"] = 376
+	enum["msoElementSecondaryCategoryAxisTitleAdjacentToAxis"] = 313
+	enum["msoElementSecondaryCategoryAxisTitleBelowAxis"] = 314
+	enum["msoElementSecondaryCategoryAxisTitleHorizontal"] = 317
+	enum["msoElementSecondaryCategoryAxisTitleNone"] = 312
+	enum["msoElementSecondaryCategoryAxisTitleRotated"] = 315
+	enum["msoElementSecondaryCategoryAxisTitleVertical"] = 316
+	enum["msoElementSecondaryCategoryAxisWithoutLabels"] = 360
+	enum["msoElementSecondaryCategoryGridLinesMajor"] = 342
+	enum["msoElementSecondaryCategoryGridLinesMinor"] = 341
+	enum["msoElementSecondaryCategoryGridLinesMinorMajor"] = 343
+	enum["msoElementSecondaryCategoryGridLinesNone"] = 340
+	enum["msoElementSecondaryValueAxisBillions"] = 366
+	enum["msoElementSecondaryValueAxisLogScale"] = 367
+	enum["msoElementSecondaryValueAxisMillions"] = 365
+	enum["msoElementSecondaryValueAxisNone"] = 362
+	enum["msoElementSecondaryValueAxisShow"] = 363
+	enum["msoElementSecondaryValueAxisThousands"] = 364
+	enum["msoElementSecondaryValueAxisTitleAdjacentToAxis"] = 319
+	enum["msoElementSecondaryValueAxisTitleBelowAxis"] = 320
+	enum["msoElementSecondaryValueAxisTitleHorizontal"] = 323
+	enum["msoElementSecondaryValueAxisTitleNone"] = 318
+	enum["msoElementSecondaryValueAxisTitleRotated"] = 321
+	enum["msoElementSecondaryValueAxisTitleVertical"] = 322
+	enum["msoElementSecondaryValueGridLinesMajor"] = 338
+	enum["msoElementSecondaryValueGridLinesMinor"] = 337
+	enum["msoElementSecondaryValueGridLinesMinorMajor"] = 339
+	enum["msoElementSecondaryValueGridLinesNone"] = 336
+	enum["msoElementSeriesAxisGridLinesMajor"] = 346
+	enum["msoElementSeriesAxisGridLinesMinor"] = 345
+	enum["msoElementSeriesAxisGridLinesMinorMajor"] = 347
+	enum["msoElementSeriesAxisGridLinesNone"] = 344
+	enum["msoElementSeriesAxisNone"] = 368
+	enum["msoElementSeriesAxisReverse"] = 371
+	enum["msoElementSeriesAxisShow"] = 369
+	enum["msoElementSeriesAxisTitleHorizontal"] = 327
+	enum["msoElementSeriesAxisTitleNone"] = 324
+	enum["msoElementSeriesAxisTitleRotated"] = 325
+	enum["msoElementSeriesAxisTitleVertical"] = 326
+	enum["msoElementSeriesAxisWithoutLabeling"] = 370
+	enum["msoElementTrendlineAddExponential"] = 602
+	enum["msoElementTrendlineAddLinear"] = 601
+	enum["msoElementTrendlineAddLinearForecast"] = 603
+	enum["msoElementTrendlineAddTwoPeriodMovingAverage"] = 604
+	enum["msoElementTrendlineNone"] = 600
+	enum["msoElementUpDownBarsNone"] = 900
+	enum["msoElementUpDownBarsShow"] = 901
+
+	return enum
+}
+
+func GetEnumChartElementTypeNum(enumType string) int32 {
+	var result int32
+	enum := EnumChartElementType()
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["msoElementChartTitleNone"]
+	}
+	return result
+}
+
+func GetEnumChartElementTypeStr(enumType int32) string {
+	var result string
+	enum := EnumChartElementType()
+	result = "msoElementChartTitleNone"
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumChartElementType(enumType int32) int32 {
+	var result int32
+	enum := EnumChartElementType()
+	result = enum["msoElementChartTitleNone"]
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// XlChartLocation
+func EnumChartLocation() map[string]int32 {
+	enum := make(map[string]int32)
+	enum["xlLocationAsNewSheet"] = 1
+	enum["xlLocationAsObject"] = 2
+	enum["xlLocationAutomatic"] = 3 //Default
+	return enum
+}
+
+func GetEnumChartLocationNum(enumType string) int32 {
+	var result int32
+	enum := EnumChartLocation()
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlLocationAutomatic"]
+	}
+	return result
+}
+
+func GetEnumChartLocationStr(enumType int32) string {
+	var result string
+	enum := EnumChartLocation()
+	result = "xlLocationAutomatic"
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumChartLocation(enumType int32) int32 {
+	var result int32
+	enum := EnumChartLocation()
+	result = enum["xlLocationAutomatic"]
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}

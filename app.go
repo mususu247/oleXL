@@ -396,3 +396,43 @@ func (wa *workApp) StatusBar(value string) bool {
 	}
 	return false
 }
+
+func (wa *workApp) Union(rag ...any) *workRange {
+	var wr workRange
+	xl := wa.app
+	ws := xl.ActiveSheet()
+
+	kind := "Range"
+	core, num := xl.cores.FindAdd(kind, wa.num)
+	if core.disp == nil {
+		cmd := "Method"
+		name := "Union"
+		var opt []any
+		for i := range rag {
+			switch x := rag[i].(type) {
+			case string:
+				opt = append(opt, x)
+			case *workRange:
+				disp := xl.cores.getCore(x.num).disp
+				opt = append(opt, disp)
+			}
+		}
+
+		ans, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		default:
+			log.Printf("%T %v", ans, ans)
+		}
+	}
+	wr.app = xl
+	wr.num = num
+	wr.parent = ws
+	return &wr
+}

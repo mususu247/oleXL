@@ -6,7 +6,13 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
-type workCharts struct {
+type chartGroups struct {
+	app    *Excel
+	parent any
+	num    int
+}
+
+type workChartGroup struct {
 	app    *Excel
 	parent any
 	num    int
@@ -18,37 +24,16 @@ type workChart struct {
 	num    int
 }
 
-func (sps *workShapes) AddChart2(style int32, ChartType any, left, top, width, height float64, newLayout bool) *workChart {
+func (co *chartObject) Chart() *workChart {
 	var ct workChart
-	xl := sps.app
+	xl := co.app
 
-	kind := "Shape"
-	core, num := xl.cores.FindAdd(kind, sps.num)
+	kind := "Chart"
+	core, num := xl.cores.FindAdd(kind, co.num)
 	if core.disp == nil {
-		cmd := "Method"
-		name := "AddChart2"
-		var opt []any
-
-		var z int32
-		opt = append(opt, style)
-
-		switch x := ChartType.(type) {
-		case int:
-			z = SetEnumChartType(int32(x))
-		case int32:
-			z = SetEnumChartType(x)
-		case string:
-			z = GetEnumChartTypeNum(x)
-		}
-		opt = append(opt, z)
-
-		opt = append(opt, left)
-		opt = append(opt, top)
-		opt = append(opt, width)
-		opt = append(opt, height)
-		opt = append(opt, newLayout)
-
-		ans, err := xl.cores.SendNum(cmd, name, sps.num, opt)
+		cmd := "Get"
+		name := "Chart"
+		ans, err := xl.cores.SendNum(cmd, name, co.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -61,7 +46,7 @@ func (sps *workShapes) AddChart2(style int32, ChartType any, left, top, width, h
 	}
 	ct.app = xl
 	ct.num = num
-	ct.parent = sps
+	ct.parent = co
 	return &ct
 }
 
@@ -197,6 +182,34 @@ func (ct *workChart) HasTitle(value ...bool) bool {
 	return false
 }
 
+func (ct *workChart) HasLegend(value ...bool) bool {
+	xl := ct.app
+
+	name := "HasLegend"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return false
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return false
+		}
+		switch x := ans.(type) {
+		case bool:
+			return x
+		}
+	}
+	return false
+}
+
 func (ct *workChart) Parent() *chartObject {
 	var co chartObject
 	xl := ct.app
@@ -220,4 +233,197 @@ func (ct *workChart) Parent() *chartObject {
 	co.app = xl
 	co.num = num
 	return &co
+}
+
+func (ct *workChart) Position(value ...any) int32 {
+	xl := ct.app
+
+	name := "Position"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+
+		var v int32
+		switch x := value[0].(type) {
+		case int:
+			v = SetEnumLegendPosition(int32(x))
+		case int32:
+			v = SetEnumLegendPosition(x)
+		case string:
+			v = GetEnumLegendPositionNum(x)
+		}
+		opt = append(opt, v)
+
+		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case int32:
+			return x
+		}
+	}
+	return 0
+}
+
+func (ct *workChart) Name(value ...string) string {
+	xl := ct.app
+
+	name := "Name"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+		switch x := ans.(type) {
+		case string:
+			return x
+		}
+	}
+	return ""
+}
+
+func (ct *workChart) SetElement(value any) error {
+	xl := ct.app
+
+	cmd := "Method"
+	name := "SetElement"
+	var opt []any
+	var z int32
+	switch x := value.(type) {
+	case int:
+		z = SetEnumChartElementType(int32(x))
+	case int32:
+		z = SetEnumChartElementType(x)
+	case string:
+		z = GetEnumChartElementTypeNum(x)
+	}
+	opt = append(opt, z)
+
+	_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ct *workChart) ChartGroups() *chartGroups {
+	var cgs chartGroups
+	xl := ct.app
+
+	name := "ChartGroups"
+	core, num := xl.cores.FindAdd(name, ct.num)
+	if core.disp == nil {
+		cmd := "Method"
+
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	cgs.app = xl
+	cgs.num = num
+	cgs.parent = ct
+	return &cgs
+}
+
+func (cgs *chartGroups) Count() int32 {
+	xl := cgs.app
+
+	name := "Count"
+	cmd := "Get"
+	ans, err := xl.cores.SendNum(cmd, name, cgs.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return 0
+	}
+	switch x := ans.(type) {
+	case int32:
+		return x
+	}
+	return 0
+}
+
+func (ct *workChart) ChartGroupz(value int32) *workChartGroup {
+	var cg workChartGroup
+	xl := ct.app
+
+	name := "ChartGroups"
+	core, num := xl.cores.FindAdd(name, ct.num)
+	if core.disp == nil {
+		cmd := "Method"
+		var opt []any
+		opt = append(opt, value)
+
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	cg.app = xl
+	cg.num = num
+	cg.parent = ct
+	return &cg
+}
+
+func (ct *workChart) Location(value any, option ...string) error {
+	xl := ct.app
+
+	cmd := "Method"
+	name := "Location"
+	var opt []any
+	var z int32
+	switch x := value.(type) {
+	case int:
+		z = SetEnumChartLocation(int32(x))
+	case int32:
+		z = SetEnumChartLocation(x)
+	case string:
+		z = GetEnumChartLocationNum(x)
+	}
+	opt = append(opt, z)
+
+	if len(option) > 0 {
+		opt = append(opt, option[0])
+	}
+
+	_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+	if err != nil {
+		return err
+	}
+	return nil
 }
