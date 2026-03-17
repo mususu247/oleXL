@@ -309,6 +309,11 @@ func (wbs *workBooks) Open(fileName string, options ...map[string]any) *workBook
 
 			for k, v := range options[0] {
 				switch k {
+				case "Filename":
+					switch x := v.(type) {
+					case string:
+						opt[0] = x
+					}
 				case "UpdateLinks":
 					switch x := v.(type) {
 					case int32:

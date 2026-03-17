@@ -149,6 +149,19 @@ func (ax *workAxes) Set() *workAxes {
 	return ax
 }
 
+func (ax *workAxes) Select() error {
+	xl := ax.app
+
+	cmd := "Method"
+	name := "Select"
+
+	_, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (ax *workAxes) HasMajorGridlines(value ...bool) bool {
 	var opt []any
 	xl := ax.app

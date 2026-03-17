@@ -18,8 +18,8 @@ type chartObject struct {
 	num    int
 }
 
-func (sps *workShapes) AddChart2(style int32, ChartType any, left, top, width, height float64, newLayout bool) *chartObject {
-	var co chartObject
+func (sps *workShapes) AddChart2(style int32, ChartType any, left, top, width, height float64, newLayout bool) *workChart {
+	var ct workChart
 	xl := sps.app
 
 	kind := "Shape"
@@ -59,10 +59,10 @@ func (sps *workShapes) AddChart2(style int32, ChartType any, left, top, width, h
 			core.lock = 0
 		}
 	}
-	co.app = xl
-	co.num = num
-	co.parent = sps
-	return &co
+	ct.app = xl
+	ct.num = num
+	ct.parent = sps
+	return &ct
 }
 
 func (ct *workChart) ChartObjects() *chartObjects {

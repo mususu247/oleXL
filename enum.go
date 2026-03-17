@@ -2189,8 +2189,8 @@ func SetEnumAxisGroup(enumType int32) int32 {
 func EnumAxisType() map[string]int32 {
 	enum := make(map[string]int32)
 	enum["xlCategory"] = 1 //Default
-	enum["xlSeriesAxis"] = 2
-	enum["xlValue"] = 3
+	enum["xlSeriesAxis"] = 3
+	enum["xlValue"] = 2
 	return enum
 }
 

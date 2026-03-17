@@ -130,6 +130,57 @@ func (sc *seriesCollection) Item(value any) *workSeries {
 	return &ws
 }
 
+func (sc *seriesCollection) Extend(value *workRange, option ...any) *workSeries {
+	var ws workSeries
+	xl := sc.app
+
+	kind := "Series"
+	core, num := xl.cores.FindAdd(kind, sc.num)
+	if core.disp == nil {
+		cmd := "Method"
+		name := "Extend"
+		var opt []any
+		core := xl.cores.getCore(sc.num)
+		opt = append(opt, core.disp)
+
+		if len(option) > 0 {
+			var z int32
+			switch x := option[0].(type) {
+			case int:
+				z = SetEnumRowCol(int32(x))
+			case int32:
+				z = SetEnumRowCol(x)
+			case string:
+				z = GetEnumRowColNum(x)
+			}
+			opt = append(opt, z)
+			opt = append(opt, true)
+		}
+
+		if len(option) > 1 {
+			switch x := option[1].(type) {
+			case bool:
+				opt = append(opt, x)
+			}
+		}
+
+		ans, err := xl.cores.SendNum(cmd, name, sc.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	ws.app = xl
+	ws.num = num
+	ws.parent = sc.parent //wrokChart
+	return &ws
+}
+
 func (ws *workSeries) Release() error {
 	xl := ws.app
 	xl.cores.Release(ws.num, false)
