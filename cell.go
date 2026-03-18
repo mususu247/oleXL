@@ -1597,6 +1597,44 @@ func (wr *workRange) ColumnWidth(value ...float64) float64 {
 	return 0
 }
 
+func (wr *workRange) Left() float64 {
+	xl := wr.app
+
+	name := "Left"
+	cmd := "Get"
+
+	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return 0
+	}
+	switch x := ans.(type) {
+	case float64:
+		return x
+	}
+
+	return 0
+}
+
+func (wr *workRange) Top() float64 {
+	xl := wr.app
+
+	name := "Top"
+	cmd := "Get"
+
+	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return 0
+	}
+	switch x := ans.(type) {
+	case float64:
+		return x
+	}
+
+	return 0
+}
+
 func (wr *workRange) Height() float64 {
 	xl := wr.app
 

@@ -44,6 +44,32 @@ func (ct *workChart) SeriesCollection() *seriesCollection {
 	return &sc
 }
 
+func (ct *workChart) FullSeriesCollection() *seriesCollection {
+	var sc seriesCollection
+	xl := ct.app
+
+	name := "FullSeriesCollection"
+	core, num := xl.cores.FindAdd(name, ct.num)
+	if core.disp == nil {
+		cmd := "Method"
+
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 1 //Lock on
+		}
+	}
+	sc.app = xl
+	sc.num = num
+	sc.parent = ct
+	return &sc
+}
+
 func (sc *seriesCollection) Release() error {
 	xl := sc.app
 	xl.cores.Release(sc.num, false)

@@ -85,6 +85,16 @@ func (wl *workFill) Nothing() error {
 	return nil
 }
 
+func (wl *workFill) Set() *workFill {
+	if wl == nil {
+		log.Printf("(Error) Object is NULL.")
+		return nil
+	}
+	xl := wl.app
+	xl.cores.Lock(wl.num)
+	return wl
+}
+
 func (wl *workFill) Visible(value bool) error {
 	xl := wl.app
 	cmd := "Put"

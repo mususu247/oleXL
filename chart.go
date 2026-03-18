@@ -41,7 +41,7 @@ func (co *chartObject) Chart() *workChart {
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			core.disp = x
-			core.lock = 0
+			core.lock = 1 //Lock on
 		}
 	}
 	ct.app = xl
@@ -131,7 +131,7 @@ func (xl *Excel) ActiveChart() *workChart {
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			core.disp = x
-			core.lock = 0
+			core.lock = 1 //Lock on
 		}
 	}
 	ct.app = xl

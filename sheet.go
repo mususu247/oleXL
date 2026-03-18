@@ -445,3 +445,41 @@ func (ws *workSheet) Visible(value bool) error {
 	}
 	return nil
 }
+
+func (ws *workSheet) Paste(option ...any) bool {
+	xl := ws.app
+
+	//Destination *workRange, Link bool
+
+	cmd := "Method"
+	name := "Paste"
+	var opt []any
+	if len(option) > 0 {
+		for range 2 {
+			opt = append(opt, nil)
+		}
+
+		for i := range option {
+			switch x := option[i].(type) {
+			case *workRange:
+				core := xl.cores.getCore(x.num)
+				opt[0] = core.disp
+				opt[1] = false
+			case bool:
+				opt[1] = x
+			}
+		}
+	} else {
+		opt = nil
+	}
+
+	ans, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+	if err != nil {
+		return false
+	}
+	switch x := ans.(type) {
+	case bool:
+		return x
+	}
+	return false
+}

@@ -222,6 +222,19 @@ func (sp *workShape) Set() *workShape {
 	return sp
 }
 
+func (sp *workShape) Select() error {
+	xl := sp.app
+
+	cmd := "Method"
+	name := "Select"
+
+	_, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (sp *workShape) Name(value ...any) string {
 	xl := sp.app
 
@@ -267,6 +280,63 @@ func (sp *workShape) Delete() error {
 		return err
 	}
 	return nil
+}
+
+func (sps *workShapes) AddChart2(style int32, ChartType any, option ...any) *workShape {
+	var sp workShape
+	xl := sps.app
+
+	//style int32, ChartType any, left, top, width, height float64, newLayout bool
+
+	kind := "Shape"
+	core, num := xl.cores.FindAdd(kind, sps.num)
+	if core.disp == nil {
+		cmd := "Method"
+		name := "AddChart2"
+		var opt []any
+		for range 6 {
+			opt = append(opt, nil)
+		}
+
+		opt[0] = style
+
+		var z int32
+		switch x := ChartType.(type) {
+		case int:
+			z = SetEnumChartType(int32(x))
+		case int32:
+			z = SetEnumChartType(x)
+		case string:
+			z = GetEnumChartTypeNum(x)
+		}
+		opt[1] = z
+
+		for i := range option {
+			switch x := option[i].(type) {
+			case int:
+				opt[i+2] = float64(x)
+			case float64:
+				opt[i+2] = x
+			case bool:
+				opt[5] = x
+			}
+		}
+
+		ans, err := xl.cores.SendNum(cmd, name, sps.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	sp.app = xl
+	sp.num = num
+	sp.parent = sps
+	return &sp
 }
 
 func (sps *workShapes) AddPicture(fileName string, LinkToFile bool, SaveWithDocument bool, left, top, width, height float64) *workShape {
