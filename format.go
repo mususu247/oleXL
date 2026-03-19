@@ -8,7 +8,7 @@ import (
 
 type workFormat struct {
 	app    *Excel
-	parent *workTitle
+	parent any
 	num    int
 }
 
@@ -16,7 +16,7 @@ func (wt *workTitle) Format() *workFormat {
 	var wf workFormat
 	xl := wt.app
 
-	name := "TextFrame"
+	name := "Format"
 	core, num := xl.cores.FindAdd(name, wt.num)
 	if core.disp == nil {
 		cmd := "Get"
@@ -36,6 +36,33 @@ func (wt *workTitle) Format() *workFormat {
 	wf.app = xl
 	wf.num = num
 	wf.parent = wt
+	return &wf
+}
+
+func (sr *workSeries) Format() *workFormat {
+	var wf workFormat
+	xl := sr.app
+
+	name := "Format"
+	core, num := xl.cores.FindAdd(name, sr.num)
+	if core.disp == nil {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, sr.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	wf.app = xl
+	wf.num = num
+	wf.parent = sr
 	return &wf
 }
 

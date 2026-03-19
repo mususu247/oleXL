@@ -237,6 +237,23 @@ func (ws *workSeries) Set() *workSeries {
 	return ws
 }
 
+func (ws *workSeries) Select() error {
+	if ws == nil {
+		log.Printf("(Error) Object is NULL.")
+		return nil
+	}
+	xl := ws.app
+
+	cmd := "Method"
+	name := "Select"
+
+	_, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (ws *workSeries) AxisGroup(value ...any) string {
 	xl := ws.app
 
@@ -320,4 +337,74 @@ func (ws *workSeries) Name(value ...any) string {
 		}
 	}
 	return ""
+}
+
+func (ws *workSeries) MarkerStyle(value ...any) string {
+	xl := ws.app
+
+	name := "MarkerStyle"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		var z int32
+		switch x := value[0].(type) {
+		case int:
+			z = SetEnumMarkerStyle(int32(x))
+		case int32:
+			z = SetEnumMarkerStyle(x)
+		case string:
+			z = GetEnumMarkerStyleNum(x)
+		}
+		opt = append(opt, z)
+
+		_, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+
+		switch x := ans.(type) {
+		case string:
+			return x
+		}
+	}
+	return ""
+}
+
+func (ws *workSeries) MarkerSize(value ...int32) int32 {
+	xl := ws.app
+
+	name := "MarkerSize"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case int32:
+			return x
+		}
+	}
+
+	return 0
 }

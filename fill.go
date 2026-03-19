@@ -66,6 +66,33 @@ func (wf *workFont) Fill() *workFill {
 	return &wl
 }
 
+func (wf *workFormat) Fill() *workFill {
+	var wl workFill
+	xl := wf.app
+
+	name := "Fill"
+	core, num := xl.cores.FindAdd(name, wf.num)
+	if core.disp == nil {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 1 //Lock.on
+		}
+	}
+	wl.app = xl
+	wl.num = num
+	wl.parent = wf
+	return &wl
+}
+
 func (wl *workFill) Release() error {
 	xl := wl.app
 	return xl.cores.Release(wl.num, false)

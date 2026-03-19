@@ -8,11 +8,11 @@ import (
 
 type workChar struct {
 	app    *Excel
-	parent *workShape
+	parent any
 	num    int
 }
 
-func (wf *workFrame) Characters(value ...any) *workChar {
+func (wf *workFrame) Characterz(value ...any) *workChar {
 	var ch workChar
 	xl := wf.app
 
@@ -48,6 +48,101 @@ func (wf *workFrame) Characters(value ...any) *workChar {
 	}
 	ch.app = xl
 	ch.num = num
+	ch.parent = wf
+	return &ch
+}
+
+func (wf *workFrame) Characters() *workChar {
+	var ch workChar
+	xl := wf.app
+
+	name := "Characters"
+	core, num := xl.cores.FindAdd(name, wf.num)
+	if core.disp == nil {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	ch.app = xl
+	ch.num = num
+	ch.parent = wf
+	return &ch
+}
+
+func (tr *workTextRange) Characterz(value ...any) *workChar {
+	var ch workChar
+	xl := tr.app
+
+	name := "Characters"
+	core, num := xl.cores.FindAdd(name, tr.num)
+	if core.disp == nil {
+		cmd := "Method"
+		var opt []any
+		if len(value) > 0 {
+			for i := range value {
+				switch x := value[i].(type) {
+				case int:
+					opt = append(opt, int32(x))
+				case int32:
+					opt = append(opt, x)
+				}
+			}
+		} else {
+			opt = nil
+		}
+
+		ans, err := xl.cores.SendNum(cmd, name, tr.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	ch.app = xl
+	ch.num = num
+	ch.parent = tr
+	return &ch
+}
+
+func (tr *workTextRange) Characters() *workChar {
+	var ch workChar
+	xl := tr.app
+
+	name := "Characters"
+	core, num := xl.cores.FindAdd(name, tr.num)
+	if core.disp == nil {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, tr.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	ch.app = xl
+	ch.num = num
+	ch.parent = tr
 	return &ch
 }
 

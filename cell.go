@@ -9,8 +9,34 @@ import (
 
 type workRange struct {
 	app    *Excel
-	parent *workSheet
+	parent any
 	num    int
+}
+
+func (wr *workRange) getSheet() *workSheet {
+	var ws *workSheet
+
+	loop := true
+	for loop {
+		var w *workRange
+		w = wr
+
+		switch x := w.parent.(type) {
+		case *workSheet:
+			ws = x
+			loop = false
+		case *workRange:
+			w = x
+		default:
+			loop = false
+		}
+	}
+
+	if ws == nil {
+		xl := wr.app
+		ws = xl.ActiveSheet()
+	}
+	return ws
 }
 
 func (ws *workSheet) Range(cell ...any) *workRange {
@@ -84,8 +110,28 @@ func (ws *workSheet) Cells(cell ...any) *workRange {
 
 func (wr *workRange) Cells(cell ...any) *workRange {
 	var xr workRange
+	var ws *workSheet
 	xl := wr.app
-	ws := wr.parent
+
+	sw := true
+	for sw {
+		var w *workRange
+		w = wr
+
+		switch x := w.parent.(type) {
+		case *workSheet:
+			ws = x
+			sw = false
+		case *workRange:
+			w = x
+		default:
+			sw = false
+		}
+	}
+
+	if ws == nil {
+		ws = xl.ActiveSheet()
+	}
 
 	kind := "Range"
 	name := "Cells"
@@ -149,7 +195,7 @@ func (ws *workSheet) Rows(cell any) *workRange {
 func (wr *workRange) Rows(cell any) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "Rows"
@@ -208,7 +254,7 @@ func (ws *workSheet) Columns(cell any) *workRange {
 func (wr *workRange) Columns(cell any) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "Columns"
@@ -238,7 +284,7 @@ func (wr *workRange) Columns(cell any) *workRange {
 func (wr *workRange) End(shift any) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "End"
@@ -278,7 +324,7 @@ func (wr *workRange) End(shift any) *workRange {
 func (wr *workRange) Delete(shift ...any) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "Delete"
@@ -322,7 +368,7 @@ func (wr *workRange) Delete(shift ...any) *workRange {
 func (wr *workRange) Insert(shift ...any) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "Insert"
@@ -366,7 +412,7 @@ func (wr *workRange) Insert(shift ...any) *workRange {
 func (wr *workRange) CurrentRegion() *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "CurrentRegion"
@@ -394,7 +440,7 @@ func (wr *workRange) CurrentRegion() *workRange {
 func (wr *workRange) MergeArea() *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "MergeArea"
@@ -422,7 +468,7 @@ func (wr *workRange) MergeArea() *workRange {
 func (wr *workRange) Offset(RowOffset int32, ColumnOffset int32) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "Offset"
@@ -453,7 +499,7 @@ func (wr *workRange) Offset(RowOffset int32, ColumnOffset int32) *workRange {
 func (wr *workRange) Resize(RowSize int32, ColumnSize int32) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "Resize"
@@ -543,7 +589,7 @@ func (wr *workRange) Address(options ...map[string]any) string {
 func (wr *workRange) EntireRow() *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "EntireRow"
@@ -571,7 +617,7 @@ func (wr *workRange) EntireRow() *workRange {
 func (wr *workRange) EntireColumn() *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.parent
+	ws := wr.getSheet()
 
 	kind := "Range"
 	name := "EntireColumn"

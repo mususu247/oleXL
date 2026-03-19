@@ -2494,3 +2494,58 @@ func SetEnumChartLocation(enumType int32) int32 {
 	}
 	return result
 }
+
+// XlMarkerStyle
+func EnumMarkerStyle() map[string]int32 {
+	enum := make(map[string]int32)
+	enum["xlMarkerStyleAutomatic"] = -4105
+	enum["xlMarkerStyleCircle"] = 8
+	enum["xlMarkerStyleDash"] = -4115
+	enum["xlMarkerStyleDiamond"] = 2
+	enum["xlMarkerStyleDot"] = -4118
+	enum["xlMarkerStyleNone"] = -4142 //Def
+	enum["xlMarkerStylePicture"] = -4147
+	enum["xlMarkerStylePlus"] = 9
+	enum["xlMarkerStyleSquare"] = 1
+	enum["xlMarkerStyleStar"] = 5
+	enum["xlMarkerStyleTriangle"] = 3
+	enum["xlMarkerStyleX"] = -4168
+	return enum
+}
+
+func GetEnumMarkerStyleNum(enumType string) int32 {
+	var result int32
+	enum := EnumMarkerStyle()
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlMarkerStyleNone"]
+	}
+	return result
+}
+
+func GetEnumMarkerStyleStr(enumType int32) string {
+	var result string
+	enum := EnumMarkerStyle()
+	result = "xlMarkerStyleNone"
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumMarkerStyle(enumType int32) int32 {
+	var result int32
+	enum := EnumMarkerStyle()
+	result = enum["xlMarkerStyleNone"]
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}

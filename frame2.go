@@ -18,33 +18,6 @@ type workTextRange struct {
 	num    int
 }
 
-func (sp *workShape) TextFrame2() *workFrame2 {
-	var wf workFrame2
-	xl := sp.app
-
-	name := "TextFrame2"
-	core, num := xl.cores.FindAdd(name, sp.num)
-	if core.disp == nil {
-		cmd := "Get"
-
-		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
-		if err != nil {
-			log.Printf("(Error) %v", err)
-			return nil
-		}
-
-		switch x := ans.(type) {
-		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
-		}
-	}
-	wf.app = xl
-	wf.num = num
-	wf.parent = sp
-	return &wf
-}
-
 func (wf *workFormat) TextFrame2() *workFrame2 {
 	var tf workFrame2
 	xl := wf.app
@@ -69,6 +42,33 @@ func (wf *workFormat) TextFrame2() *workFrame2 {
 	tf.app = xl
 	tf.num = num
 	tf.parent = wf
+	return &tf
+}
+
+func (sp *workShape) TextFrame2() *workFrame2 {
+	var tf workFrame2
+	xl := sp.app
+
+	name := "TextFrame2"
+	core, num := xl.cores.FindAdd(name, sp.num)
+	if core.disp == nil {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 0
+		}
+	}
+	tf.app = xl
+	tf.num = num
+	tf.parent = sp
 	return &tf
 }
 

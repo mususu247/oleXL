@@ -55,6 +55,9 @@ func (wf *workFunction) function(funcName string, args ...any) any {
 				core := xl.cores.getCore(x.num)
 				opt = append(opt, core.disp)
 			}
+			if i > 30 {
+				break
+			}
 		}
 	}
 

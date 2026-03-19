@@ -8,7 +8,7 @@ import (
 
 type workShapes struct {
 	app    *Excel
-	parent *workSheet
+	parent any
 	num    int
 }
 

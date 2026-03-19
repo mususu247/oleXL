@@ -161,6 +161,19 @@ func (co *chartObject) Set() *chartObject {
 	return co
 }
 
+func (co *chartObject) Select() error {
+	xl := co.app
+
+	cmd := "Method"
+	name := "Select"
+
+	_, err := xl.cores.SendNum(cmd, name, co.num, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (co *chartObject) Activate() error {
 	xl := co.app
 

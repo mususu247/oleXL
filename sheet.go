@@ -8,14 +8,28 @@ import (
 
 type workSheets struct {
 	app    *Excel
-	parent *workBook
+	parent any
 	num    int
 }
 
 type workSheet struct {
 	app    *Excel
-	parent *workBook
+	parent any
 	num    int
+}
+
+func (ws *workSheet) getBook() *workBook {
+	var wb *workBook
+
+	switch x := ws.parent.(type) {
+	case *workBook:
+		wb = x
+	default:
+		xl := ws.app
+		ws = xl.ActiveSheet()
+	}
+
+	return wb
 }
 
 func (wb *workBook) Worksheets() *workSheets {
@@ -293,7 +307,7 @@ func (ws *workSheet) Select() error {
 }
 
 func (ws *workSheet) Parent() *workBook {
-	wb := ws.parent
+	wb := ws.getBook()
 	xl := ws.app
 
 	core := xl.cores.getCore(wb.num)
@@ -317,7 +331,7 @@ func (ws *workSheet) Parent() *workBook {
 func (ws *workSheet) Copy(value ...any) *workSheet {
 	var xs workSheet
 	xl := ws.app
-	wb := ws.parent
+	wb := ws.getBook()
 	_wb := xl.cores.getCore(wb.num)
 	if _wb.disp == nil {
 		ws.Parent()
@@ -370,7 +384,7 @@ func (ws *workSheet) Copy(value ...any) *workSheet {
 func (ws *workSheet) Move(value ...any) *workSheet {
 	var xs workSheet
 	xl := ws.app
-	wb := ws.parent
+	wb := ws.getBook()
 	_wb := xl.cores.getCore(wb.num)
 	if _wb.disp == nil {
 		ws.Parent()

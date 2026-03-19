@@ -8,7 +8,7 @@ import (
 
 type workLine struct {
 	app    *Excel
-	parent *workShape
+	parent any
 	num    int
 }
 
@@ -39,6 +39,33 @@ func (sp *workShape) Line() *workLine {
 	return &wl
 }
 
+func (wf *workFormat) Line() *workLine {
+	var wl workLine
+	xl := wf.app
+
+	name := "Line"
+	core, num := xl.cores.FindAdd(name, wf.num)
+	if core.disp == nil {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			core.disp = x
+			core.lock = 1 //Lock.on
+		}
+	}
+	wl.app = xl
+	wl.num = num
+	wl.parent = wf
+	return &wl
+}
+
 func (wl *workLine) Release() error {
 	xl := wl.app
 	return xl.cores.Release(wl.num, false)
@@ -56,4 +83,66 @@ func (wl *workLine) Nothing() error {
 	xl.cores.Remove(wl.num)
 	wl = nil
 	return nil
+}
+
+func (wl *workLine) Weight(value ...float64) float64 {
+	xl := wl.app
+
+	name := "Weight"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, wl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, wl.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
+		}
+	}
+
+	return 0
+}
+
+func (wl *workLine) Visible(value ...bool) bool {
+	xl := wl.app
+
+	name := "Visible"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, wl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return false
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, wl.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return false
+		}
+		switch x := ans.(type) {
+		case bool:
+			return x
+		}
+	}
+
+	return false
 }

@@ -7,13 +7,14 @@ import (
 )
 
 type workBooks struct {
-	app *Excel
-	num int
+	app    *Excel
+	parent any
+	num    int
 }
 
 type workBook struct {
 	app    *Excel
-	parent *workBooks
+	parent any
 	num    int
 }
 
