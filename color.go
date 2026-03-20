@@ -29,8 +29,12 @@ func (wl *workFill) ForeColor() *workColor {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wc.app = xl
@@ -56,8 +60,12 @@ func (wl *workFill) BackColor() *workColor {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wc.app = xl
@@ -83,8 +91,12 @@ func (wl *workLine) ForeColor() *workColor {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wc.app = xl

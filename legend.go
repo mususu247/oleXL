@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -28,8 +29,12 @@ func (ct *workChart) Legend() *workLegend {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	lg.app = xl
@@ -58,14 +63,13 @@ func (lg *workLegend) Nothing() error {
 	return nil
 }
 
-func (lg *workLegend) Set() *workLegend {
+func (lg *workLegend) Set() (*workLegend, error) {
 	if lg == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := lg.app
 	xl.cores.Lock(lg.num)
-	return lg
+	return lg, nil
 }
 
 func (lg *workLegend) Select() error {

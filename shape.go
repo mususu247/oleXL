@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -35,8 +36,12 @@ func (nt *workNote) Shape() *workShape {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	sp.app = xl
@@ -63,8 +68,12 @@ func (ws *workSheet) Shapes() *workShapes {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	sps.app = xl
@@ -104,8 +113,12 @@ func (ws *workSheet) Shapez(value any) *workShape {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	sp.app = xl
@@ -182,8 +195,12 @@ func (sps *workShapes) AddShape(Type any, left, top, width, height float64) *wor
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	sp.app = xl
@@ -212,14 +229,13 @@ func (sp *workShape) Nothing() error {
 	return nil
 }
 
-func (sp *workShape) Set() *workShape {
+func (sp *workShape) Set() (*workShape, error) {
 	if sp == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := sp.app
 	xl.cores.Lock(sp.num)
-	return sp
+	return sp, nil
 }
 
 func (sp *workShape) Select() error {
@@ -329,8 +345,12 @@ func (sps *workShapes) AddChart2(style int32, ChartType any, option ...any) *wor
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	sp.app = xl
@@ -380,8 +400,12 @@ func (sps *workShapes) AddPicture(fileName string, LinkToFile bool, SaveWithDocu
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	sp.app = xl

@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -29,8 +30,12 @@ func (sp *workShape) Fill() *workFill {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wl.app = xl
@@ -56,8 +61,12 @@ func (wf *workFont) Fill() *workFill {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wl.app = xl
@@ -83,8 +92,12 @@ func (wf *workFormat) Fill() *workFill {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wl.app = xl
@@ -112,14 +125,13 @@ func (wl *workFill) Nothing() error {
 	return nil
 }
 
-func (wl *workFill) Set() *workFill {
+func (wl *workFill) Set() (*workFill, error) {
 	if wl == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := wl.app
 	xl.cores.Lock(wl.num)
-	return wl
+	return wl, nil
 }
 
 func (wl *workFill) Visible(value bool) error {

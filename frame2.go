@@ -35,8 +35,12 @@ func (wf *workFormat) TextFrame2() *workFrame2 {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	tf.app = xl
@@ -62,8 +66,12 @@ func (sp *workShape) TextFrame2() *workFrame2 {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	tf.app = xl
@@ -255,8 +263,12 @@ func (wf *workFrame2) TextRange() *workTextRange {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	tr.app = xl

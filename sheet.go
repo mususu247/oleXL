@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -47,11 +48,14 @@ func (wb *workBook) Worksheets() *workSheets {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
-
 	wss.app = xl
 	wss.num = num
 	wss.parent = wb
@@ -88,8 +92,12 @@ func (wb *workBook) Worksheetz(value any) *workSheet {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ws.app = xl
@@ -114,8 +122,12 @@ func (xl *Excel) ActiveSheet() *workSheet {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ws.app = xl
@@ -197,8 +209,12 @@ func (wss *workSheets) Add(value ...any) *workSheet {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ws.app = xl
@@ -207,14 +223,13 @@ func (wss *workSheets) Add(value ...any) *workSheet {
 	return &ws
 }
 
-func (wss *workSheets) Set() *workSheets {
+func (wss *workSheets) Set() (*workSheets, error) {
 	if wss == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := wss.app
 	xl.cores.Lock(wss.num)
-	return wss
+	return wss, nil
 }
 
 func (ws *workSheet) Release() error {
@@ -223,14 +238,13 @@ func (ws *workSheet) Release() error {
 	return nil
 }
 
-func (ws *workSheet) Set() *workSheet {
+func (ws *workSheet) Set() (*workSheet, error) {
 	if ws == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := ws.app
 	xl.cores.Lock(ws.num)
-	return ws
+	return ws, nil
 }
 
 func (ws *workSheet) Nothing() error {
@@ -321,8 +335,12 @@ func (ws *workSheet) Parent() *workBook {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	return wb
@@ -365,8 +383,12 @@ func (ws *workSheet) Copy(value ...any) *workSheet {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xs.app = xl
@@ -418,8 +440,12 @@ func (ws *workSheet) Move(value ...any) *workSheet {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xs.app = xl

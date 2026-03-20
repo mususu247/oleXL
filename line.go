@@ -29,8 +29,12 @@ func (sp *workShape) Line() *workLine {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wl.app = xl
@@ -56,8 +60,12 @@ func (wf *workFormat) Line() *workLine {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wl.app = xl

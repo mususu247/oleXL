@@ -29,8 +29,12 @@ func (sp *workShape) TextFrame() *workFrame {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wf.app = xl

@@ -33,11 +33,14 @@ func (ws *workSheet) Comments() *workNotes {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
-
 	nts.app = xl
 	nts.num = num
 	nts.parent = ws
@@ -74,8 +77,12 @@ func (ws *workSheet) Commentz(value any) *workNote {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	nt.app = xl
@@ -139,8 +146,12 @@ func (rg *workRange) Comment() *workNote {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	nt.app = xl
@@ -168,8 +179,12 @@ func (rg *workRange) AddComment(text string) *workNote {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	nt.app = xl

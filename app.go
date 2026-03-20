@@ -8,13 +8,15 @@ import (
 )
 
 type workApp struct {
-	app *Excel
-	num int
+	app    *Excel
+	parent any
+	num    int
 }
 
 type workWindow struct {
-	app *Excel
-	num int
+	app    *Excel
+	parent any
+	num    int
 }
 
 func (xl *Excel) Application() *workApp {
@@ -281,13 +283,17 @@ func (xl *Excel) ActiveWindow() *workWindow {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ww.app = xl
 	ww.num = num
-	//wbs.Release()
+	ww.parent = xl
 	return &ww
 }
 
@@ -425,8 +431,12 @@ func (wa *workApp) Union(rag ...any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		default:
 			log.Printf("%T %v", ans, ans)
 		}

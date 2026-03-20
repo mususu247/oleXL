@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -64,8 +65,12 @@ func (ws *workSheet) Range(cell ...any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wr.app = xl
@@ -98,8 +103,12 @@ func (ws *workSheet) Cells(cell ...any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wr.app = xl
@@ -153,8 +162,12 @@ func (wr *workRange) Cells(cell ...any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -182,8 +195,12 @@ func (ws *workSheet) Rows(cell any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wr.app = xl
@@ -212,8 +229,12 @@ func (wr *workRange) Rows(cell any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -241,8 +262,12 @@ func (ws *workSheet) Columns(cell any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wr.app = xl
@@ -271,8 +296,12 @@ func (wr *workRange) Columns(cell any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -311,8 +340,12 @@ func (wr *workRange) End(shift any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -355,8 +388,12 @@ func (wr *workRange) Delete(shift ...any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -399,8 +436,12 @@ func (wr *workRange) Insert(shift ...any) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -427,8 +468,12 @@ func (wr *workRange) CurrentRegion() *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -455,8 +500,12 @@ func (wr *workRange) MergeArea() *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -472,7 +521,7 @@ func (wr *workRange) Offset(RowOffset int32, ColumnOffset int32) *workRange {
 
 	kind := "Range"
 	name := "Offset"
-	core, num := xl.cores.FindAdd(kind, ws.num)
+	core, num := xl.cores.FindAdd(kind, wr.num)
 	if core.disp == nil {
 		cmd := "Get"
 		var opt []any
@@ -486,8 +535,12 @@ func (wr *workRange) Offset(RowOffset int32, ColumnOffset int32) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -517,8 +570,12 @@ func (wr *workRange) Resize(RowSize int32, ColumnSize int32) *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -604,8 +661,12 @@ func (wr *workRange) EntireRow() *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -632,8 +693,12 @@ func (wr *workRange) EntireColumn() *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xr.app = xl
@@ -658,8 +723,12 @@ func (xl *Excel) ActiveCell() *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wr.app = xl
@@ -685,8 +754,12 @@ func (xl *Excel) Selection() *workRange {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wr.app = xl
@@ -716,14 +789,13 @@ func (wr *workRange) Nothing() error {
 	return nil
 }
 
-func (wr *workRange) Set() *workRange {
+func (wr *workRange) Set() (*workRange, error) {
 	if wr == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := wr.app
 	xl.cores.Lock(wr.num)
-	return wr
+	return wr, nil
 }
 
 func (wr *workRange) Value(value ...any) any {

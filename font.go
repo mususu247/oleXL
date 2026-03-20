@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -28,8 +29,12 @@ func (wr *workRange) Font() *workFont {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wf.app = xl
@@ -54,8 +59,12 @@ func (ch *workChar) Font() *workFont {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wf.app = xl
@@ -80,8 +89,12 @@ func (wt *workTitle) Font() *workFont {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wf.app = xl
@@ -106,8 +119,12 @@ func (tr *workTextRange) Font() *workFont {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wf.app = xl
@@ -135,14 +152,13 @@ func (wf *workFont) Nothing() error {
 	return nil
 }
 
-func (wf *workFont) Set() *workFont {
+func (wf *workFont) Set() (*workFont, error) {
 	if wf == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := wf.app
 	xl.cores.Lock(wf.num)
-	return wf
+	return wf, nil
 }
 
 func (wf *workFont) Name(value ...string) string {

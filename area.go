@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -29,8 +30,12 @@ func (ct *workChart) ChartArea() *workArea {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wa.app = xl
@@ -58,14 +63,13 @@ func (wa *workArea) Nothing() error {
 	return nil
 }
 
-func (wa *workArea) Set() *workArea {
+func (wa *workArea) Set() (*workArea, error) {
 	if wa == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := wa.app
 	xl.cores.Lock(wa.num)
-	return wa
+	return wa, nil
 }
 
 func (wa *workArea) Copy() error {

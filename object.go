@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -34,8 +35,12 @@ func (ws *workSheet) ChartObjects() *chartObjects {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	cos.app = xl
@@ -68,14 +73,13 @@ func (cos *chartObjects) Nothing() error {
 	return nil
 }
 
-func (cos *chartObjects) Set() *chartObjects {
+func (cos *chartObjects) Set() (*chartObjects, error) {
 	if cos == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := cos.app
 	xl.cores.Lock(cos.num)
-	return cos
+	return cos, nil
 }
 
 func (cos *chartObjects) Select() error {
@@ -121,8 +125,12 @@ func (cos *chartObjects) Item(value any) *chartObject {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	co.app = xl
@@ -151,14 +159,13 @@ func (co *chartObject) Nothing() error {
 	return nil
 }
 
-func (co *chartObject) Set() *chartObject {
+func (co *chartObject) Set() (*chartObject, error) {
 	if co == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := co.app
 	xl.cores.Lock(co.num)
-	return co
+	return co, nil
 }
 
 func (co *chartObject) Select() error {
@@ -260,8 +267,12 @@ func (co *chartObject) Duplicate() *chartObject {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	xo.app = xl
@@ -298,4 +309,117 @@ func (co *chartObject) Name(value ...string) string {
 		}
 	}
 	return ""
+}
+
+func (co *chartObject) Left(value ...float64) float64 {
+	xl := co.app
+
+	name := "Left"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
+		}
+	}
+	return 0
+}
+
+func (co *chartObject) Top(value ...float64) float64 {
+	xl := co.app
+
+	name := "Top"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
+		}
+	}
+	return 0
+}
+
+func (co *chartObject) Width(value ...float64) float64 {
+	xl := co.app
+
+	name := "Width"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
+		}
+	}
+	return 0
+}
+
+func (co *chartObject) Height(value ...float64) float64 {
+	xl := co.app
+
+	name := "Height"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case float64:
+			return x
+		}
+	}
+	return 0
 }

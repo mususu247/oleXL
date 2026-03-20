@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -33,13 +34,17 @@ func (xl *Excel) Workbooks() *workBooks {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
-
 	wbs.app = xl
 	wbs.num = num
+	wbs.parent = xl
 	return &wbs
 }
 
@@ -59,8 +64,12 @@ func (xl *Excel) ActiveWorkbook() *workBook {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wb.app = xl
@@ -96,12 +105,17 @@ func (xl *Excel) Workbookz(value any) *workBook {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wb.app = xl
 	wb.num = num
+	wb.parent = xl
 	return &wb
 }
 
@@ -161,23 +175,27 @@ func (wbs *workBooks) Add() *workBook {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wb.app = xl
 	wb.num = num
+	wb.parent = wbs
 	return &wb
 }
 
-func (wbs *workBooks) Set() *workBooks {
+func (wbs *workBooks) Set() (*workBooks, error) {
 	if wbs == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := wbs.app
 	xl.cores.Lock(wbs.num)
-	return wbs
+	return wbs, nil
 }
 
 func (wb *workBook) Release() error {
@@ -186,14 +204,13 @@ func (wb *workBook) Release() error {
 	return nil
 }
 
-func (wb *workBook) Set() *workBook {
+func (wb *workBook) Set() (*workBook, error) {
 	if wb == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := wb.app
 	xl.cores.Lock(wb.num)
-	return wb
+	return wb, nil
 }
 
 func (wb *workBook) Nothing() error {
@@ -280,19 +297,17 @@ func (wb *workBook) RefreshAll() error {
 	return nil
 }
 
-func (wbs *workBooks) Open(fileName string, options ...map[string]any) *workBook {
+func (wbs *workBooks) Open(fileName string, options ...map[string]any) (*workBook, error) {
 	var wb workBook
 	xl := wbs.app
 
 	fn, err := GetAbsolutePathName(fileName)
 	if err != nil {
-		log.Printf("(Error) %v", err)
-		return nil
+		return nil, fmt.Errorf("(Error) %v", err)
 	}
 
 	if !FileExists(fn) {
-		log.Printf("(Error) File not found: %v", fn)
-		return nil
+		return nil, fmt.Errorf("(Error) %v", err)
 	}
 
 	kind := "Workbook"
@@ -438,18 +453,22 @@ func (wbs *workBooks) Open(fileName string, options ...map[string]any) *workBook
 
 		ans, err := xl.cores.SendNum(cmd, name, wbs.num, opt)
 		if err != nil {
-			log.Printf("(Error) %v", err)
-			return nil
+			return nil, fmt.Errorf("(Error) %v", err)
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil, fmt.Errorf("(Error) %v", err)
+			}
 		}
 	}
 	wb.app = xl
 	wb.num = num
-	return &wb
+	wb.parent = wbs
+	return &wb, nil
 }
 
 func (wb *workBook) SaveAs(fileName string, options ...map[string]any) error {

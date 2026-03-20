@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -28,8 +29,12 @@ func (wr *workRange) Interior() *workInterior {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wi.app = xl
@@ -57,12 +62,11 @@ func (wi *workInterior) Nothing() error {
 	return nil
 }
 
-func (wi *workInterior) Set() *workInterior {
+func (wi *workInterior) Set() (*workInterior, error) {
 	if wi == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := wi.app
 	xl.cores.Lock(wi.num)
-	return wi
+	return wi, nil
 }

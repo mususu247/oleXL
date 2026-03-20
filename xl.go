@@ -36,16 +36,21 @@ func (xl *Excel) CreateObject() error {
 	name := "Excel.Application"
 
 	core, num := xl.cores.Add(name, 0)
-	core.lock = 1 //lockOn
+	core.lock = 1 //Lock on
 	ans, err := xl.cores.SendNum(cmd, name, num, nil)
 	if err != nil {
-		log.Printf("(Error) %v", err)
-		return nil
+		return fmt.Errorf("(Error) CreateObject:%v\n", err)
 	}
 	switch x := ans.(type) {
 	case *ole.IDispatch:
-		core.disp = x
-		core.lock = 1 //lockOn
+		if x != nil {
+			core.disp = x
+			core.lock = 1 //Lock on
+		} else {
+			return nil
+		}
+	case nil:
+		return fmt.Errorf("(Error) CreateObject\n")
 	}
 
 	xl.num = num

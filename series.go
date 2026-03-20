@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -34,8 +35,12 @@ func (ct *workChart) SeriesCollection() *seriesCollection {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	sc.app = xl
@@ -60,8 +65,12 @@ func (ct *workChart) FullSeriesCollection() *seriesCollection {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	sc.app = xl
@@ -90,14 +99,13 @@ func (sc *seriesCollection) Nothing() error {
 	return nil
 }
 
-func (sc *seriesCollection) Set() *seriesCollection {
+func (sc *seriesCollection) Set() (*seriesCollection, error) {
 	if sc == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := sc.app
 	xl.cores.Lock(sc.num)
-	return sc
+	return sc, nil
 }
 
 func (sc *seriesCollection) Count() int32 {
@@ -146,8 +154,12 @@ func (sc *seriesCollection) Item(value any) *workSeries {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ws.app = xl
@@ -197,8 +209,12 @@ func (sc *seriesCollection) Extend(value *workRange, option ...any) *workSeries 
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ws.app = xl
@@ -227,14 +243,13 @@ func (ws *workSeries) Nothing() error {
 	return nil
 }
 
-func (ws *workSeries) Set() *workSeries {
+func (ws *workSeries) Set() (*workSeries, error) {
 	if ws == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := ws.app
 	xl.cores.Lock(ws.num)
-	return ws
+	return ws, nil
 }
 
 func (ws *workSeries) Select() error {

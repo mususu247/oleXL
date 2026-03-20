@@ -42,8 +42,12 @@ func (wf *workFrame) Characterz(value ...any) *workChar {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ch.app = xl
@@ -59,7 +63,7 @@ func (wf *workFrame) Characters() *workChar {
 	name := "Characters"
 	core, num := xl.cores.FindAdd(name, wf.num)
 	if core.disp == nil {
-		cmd := "Get"
+		cmd := "Method"
 
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
@@ -69,8 +73,12 @@ func (wf *workFrame) Characters() *workChar {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ch.app = xl
@@ -109,8 +117,12 @@ func (tr *workTextRange) Characterz(value ...any) *workChar {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ch.app = xl
@@ -136,8 +148,12 @@ func (tr *workTextRange) Characters() *workChar {
 
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ch.app = xl
@@ -213,8 +229,8 @@ func (ch *workChar) Count() int32 {
 func (ch *workChar) Insert(value string) error {
 	xl := ch.app
 
-	name := "Text"
-	cmd := "Put"
+	name := "Insert"
+	cmd := "Method"
 	var opt []any
 	opt = append(opt, value)
 	_, err := xl.cores.SendNum(cmd, name, ch.num, opt)

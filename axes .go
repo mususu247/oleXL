@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -109,8 +110,12 @@ func (ct *workChart) Axes(value ...any) *workAxes {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 1 //Lock on
+			} else {
+				return nil
+			}
 		}
 	}
 	ax.app = xl
@@ -139,14 +144,13 @@ func (ax *workAxes) Nothing() error {
 	return nil
 }
 
-func (ax *workAxes) Set() *workAxes {
+func (ax *workAxes) Set() (*workAxes, error) {
 	if ax == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := ax.app
 	xl.cores.Lock(ax.num)
-	return ax
+	return ax, nil
 }
 
 func (ax *workAxes) Select() error {
@@ -308,8 +312,12 @@ func (ax *workAxes) AxisTitle() *workTitle {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock.on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	wt.app = xl

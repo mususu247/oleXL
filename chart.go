@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -40,8 +41,12 @@ func (co *chartObject) Chart() *workChart {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ct.app = xl
@@ -70,14 +75,13 @@ func (ct *workChart) Nothing() error {
 	return nil
 }
 
-func (ct *workChart) Set() *workChart {
+func (ct *workChart) Set() (*workChart, error) {
 	if ct == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := ct.app
 	xl.cores.Lock(ct.num)
-	return ct
+	return ct, nil
 }
 
 func (ct *workChart) SetSourceData(Source *workRange, RowCol ...any) error {
@@ -130,8 +134,12 @@ func (xl *Excel) ActiveChart() *workChart {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 1 //Lock on
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	ct.app = xl
@@ -226,12 +234,17 @@ func (ct *workChart) Parent() *chartObject {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	co.app = xl
 	co.num = num
+	co.parent = ct
 	return &co
 }
 
@@ -345,8 +358,12 @@ func (ct *workChart) ChartGroups() *chartGroups {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	cgs.app = xl
@@ -390,8 +407,12 @@ func (ct *workChart) ChartGroupz(value int32) *workChartGroup {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	cg.app = xl

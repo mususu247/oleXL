@@ -1,6 +1,7 @@
 package oleXL
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-ole/go-ole"
@@ -44,12 +45,17 @@ func (wr *workRange) Borders(value ...any) *workBorder {
 		}
 		switch x := ans.(type) {
 		case *ole.IDispatch:
-			core.disp = x
-			core.lock = 0
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
 		}
 	}
 	br.app = xl
 	br.num = num
+	br.parent = wr
 	return &br
 }
 
@@ -153,14 +159,13 @@ func (br *workBorder) Nothing() error {
 	return nil
 }
 
-func (br *workBorder) Set() *workBorder {
+func (br *workBorder) Set() (*workBorder, error) {
 	if br == nil {
-		log.Printf("(Error) Object is NULL.")
-		return nil
+		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
 	xl := br.app
 	xl.cores.Lock(br.num)
-	return br
+	return br, nil
 }
 
 func (br *workBorder) LineStyle(value ...any) int32 {
