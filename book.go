@@ -459,7 +459,7 @@ func (wbs *workBooks) Open(fileName string, options ...map[string]any) (*workBoo
 		case *ole.IDispatch:
 			if x != nil {
 				core.disp = x
-				core.lock = 0
+				core.lock = 1 //Lock on
 			} else {
 				return nil, fmt.Errorf("(Error) %v", err)
 			}

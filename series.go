@@ -223,6 +223,96 @@ func (sc *seriesCollection) Extend(value *workRange, option ...any) *workSeries 
 	return &ws
 }
 
+func (sc *seriesCollection) NewSeries() *workSeries {
+	var ws workSeries
+	xl := sc.app
+
+	kind := "Series"
+	core, num := xl.cores.FindAdd(kind, sc.num)
+	if core.disp == nil {
+		cmd := "Method"
+		name := "NewSeries"
+
+		ans, err := xl.cores.SendNum(cmd, name, sc.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
+		}
+	}
+	ws.app = xl
+	ws.num = num
+	ws.parent = sc.parent //wrokChart
+	return &ws
+}
+
+func (sc *seriesCollection) Add(Source *workRange, option ...any) *workSeries {
+	var ws workSeries
+	xl := sc.app
+
+	kind := "Series"
+	core, num := xl.cores.FindAdd(kind, sc.num)
+	if core.disp == nil {
+		cmd := "Method"
+		name := "Add"
+		var opt []any
+		for range 6 {
+			opt = append(opt, true)
+		}
+
+		core := xl.cores.getCore(Source.num)
+		opt[0] = core.disp
+
+		for i := range option {
+			switch i {
+			case 0:
+				var z int32
+				switch x := option[i].(type) {
+				case int:
+					z = SetEnumRowCol(int32(x))
+				case int32:
+					z = SetEnumRowCol(x)
+				case string:
+					z = GetEnumRowColNum(x)
+				}
+				opt[1] = z
+			default:
+				switch x := option[i].(type) {
+				case bool:
+					opt[i+1] = x
+				}
+			}
+		}
+
+		ans, err := xl.cores.SendNum(cmd, name, sc.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
+		}
+	}
+	ws.app = xl
+	ws.num = num
+	ws.parent = sc.parent //wrokChart
+	return &ws
+}
+
 func (ws *workSeries) Release() error {
 	xl := ws.app
 	xl.cores.Release(ws.num, false)
@@ -269,7 +359,7 @@ func (ws *workSeries) Select() error {
 	return nil
 }
 
-func (ws *workSeries) AxisGroup(value ...any) string {
+func (ws *workSeries) AxisGroup(value ...any) int32 {
 	xl := ws.app
 
 	name := "AxisGroup"
@@ -290,22 +380,22 @@ func (ws *workSeries) AxisGroup(value ...any) string {
 		_, err := xl.cores.SendNum(cmd, name, ws.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
-			return ""
+			return 0
 		}
 	} else {
 		cmd := "Get"
 		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
-			return ""
+			return 0
 		}
 
 		switch x := ans.(type) {
-		case string:
+		case int32:
 			return x
 		}
 	}
-	return ""
+	return 0
 }
 
 func (ws *workSeries) Delete() error {

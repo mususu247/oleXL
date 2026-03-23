@@ -372,23 +372,6 @@ func (ct *workChart) ChartGroups() *chartGroups {
 	return &cgs
 }
 
-func (cgs *chartGroups) Count() int32 {
-	xl := cgs.app
-
-	name := "Count"
-	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, cgs.num, nil)
-	if err != nil {
-		log.Printf("(Error) %v", err)
-		return 0
-	}
-	switch x := ans.(type) {
-	case int32:
-		return x
-	}
-	return 0
-}
-
 func (ct *workChart) ChartGroupz(value int32) *workChartGroup {
 	var cg workChartGroup
 	xl := ct.app
@@ -447,4 +430,140 @@ func (ct *workChart) Location(value any, option ...string) error {
 		return err
 	}
 	return nil
+}
+
+func (ct *workChart) ChartType(value ...any) int32 {
+	xl := ct.app
+
+	name := "ChartType"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+
+		var v int32
+		switch x := value[0].(type) {
+		case int:
+			v = SetEnumChartType(int32(x))
+		case int32:
+			v = SetEnumChartType(x)
+		case string:
+			v = GetEnumChartTypeNum(x)
+		}
+		opt = append(opt, v)
+
+		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case int32:
+			return x
+		}
+	}
+	return 0
+}
+
+func (ct *workChart) PlotBy(value ...any) int32 {
+	xl := ct.app
+
+	name := "PlotBy"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+
+		var v int32
+		switch x := value[0].(type) {
+		case int:
+			v = SetEnumRowCol(int32(x))
+		case int32:
+			v = SetEnumRowCol(x)
+		case string:
+			v = GetEnumRowColNum(x)
+		}
+		opt = append(opt, v)
+
+		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case int32:
+			return x
+		}
+	}
+	return 0
+}
+
+func (cgs *chartGroups) Count() int32 {
+	xl := cgs.app
+
+	name := "Count"
+	cmd := "Get"
+	ans, err := xl.cores.SendNum(cmd, name, cgs.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return 0
+	}
+	switch x := ans.(type) {
+	case int32:
+		return x
+	}
+	return 0
+}
+
+func (cg *chartGroups) AxisGroup(value ...any) int32 {
+	xl := cg.app
+
+	name := "AxisGroup"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		var z int32
+		switch x := value[0].(type) {
+		case int:
+			z = SetEnumAxisGroup(int32(x))
+		case int32:
+			z = SetEnumAxisGroup(x)
+		case string:
+			z = GetEnumAlignCmdNum(x)
+		}
+		opt = append(opt, z)
+
+		_, err := xl.cores.SendNum(cmd, name, cg.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, cg.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+
+		switch x := ans.(type) {
+		case int32:
+			return x
+		}
+	}
+	return 0
 }

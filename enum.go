@@ -2549,3 +2549,97 @@ func SetEnumMarkerStyle(enumType int32) int32 {
 	}
 	return result
 }
+
+// XlListObjectSourceType
+func EnumListObjectSourceType() map[string]int32 {
+	enum := make(map[string]int32)
+	enum["xlSrcExternal"] = 0
+	enum["xlSrcModel"] = 4
+	enum["xlSrcQuery"] = 3
+	enum["xlSrcRange"] = 1 //Def
+	enum["xlSrcXml"] = 2
+	return enum
+}
+
+func GetEnumListObjectSourceTypeNum(enumType string) int32 {
+	var result int32
+	enum := EnumListObjectSourceType()
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlSrcRange"]
+	}
+	return result
+}
+
+func GetEnumListObjectSourceTypeStr(enumType int32) string {
+	var result string
+	enum := EnumListObjectSourceType()
+	result = "xlSrcRange"
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumListObjectSourceType(enumType int32) int32 {
+	var result int32
+	enum := EnumListObjectSourceType()
+	result = enum["xlSrcRange"]
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
+
+// XlYesNoGuess
+func EnumYesNoGuess() map[string]int32 {
+	enum := make(map[string]int32)
+	enum["xlGuesss"] = 0
+	enum["xlNo"] = 2
+	enum["xlYes"] = 1 //Def
+	return enum
+}
+
+func GetEnumYesNoGuessNum(enumType string) int32 {
+	var result int32
+	enum := EnumYesNoGuess()
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlYes"]
+	}
+	return result
+}
+
+func GetEnumYesNoGuessStr(enumType int32) string {
+	var result string
+	enum := EnumYesNoGuess()
+	result = "xlYes"
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumYesNoGuess(enumType int32) int32 {
+	var result int32
+	enum := EnumYesNoGuess()
+	result = enum["xlYes"]
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}
