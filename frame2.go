@@ -26,13 +26,11 @@ func (wf *workFormat) TextFrame2() *workFrame2 {
 	core, num := xl.cores.FindAdd(name, wf.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -57,13 +55,11 @@ func (sp *workShape) TextFrame2() *workFrame2 {
 	core, num := xl.cores.FindAdd(name, sp.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -254,13 +250,11 @@ func (wf *workFrame2) TextRange() *workTextRange {
 	core, num := xl.cores.FindAdd(name, wf.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {

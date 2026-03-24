@@ -30,9 +30,8 @@ func (xl *Excel) Init(debug ...bool) error {
 }
 
 func (xl *Excel) CreateObject() error {
-	cmd := "Create"
 	name := "Excel.Application"
-
+	cmd := "Create"
 	core, num := xl.cores.Add(name, 0)
 	core.lock = 1 //Lock on
 	ans, err := xl.cores.SendNum(cmd, name, num, nil)
@@ -68,7 +67,6 @@ func (xl *Excel) Quit() error {
 	if err != nil {
 		return err
 	}
-
 	switch x := ans.(type) {
 	case nil:
 		//ok
@@ -107,7 +105,6 @@ func (xl *Excel) Nothing() error {
 func (xl *Excel) Hand() int32 {
 	cmd := "Get"
 	name := "hWnd"
-
 	ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
 	if err != nil {
 		log.Printf("(Error) .Hand:%v", err)
@@ -153,7 +150,6 @@ func (xl *Excel) DisplayAlerts(value ...bool) bool {
 	if err != nil {
 		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 	}
-
 	switch x := ans.(type) {
 	case bool:
 		return x
@@ -181,7 +177,6 @@ func (xl *Excel) ScreenUpdating(value ...bool) bool {
 	if err != nil {
 		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 	}
-
 	switch x := ans.(type) {
 	case bool:
 		return x
@@ -219,7 +214,6 @@ func (xl *Excel) Calculation(value ...any) int32 {
 	if err != nil {
 		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 	}
-
 	switch x := ans.(type) {
 	case int32:
 		return x

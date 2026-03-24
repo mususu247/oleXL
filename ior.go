@@ -21,7 +21,6 @@ func (wr *workRange) Interior() *workInterior {
 	core, num := xl.cores.FindAdd(name, wr.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)

@@ -28,7 +28,6 @@ func (nt *workNote) Shape() *workShape {
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Shape"
-
 		ans, err := xl.cores.SendNum(cmd, name, nt.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -59,13 +58,11 @@ func (ws *workSheet) Shapes() *workShapes {
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Shapes"
-
 		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -183,11 +180,11 @@ func (sps *workShapes) AddShape(Type any, left, top, width, height float64) *wor
 			z = GetEnumShapeTypeNum(x)
 		}
 		opt = append(opt, z)
-
 		opt = append(opt, left)
 		opt = append(opt, top)
 		opt = append(opt, width)
 		opt = append(opt, height)
+
 		ans, err := xl.cores.SendNum(cmd, name, sps.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -270,7 +267,6 @@ func (sp *workShape) Name(value ...any) string {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -393,6 +389,7 @@ func (sps *workShapes) AddPicture(fileName string, LinkToFile bool, SaveWithDocu
 		opt = append(opt, top)
 		opt = append(opt, width)
 		opt = append(opt, height)
+
 		ans, err := xl.cores.SendNum(cmd, name, sps.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)

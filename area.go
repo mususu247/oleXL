@@ -21,13 +21,11 @@ func (ct *workChart) ChartArea() *workArea {
 	core, num := xl.cores.FindAdd(name, ct.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -132,7 +130,6 @@ func (wa *workArea) Name(value ...any) string {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
-
 		switch x := ans.(type) {
 		case string:
 			return x
@@ -240,7 +237,6 @@ func (wa *workArea) Height(value ...float64) float64 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)

@@ -20,13 +20,11 @@ func (wt *workTitle) Format() *workFormat {
 	core, num := xl.cores.FindAdd(name, wt.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wt.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -51,13 +49,11 @@ func (sr *workSeries) Format() *workFormat {
 	core, num := xl.cores.FindAdd(name, sr.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, sr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {

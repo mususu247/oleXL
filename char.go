@@ -39,7 +39,6 @@ func (wf *workFrame) Characterz(value ...any) *workChar {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -64,13 +63,11 @@ func (wf *workFrame) Characters() *workChar {
 	core, num := xl.cores.FindAdd(name, wf.num)
 	if core.disp == nil {
 		cmd := "Method"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -114,7 +111,6 @@ func (tr *workTextRange) Characterz(value ...any) *workChar {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -139,13 +135,11 @@ func (tr *workTextRange) Characters() *workChar {
 	core, num := xl.cores.FindAdd(name, tr.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, tr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {

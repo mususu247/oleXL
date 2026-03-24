@@ -193,7 +193,6 @@ func (br *workBorder) LineStyle(value ...any) int32 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, br.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -233,7 +232,6 @@ func (br *workBorder) Weight(value ...any) int32 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, br.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)

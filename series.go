@@ -27,7 +27,6 @@ func (ct *workChart) SeriesCollection() *seriesCollection {
 	core, num := xl.cores.FindAdd(name, ct.num)
 	if core.disp == nil {
 		cmd := "Method"
-
 		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -57,7 +56,6 @@ func (ct *workChart) FullSeriesCollection() *seriesCollection {
 	core, num := xl.cores.FindAdd(name, ct.num)
 	if core.disp == nil {
 		cmd := "Method"
-
 		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -232,7 +230,6 @@ func (sc *seriesCollection) NewSeries() *workSeries {
 	if core.disp == nil {
 		cmd := "Method"
 		name := "NewSeries"
-
 		ans, err := xl.cores.SendNum(cmd, name, sc.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -389,7 +386,6 @@ func (ws *workSeries) AxisGroup(value ...any) int32 {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
-
 		switch x := ans.(type) {
 		case int32:
 			return x
@@ -435,7 +431,6 @@ func (ws *workSeries) Name(value ...any) string {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
-
 		switch x := ans.(type) {
 		case string:
 			return x
@@ -474,7 +469,6 @@ func (ws *workSeries) MarkerStyle(value ...any) string {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
-
 		switch x := ans.(type) {
 		case string:
 			return x
@@ -499,7 +493,6 @@ func (ws *workSeries) MarkerSize(value ...int32) int32 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)

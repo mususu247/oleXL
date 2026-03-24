@@ -14,30 +14,18 @@ type workRange struct {
 	num    int
 }
 
-func (wr *workRange) getSheet() *workSheet {
-	var ws *workSheet
+func getSheet(v *workRange) *workSheet {
+	var w any
+	w = v
 
-	loop := true
-	for loop {
-		var w *workRange
-		w = wr
-
-		switch x := w.parent.(type) {
-		case *workSheet:
-			ws = x
-			loop = false
+	for {
+		switch x := w.(type) {
 		case *workRange:
-			w = x
-		default:
-			loop = false
+			w = x.parent
+		case *workSheet:
+			return x
 		}
 	}
-
-	if ws == nil {
-		xl := wr.app
-		ws = xl.ActiveSheet()
-	}
-	return ws
 }
 
 func (ws *workSheet) Range(cell ...any) *workRange {
@@ -52,6 +40,10 @@ func (ws *workSheet) Range(cell ...any) *workRange {
 		for i := range cell {
 			switch x := cell[i].(type) {
 			case string:
+				opt = append(opt, x)
+			case int:
+				opt = append(opt, int32(x))
+			case int32:
 				opt = append(opt, x)
 			case *workRange:
 				opt = append(opt, xl.cores.getCore(x.num).disp)
@@ -212,7 +204,7 @@ func (ws *workSheet) Rows(cell any) *workRange {
 func (wr *workRange) Rows(cell any) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "Rows"
@@ -279,7 +271,7 @@ func (ws *workSheet) Columns(cell any) *workRange {
 func (wr *workRange) Columns(cell any) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "Columns"
@@ -313,7 +305,7 @@ func (wr *workRange) Columns(cell any) *workRange {
 func (wr *workRange) End(shift any) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "End"
@@ -357,7 +349,7 @@ func (wr *workRange) End(shift any) *workRange {
 func (wr *workRange) Delete(shift ...any) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "Delete"
@@ -405,7 +397,7 @@ func (wr *workRange) Delete(shift ...any) *workRange {
 func (wr *workRange) Insert(shift ...any) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "Insert"
@@ -453,14 +445,13 @@ func (wr *workRange) Insert(shift ...any) *workRange {
 func (wr *workRange) CurrentRegion() *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "CurrentRegion"
 	core, num := xl.cores.FindAdd(kind, ws.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -485,14 +476,13 @@ func (wr *workRange) CurrentRegion() *workRange {
 func (wr *workRange) MergeArea() *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "MergeArea"
 	core, num := xl.cores.FindAdd(kind, ws.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -517,7 +507,7 @@ func (wr *workRange) MergeArea() *workRange {
 func (wr *workRange) Offset(RowOffset int32, ColumnOffset int32) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "Offset"
@@ -552,7 +542,7 @@ func (wr *workRange) Offset(RowOffset int32, ColumnOffset int32) *workRange {
 func (wr *workRange) Resize(RowSize int32, ColumnSize int32) *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "Resize"
@@ -646,14 +636,13 @@ func (wr *workRange) Address(options ...map[string]any) string {
 func (wr *workRange) EntireRow() *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "EntireRow"
 	core, num := xl.cores.FindAdd(kind, ws.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -678,14 +667,13 @@ func (wr *workRange) EntireRow() *workRange {
 func (wr *workRange) EntireColumn() *workRange {
 	var xr workRange
 	xl := wr.app
-	ws := wr.getSheet()
+	ws := getSheet(wr)
 
 	kind := "Range"
 	name := "EntireColumn"
 	core, num := xl.cores.FindAdd(kind, ws.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -1138,7 +1126,6 @@ func (wr *workRange) Cut() bool {
 
 	cmd := "Method"
 	name := "Cut"
-
 	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 	if err != nil {
 		return false
@@ -1448,7 +1435,6 @@ func (wr *workRange) WrapText(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -1479,7 +1465,6 @@ func (wr *workRange) Orientation(value ...float64) float64 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -1510,7 +1495,6 @@ func (wr *workRange) AddIndent(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -1541,7 +1525,6 @@ func (wr *workRange) IndentLevel(value ...int32) int32 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -1572,7 +1555,6 @@ func (wr *workRange) ShrinkToFit(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -1638,7 +1620,6 @@ func (wr *workRange) MergeCells(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -1669,7 +1650,6 @@ func (wr *workRange) RowHeight(value ...float64) float64 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -1700,7 +1680,6 @@ func (wr *workRange) ColumnWidth(value ...float64) float64 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -1720,7 +1699,6 @@ func (wr *workRange) Left() float64 {
 
 	name := "Left"
 	cmd := "Get"
-
 	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
@@ -1739,7 +1717,6 @@ func (wr *workRange) Top() float64 {
 
 	name := "Top"
 	cmd := "Get"
-
 	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
@@ -1758,7 +1735,6 @@ func (wr *workRange) Height() float64 {
 
 	name := "Height"
 	cmd := "Get"
-
 	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
@@ -1777,7 +1753,6 @@ func (wr *workRange) Width() float64 {
 
 	name := "Width"
 	cmd := "Get"
-
 	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)

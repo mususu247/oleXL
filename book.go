@@ -151,7 +151,6 @@ func (wbs *workBooks) Count() int32 {
 		log.Printf("(Error) %v", err)
 		return result
 	}
-
 	switch x := ans.(type) {
 	case int32:
 		result = x
@@ -258,7 +257,6 @@ func (wb *workBook) Name() string {
 		log.Printf("(Error) %v", err)
 		return result
 	}
-
 	switch x := ans.(type) {
 	case string:
 		result = x
@@ -277,7 +275,6 @@ func (wb *workBook) Path() string {
 		log.Printf("(Error) %v", err)
 		return result
 	}
-
 	switch x := ans.(type) {
 	case string:
 		result = x

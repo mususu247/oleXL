@@ -22,7 +22,6 @@ func (ct *workChart) ChartTitle() *workTitle {
 	if core.disp == nil {
 		cmd := "Get"
 		name := "ChartTitle"
-
 		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)

@@ -259,7 +259,6 @@ func (co *chartObject) Duplicate() *chartObject {
 	if core.disp == nil {
 		cmd := "Method"
 		name := "Duplicate"
-
 		ans, err := xl.cores.SendNum(cmd, name, co.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -297,7 +296,6 @@ func (co *chartObject) Name(value ...string) string {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, co.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -410,7 +408,6 @@ func (co *chartObject) Height(value ...float64) float64 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)

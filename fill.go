@@ -21,13 +21,11 @@ func (sp *workShape) Fill() *workFill {
 	core, num := xl.cores.FindAdd(name, sp.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -52,13 +50,11 @@ func (wf *workFont) Fill() *workFill {
 	core, num := xl.cores.FindAdd(name, wf.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -83,13 +79,11 @@ func (wf *workFormat) Fill() *workFill {
 	core, num := xl.cores.FindAdd(name, wf.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -164,7 +158,6 @@ func (wf *workFill) Transparency(value ...float64) float64 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)

@@ -57,7 +57,6 @@ func (ct *workChart) HasAxis(AxisType any, AxisGroup any, value ...any) bool {
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
-
 		switch x := ans.(type) {
 		case bool:
 			return x
@@ -186,7 +185,6 @@ func (ax *workAxes) HasMajorGridlines(value ...bool) bool {
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
-
 		switch x := ans.(type) {
 		case bool:
 			return x
@@ -216,7 +214,6 @@ func (ax *workAxes) HasMinorGridlines(value ...bool) bool {
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
-
 		switch x := ans.(type) {
 		case bool:
 			return x
@@ -246,7 +243,6 @@ func (ax *workAxes) HasTitle(value ...bool) bool {
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
-
 		switch x := ans.(type) {
 		case bool:
 			return x
@@ -286,7 +282,6 @@ func (ax *workAxes) TickLabelPosition(value ...any) int32 {
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
-
 		switch x := ans.(type) {
 		case int32:
 			return x
@@ -304,7 +299,6 @@ func (ax *workAxes) AxisTitle() *workTitle {
 	if core.disp == nil {
 		cmd := "Get"
 		name := "AxisTitle"
-
 		ans, err := xl.cores.SendNum(cmd, name, ax.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -345,7 +339,6 @@ func (ax *workAxes) MinimumScale(value ...float64) float64 {
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
-
 		switch x := ans.(type) {
 		case float64:
 			return x
@@ -374,7 +367,6 @@ func (ax *workAxes) MaximumScale(value ...float64) float64 {
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
-
 		switch x := ans.(type) {
 		case float64:
 			return x
@@ -403,7 +395,6 @@ func (ax *workAxes) MinimumScaleIsAuto(value ...bool) bool {
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
-
 		switch x := ans.(type) {
 		case bool:
 			return x
@@ -432,7 +423,6 @@ func (ax *workAxes) MaximumScaleIsAuto(value ...bool) bool {
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
-
 		switch x := ans.(type) {
 		case bool:
 			return x

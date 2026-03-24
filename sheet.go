@@ -19,7 +19,7 @@ type workSheet struct {
 	num    int
 }
 
-func (ws *workSheet) getBook() *workBook {
+func getBook(ws *workSheet) *workBook {
 	var wb *workBook
 
 	switch x := ws.parent.(type) {
@@ -285,7 +285,6 @@ func (ws *workSheet) Name(value ...any) string {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
-
 		switch x := ans.(type) {
 		case string:
 			return x
@@ -321,7 +320,7 @@ func (ws *workSheet) Select() error {
 }
 
 func (ws *workSheet) Parent() *workBook {
-	wb := ws.getBook()
+	wb := getBook(ws)
 	xl := ws.app
 
 	core := xl.cores.getCore(wb.num)
@@ -349,7 +348,7 @@ func (ws *workSheet) Parent() *workBook {
 func (ws *workSheet) Copy(value ...any) *workSheet {
 	var xs workSheet
 	xl := ws.app
-	wb := ws.getBook()
+	wb := getBook(ws)
 	_wb := xl.cores.getCore(wb.num)
 	if _wb.disp == nil {
 		ws.Parent()
@@ -406,7 +405,7 @@ func (ws *workSheet) Copy(value ...any) *workSheet {
 func (ws *workSheet) Move(value ...any) *workSheet {
 	var xs workSheet
 	xl := ws.app
-	wb := ws.getBook()
+	wb := getBook(ws)
 	_wb := xl.cores.getCore(wb.num)
 	if _wb.disp == nil {
 		ws.Parent()

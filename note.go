@@ -121,7 +121,6 @@ func (nts *workNotes) Count() int32 {
 		log.Printf("(Error) %v", err)
 		return result
 	}
-
 	switch x := ans.(type) {
 	case int32:
 		result = x
@@ -137,13 +136,11 @@ func (rg *workRange) Comment() *workNote {
 	core, num := xl.cores.FindAdd(name, rg.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, rg.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -176,7 +173,6 @@ func (rg *workRange) AddComment(text string) *workNote {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
-
 		switch x := ans.(type) {
 		case *ole.IDispatch:
 			if x != nil {
@@ -260,7 +256,6 @@ func (nt *workNote) Text(value ...any) string {
 		}
 	} else {
 		cmd := "Method"
-
 		ans, err := xl.cores.SendNum(cmd, name, nt.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)

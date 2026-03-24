@@ -21,7 +21,6 @@ func (ct *workChart) Legend() *workLegend {
 	core, num := xl.cores.FindAdd(name, ct.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -140,7 +139,6 @@ func (lg *workLegend) Position(value ...any) int32 {
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
-
 		switch x := ans.(type) {
 		case int32:
 			return x

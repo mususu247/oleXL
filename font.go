@@ -21,7 +21,6 @@ func (wr *workRange) Font() *workFont {
 	core, num := xl.cores.FindAdd(name, wr.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -51,7 +50,6 @@ func (ch *workChar) Font() *workFont {
 	core, num := xl.cores.FindAdd(name, ch.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, ch.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -81,7 +79,6 @@ func (wt *workTitle) Font() *workFont {
 	core, num := xl.cores.FindAdd(name, wt.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wt.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -111,7 +108,6 @@ func (tr *workTextRange) Font() *workFont {
 	core, num := xl.cores.FindAdd(name, tr.num)
 	if core.disp == nil {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, tr.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -177,7 +173,6 @@ func (wf *workFont) Name(value ...string) string {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -208,7 +203,6 @@ func (wf *workFont) Bold(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -239,7 +233,6 @@ func (wf *workFont) Italic(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -270,7 +263,6 @@ func (wf *workFont) Size(value ...float64) float64 {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -301,7 +293,6 @@ func (wf *workFont) Strikethrough(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -332,7 +323,6 @@ func (wf *workFont) Superscript(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -363,7 +353,6 @@ func (wf *workFont) Subscript(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -394,7 +383,6 @@ func (wf *workFont) OutlineFont(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
@@ -425,7 +413,6 @@ func (wf *workFont) Shadow(value ...bool) bool {
 		}
 	} else {
 		cmd := "Get"
-
 		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
