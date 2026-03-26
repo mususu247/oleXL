@@ -28,12 +28,12 @@ func getSheet(v *workRange) *workSheet {
 	}
 }
 
-func (ws *workSheet) Range(cell ...any) *workRange {
-	var wr workRange
-	xl := ws.app
+func (Q *workSheet) Range(cell ...any) *workRange {
+	var body workRange
+	xl := Q.app
 
 	name := "Range"
-	core, num := xl.cores.FindAdd(name, ws.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		var opt []any
@@ -50,7 +50,7 @@ func (ws *workSheet) Range(cell ...any) *workRange {
 			}
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -65,19 +65,19 @@ func (ws *workSheet) Range(cell ...any) *workRange {
 			}
 		}
 	}
-	wr.app = xl
-	wr.num = num
-	wr.parent = ws
-	return &wr
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ws *workSheet) Cells(cell ...any) *workRange {
-	var wr workRange
-	xl := ws.app
+func (Q *workSheet) Cells(cell ...any) *workRange {
+	var body workRange
+	xl := Q.app
 
 	kind := "Range"
 	name := "Cells"
-	core, num := xl.cores.FindAdd(kind, ws.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		var opt []any
@@ -88,7 +88,7 @@ func (ws *workSheet) Cells(cell ...any) *workRange {
 			opt = append(opt, cell[1])
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -103,21 +103,21 @@ func (ws *workSheet) Cells(cell ...any) *workRange {
 			}
 		}
 	}
-	wr.app = xl
-	wr.num = num
-	wr.parent = ws
-	return &wr
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wr *workRange) Cells(cell ...any) *workRange {
-	var xr workRange
+func (Q *workRange) Cells(cell ...any) *workRange {
+	var body workRange
 	var ws *workSheet
-	xl := wr.app
+	xl := Q.app
 
 	sw := true
 	for sw {
 		var w *workRange
-		w = wr
+		w = Q
 
 		switch x := w.parent.(type) {
 		case *workSheet:
@@ -147,7 +147,7 @@ func (wr *workRange) Cells(cell ...any) *workRange {
 			opt = append(opt, cell[1])
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -162,14 +162,14 @@ func (wr *workRange) Cells(cell ...any) *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
 func (ws *workSheet) Rows(cell any) *workRange {
-	var wr workRange
+	var body workRange
 	xl := ws.app
 
 	kind := "Range"
@@ -195,16 +195,16 @@ func (ws *workSheet) Rows(cell any) *workRange {
 			}
 		}
 	}
-	wr.app = xl
-	wr.num = num
-	wr.parent = ws
-	return &wr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) Rows(cell any) *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) Rows(cell any) *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "Rows"
@@ -214,7 +214,7 @@ func (wr *workRange) Rows(cell any) *workRange {
 		var opt []any
 		opt = append(opt, cell)
 
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -229,14 +229,14 @@ func (wr *workRange) Rows(cell any) *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
 func (ws *workSheet) Columns(cell any) *workRange {
-	var wr workRange
+	var body workRange
 	xl := ws.app
 
 	kind := "Range"
@@ -262,16 +262,16 @@ func (ws *workSheet) Columns(cell any) *workRange {
 			}
 		}
 	}
-	wr.app = xl
-	wr.num = num
-	wr.parent = ws
-	return &wr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) Columns(cell any) *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) Columns(cell any) *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "Columns"
@@ -281,7 +281,7 @@ func (wr *workRange) Columns(cell any) *workRange {
 		var opt []any
 		opt = append(opt, cell)
 
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -296,16 +296,16 @@ func (wr *workRange) Columns(cell any) *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) End(shift any) *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) End(shift any) *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "End"
@@ -325,7 +325,7 @@ func (wr *workRange) End(shift any) *workRange {
 		}
 		opt = append(opt, z)
 
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -340,16 +340,16 @@ func (wr *workRange) End(shift any) *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) Delete(shift ...any) *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) Delete(shift ...any) *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "Delete"
@@ -373,7 +373,7 @@ func (wr *workRange) Delete(shift ...any) *workRange {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -388,16 +388,16 @@ func (wr *workRange) Delete(shift ...any) *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) Insert(shift ...any) *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) Insert(shift ...any) *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "Insert"
@@ -421,7 +421,7 @@ func (wr *workRange) Insert(shift ...any) *workRange {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -436,23 +436,23 @@ func (wr *workRange) Insert(shift ...any) *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) CurrentRegion() *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) CurrentRegion() *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "CurrentRegion"
 	core, num := xl.cores.FindAdd(kind, ws.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -467,23 +467,23 @@ func (wr *workRange) CurrentRegion() *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) MergeArea() *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) MergeArea() *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "MergeArea"
 	core, num := xl.cores.FindAdd(kind, ws.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -498,27 +498,27 @@ func (wr *workRange) MergeArea() *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) Offset(RowOffset int32, ColumnOffset int32) *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) Offset(RowOffset int32, ColumnOffset int32) *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "Offset"
-	core, num := xl.cores.FindAdd(kind, wr.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		var opt []any
 		opt = append(opt, RowOffset)
 		opt = append(opt, ColumnOffset)
 
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -533,16 +533,16 @@ func (wr *workRange) Offset(RowOffset int32, ColumnOffset int32) *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) Resize(RowSize int32, ColumnSize int32) *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) Resize(RowSize int32, ColumnSize int32) *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "Resize"
@@ -553,7 +553,7 @@ func (wr *workRange) Resize(RowSize int32, ColumnSize int32) *workRange {
 		opt = append(opt, RowSize)
 		opt = append(opt, ColumnSize)
 
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -568,14 +568,14 @@ func (wr *workRange) Resize(RowSize int32, ColumnSize int32) *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) Address(options ...map[string]any) string {
-	xl := wr.app
+func (Q *workRange) Address(options ...map[string]any) string {
+	xl := Q.app
 
 	name := "Address"
 	cmd := "Get"
@@ -620,7 +620,7 @@ func (wr *workRange) Address(options ...map[string]any) string {
 		}
 	}
 
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return ""
@@ -633,17 +633,17 @@ func (wr *workRange) Address(options ...map[string]any) string {
 	return ""
 }
 
-func (wr *workRange) EntireRow() *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) EntireRow() *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "EntireRow"
 	core, num := xl.cores.FindAdd(kind, ws.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -658,23 +658,23 @@ func (wr *workRange) EntireRow() *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (wr *workRange) EntireColumn() *workRange {
-	var xr workRange
-	xl := wr.app
-	ws := getSheet(wr)
+func (Q *workRange) EntireColumn() *workRange {
+	var body workRange
+	xl := Q.app
+	ws := getSheet(Q)
 
 	kind := "Range"
 	name := "EntireColumn"
 	core, num := xl.cores.FindAdd(kind, ws.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -689,14 +689,15 @@ func (wr *workRange) EntireColumn() *workRange {
 			}
 		}
 	}
-	xr.app = xl
-	xr.num = num
-	xr.parent = ws
-	return &xr
+	body.app = xl
+	body.num = num
+	body.parent = ws
+	return &body
 }
 
-func (xl *Excel) ActiveCell() *workRange {
-	var wr workRange
+func (Q *Excel) ActiveCell() *workRange {
+	var body workRange
+	xl := Q
 	ws := xl.ActiveSheet()
 
 	kind := "Range"
@@ -719,15 +720,16 @@ func (xl *Excel) ActiveCell() *workRange {
 			}
 		}
 	}
-	wr.app = xl
-	wr.num = num
-	wr.parent = ws
+	body.app = xl
+	body.num = num
+	body.parent = ws
 	ws.Release()
-	return &wr
+	return &body
 }
 
-func (xl *Excel) Selection() *workRange {
-	var wr workRange
+func (Q *Excel) Selection() *workRange {
+	var body workRange
+	xl := Q
 	ws := xl.ActiveSheet()
 
 	kind := "Range"
@@ -750,44 +752,44 @@ func (xl *Excel) Selection() *workRange {
 			}
 		}
 	}
-	wr.app = xl
-	wr.num = num
-	wr.parent = ws
+	body.app = xl
+	body.num = num
+	body.parent = ws
 	ws.Release()
-	return &wr
+	return &body
 }
 
-func (wr *workRange) Release() error {
-	xl := wr.app
-	xl.cores.Release(wr.num, false)
+func (Q *workRange) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, false)
 	return nil
 }
 
-func (wr *workRange) Nothing() error {
-	xl := wr.app
-	xl.cores.releaseChild(wr.num)
+func (Q *workRange) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wr.num)
-	err := wr.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wr.num)
-	wr = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wr *workRange) Set() (*workRange, error) {
-	if wr == nil {
+func (Q *workRange) Set() (*workRange, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := wr.app
-	xl.cores.Lock(wr.num)
-	return wr, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (wr *workRange) Value(value ...any) any {
-	xl := wr.app
+func (Q *workRange) Value(value ...any) any {
+	xl := Q.app
 
 	name := "Value"
 	if len(value) > 0 {
@@ -818,14 +820,14 @@ func (wr *workRange) Value(value ...any) any {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -864,8 +866,8 @@ func (wr *workRange) Value(value ...any) any {
 	return nil
 }
 
-func (wr *workRange) Value2(value ...any) any {
-	xl := wr.app
+func (Q *workRange) Value2(value ...any) any {
+	xl := Q.app
 
 	name := "Value2"
 	if len(value) > 0 {
@@ -896,14 +898,14 @@ func (wr *workRange) Value2(value ...any) any {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -942,8 +944,8 @@ func (wr *workRange) Value2(value ...any) any {
 	return nil
 }
 
-func (wr *workRange) Formula(value ...string) string {
-	xl := wr.app
+func (Q *workRange) Formula(value ...string) string {
+	xl := Q.app
 
 	name := "Formula"
 	if len(value) > 0 {
@@ -952,14 +954,14 @@ func (wr *workRange) Formula(value ...string) string {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -972,8 +974,8 @@ func (wr *workRange) Formula(value ...string) string {
 	return ""
 }
 
-func (wr *workRange) Formula2(value ...string) string {
-	xl := wr.app
+func (Q *workRange) Formula2(value ...string) string {
+	xl := Q.app
 
 	name := "Formula2"
 	if len(value) > 0 {
@@ -982,14 +984,14 @@ func (wr *workRange) Formula2(value ...string) string {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -1002,8 +1004,8 @@ func (wr *workRange) Formula2(value ...string) string {
 	return ""
 }
 
-func (wr *workRange) FormulaR1C1(value ...string) string {
-	xl := wr.app
+func (Q *workRange) FormulaR1C1(value ...string) string {
+	xl := Q.app
 
 	name := "FormulaR1C1"
 	if len(value) > 0 {
@@ -1012,14 +1014,14 @@ func (wr *workRange) FormulaR1C1(value ...string) string {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -1032,8 +1034,8 @@ func (wr *workRange) FormulaR1C1(value ...string) string {
 	return ""
 }
 
-func (wr *workRange) Formula2R1C1(value ...string) string {
-	xl := wr.app
+func (Q *workRange) Formula2R1C1(value ...string) string {
+	xl := Q.app
 
 	name := "Formula2R1C1"
 	if len(value) > 0 {
@@ -1042,14 +1044,14 @@ func (wr *workRange) Formula2R1C1(value ...string) string {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -1062,38 +1064,38 @@ func (wr *workRange) Formula2R1C1(value ...string) string {
 	return ""
 }
 
-func (wr *workRange) Activate() error {
-	xl := wr.app
+func (Q *workRange) Activate() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Activate"
 
-	_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wr *workRange) Select() error {
-	if wr == nil {
+func (Q *workRange) Select() error {
+	if Q == nil {
 		log.Printf("(Error) Object is NULL.")
 		return nil
 	}
-	xl := wr.app
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wr *workRange) Copy(value ...any) bool {
-	xl := wr.app
+func (Q *workRange) Copy(value ...any) bool {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Copy"
@@ -1110,7 +1112,7 @@ func (wr *workRange) Copy(value ...any) bool {
 		opt = nil
 	}
 
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		return false
 	}
@@ -1121,12 +1123,12 @@ func (wr *workRange) Copy(value ...any) bool {
 	return false
 }
 
-func (wr *workRange) Cut() bool {
-	xl := wr.app
+func (Q *workRange) Cut() bool {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Cut"
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return false
 	}
@@ -1137,8 +1139,8 @@ func (wr *workRange) Cut() bool {
 	return false
 }
 
-func (wr *workRange) PasteSpecial(Paste any, Operation any, SkipBlanks any, Transpose any) bool {
-	xl := wr.app
+func (Q *workRange) PasteSpecial(Paste any, Operation any, SkipBlanks any, Transpose any) bool {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "PasteSpecial"
@@ -1183,7 +1185,7 @@ func (wr *workRange) PasteSpecial(Paste any, Operation any, SkipBlanks any, Tran
 		opt = append(opt, nil)
 	}
 
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		return false
 	}
@@ -1194,82 +1196,82 @@ func (wr *workRange) PasteSpecial(Paste any, Operation any, SkipBlanks any, Tran
 	return false
 }
 
-func (wr *workRange) Paste() bool {
-	return wr.PasteSpecial("xlPasteAll", "xlPasteSpecialOperationNone", false, false)
+func (Q *workRange) Paste() bool {
+	return Q.PasteSpecial("xlPasteAll", "xlPasteSpecialOperationNone", false, false)
 }
 
-func (wr *workRange) Clear() error {
-	xl := wr.app
+func (Q *workRange) Clear() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Clear"
 
-	_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wr *workRange) ClearComments() error {
-	xl := wr.app
+func (Q *workRange) ClearComments() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "ClearComments"
 
-	_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wr *workRange) ClearContents() error {
-	xl := wr.app
+func (Q *workRange) ClearContents() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "ClearContents"
 
-	_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wr *workRange) ClearFormats() error {
-	xl := wr.app
+func (Q *workRange) ClearFormats() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "ClearFormats"
 
-	_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wr *workRange) ClearHyperlinks() error {
-	xl := wr.app
+func (Q *workRange) ClearHyperlinks() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "ClearHyperlinks"
 
-	_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wr *workRange) Count() int32 {
+func (Q *workRange) Count() int32 {
 	var result int32
-	xl := wr.app
+	xl := Q.app
 
 	cmd := "Get"
 	name := "Count"
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return result
@@ -1282,13 +1284,13 @@ func (wr *workRange) Count() int32 {
 	return result
 }
 
-func (wr *workRange) Row() int32 {
+func (Q *workRange) Row() int32 {
 	var result int32
-	xl := wr.app
+	xl := Q.app
 
 	cmd := "Get"
 	name := "Row"
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return result
@@ -1301,13 +1303,13 @@ func (wr *workRange) Row() int32 {
 	return result
 }
 
-func (wr *workRange) Column() int32 {
+func (Q *workRange) Column() int32 {
 	var result int32
-	xl := wr.app
+	xl := Q.app
 
 	cmd := "Get"
 	name := "Column"
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return result
@@ -1320,8 +1322,8 @@ func (wr *workRange) Column() int32 {
 	return result
 }
 
-func (wr *workRange) NumberFormatLocal(value ...string) string {
-	xl := wr.app
+func (Q *workRange) NumberFormatLocal(value ...string) string {
+	xl := Q.app
 
 	name := "NumberFormatLocal"
 	if len(value) > 0 {
@@ -1329,14 +1331,14 @@ func (wr *workRange) NumberFormatLocal(value ...string) string {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -1349,8 +1351,8 @@ func (wr *workRange) NumberFormatLocal(value ...string) string {
 	return ""
 }
 
-func (wr *workRange) HorizontalAlignment(value ...any) int32 {
-	xl := wr.app
+func (Q *workRange) HorizontalAlignment(value ...any) int32 {
+	xl := Q.app
 
 	name := "HorizontalAlignment"
 	if len(value) > 0 {
@@ -1367,7 +1369,7 @@ func (wr *workRange) HorizontalAlignment(value ...any) int32 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -1375,7 +1377,7 @@ func (wr *workRange) HorizontalAlignment(value ...any) int32 {
 	} else {
 		cmd := "Get"
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -1384,8 +1386,8 @@ func (wr *workRange) HorizontalAlignment(value ...any) int32 {
 	return 0
 }
 
-func (wr *workRange) VerticalAlignment(value ...any) int32 {
-	xl := wr.app
+func (Q *workRange) VerticalAlignment(value ...any) int32 {
+	xl := Q.app
 
 	name := "VerticalAlignment"
 	if len(value) > 0 {
@@ -1402,7 +1404,7 @@ func (wr *workRange) VerticalAlignment(value ...any) int32 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -1410,7 +1412,7 @@ func (wr *workRange) VerticalAlignment(value ...any) int32 {
 	} else {
 		cmd := "Get"
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -1419,8 +1421,8 @@ func (wr *workRange) VerticalAlignment(value ...any) int32 {
 	return 0
 }
 
-func (wr *workRange) WrapText(value ...bool) bool {
-	xl := wr.app
+func (Q *workRange) WrapText(value ...bool) bool {
+	xl := Q.app
 
 	name := "WrapText"
 	if len(value) > 0 {
@@ -1428,14 +1430,14 @@ func (wr *workRange) WrapText(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -1449,8 +1451,8 @@ func (wr *workRange) WrapText(value ...bool) bool {
 	return false
 }
 
-func (wr *workRange) Orientation(value ...float64) float64 {
-	xl := wr.app
+func (Q *workRange) Orientation(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Orientation"
 	if len(value) > 0 {
@@ -1458,14 +1460,14 @@ func (wr *workRange) Orientation(value ...float64) float64 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -1479,8 +1481,8 @@ func (wr *workRange) Orientation(value ...float64) float64 {
 	return 0
 }
 
-func (wr *workRange) AddIndent(value ...bool) bool {
-	xl := wr.app
+func (Q *workRange) AddIndent(value ...bool) bool {
+	xl := Q.app
 
 	name := "AddIndent"
 	if len(value) > 0 {
@@ -1488,14 +1490,14 @@ func (wr *workRange) AddIndent(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -1509,8 +1511,8 @@ func (wr *workRange) AddIndent(value ...bool) bool {
 	return false
 }
 
-func (wr *workRange) IndentLevel(value ...int32) int32 {
-	xl := wr.app
+func (Q *workRange) IndentLevel(value ...int32) int32 {
+	xl := Q.app
 
 	name := "IndentLevel"
 	if len(value) > 0 {
@@ -1518,14 +1520,14 @@ func (wr *workRange) IndentLevel(value ...int32) int32 {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -1539,8 +1541,8 @@ func (wr *workRange) IndentLevel(value ...int32) int32 {
 	return 0
 }
 
-func (wr *workRange) ShrinkToFit(value ...bool) bool {
-	xl := wr.app
+func (Q *workRange) ShrinkToFit(value ...bool) bool {
+	xl := Q.app
 
 	name := "ShrinkToFit"
 	if len(value) > 0 {
@@ -1548,14 +1550,14 @@ func (wr *workRange) ShrinkToFit(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -1569,8 +1571,8 @@ func (wr *workRange) ShrinkToFit(value ...bool) bool {
 	return false
 }
 
-func (wr *workRange) ReadingOrder(value ...any) int32 {
-	xl := wr.app
+func (Q *workRange) ReadingOrder(value ...any) int32 {
+	xl := Q.app
 
 	name := "ReadingOrder"
 	if len(value) > 0 {
@@ -1587,7 +1589,7 @@ func (wr *workRange) ReadingOrder(value ...any) int32 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -1595,7 +1597,7 @@ func (wr *workRange) ReadingOrder(value ...any) int32 {
 	} else {
 		cmd := "Get"
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -1604,8 +1606,8 @@ func (wr *workRange) ReadingOrder(value ...any) int32 {
 	return 0
 }
 
-func (wr *workRange) MergeCells(value ...bool) bool {
-	xl := wr.app
+func (Q *workRange) MergeCells(value ...bool) bool {
+	xl := Q.app
 
 	name := "MergeCells"
 	if len(value) > 0 {
@@ -1613,14 +1615,14 @@ func (wr *workRange) MergeCells(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -1634,8 +1636,8 @@ func (wr *workRange) MergeCells(value ...bool) bool {
 	return false
 }
 
-func (wr *workRange) RowHeight(value ...float64) float64 {
-	xl := wr.app
+func (Q *workRange) RowHeight(value ...float64) float64 {
+	xl := Q.app
 
 	name := "RowHeight"
 	if len(value) > 0 {
@@ -1643,14 +1645,14 @@ func (wr *workRange) RowHeight(value ...float64) float64 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -1664,8 +1666,8 @@ func (wr *workRange) RowHeight(value ...float64) float64 {
 	return 0
 }
 
-func (wr *workRange) ColumnWidth(value ...float64) float64 {
-	xl := wr.app
+func (Q *workRange) ColumnWidth(value ...float64) float64 {
+	xl := Q.app
 
 	name := "ColumnWidth"
 	if len(value) > 0 {
@@ -1673,14 +1675,14 @@ func (wr *workRange) ColumnWidth(value ...float64) float64 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -1694,12 +1696,12 @@ func (wr *workRange) ColumnWidth(value ...float64) float64 {
 	return 0
 }
 
-func (wr *workRange) Left() float64 {
-	xl := wr.app
+func (Q *workRange) Left() float64 {
+	xl := Q.app
 
 	name := "Left"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -1712,12 +1714,12 @@ func (wr *workRange) Left() float64 {
 	return 0
 }
 
-func (wr *workRange) Top() float64 {
-	xl := wr.app
+func (Q *workRange) Top() float64 {
+	xl := Q.app
 
 	name := "Top"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -1730,12 +1732,12 @@ func (wr *workRange) Top() float64 {
 	return 0
 }
 
-func (wr *workRange) Height() float64 {
-	xl := wr.app
+func (Q *workRange) Height() float64 {
+	xl := Q.app
 
 	name := "Height"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -1748,12 +1750,12 @@ func (wr *workRange) Height() float64 {
 	return 0
 }
 
-func (wr *workRange) Width() float64 {
-	xl := wr.app
+func (Q *workRange) Width() float64 {
+	xl := Q.app
 
 	name := "Width"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -1766,13 +1768,13 @@ func (wr *workRange) Width() float64 {
 	return 0
 }
 
-func (wr *workRange) AutoFit() error {
-	xl := wr.app
+func (Q *workRange) AutoFit() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "AutoFit"
 
-	_, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}

@@ -13,15 +13,15 @@ type workFont struct {
 	num    int
 }
 
-func (wr *workRange) Font() *workFont {
-	var wf workFont
-	xl := wr.app
+func (Q *workRange) Font() *workFont {
+	var body workFont
+	xl := Q.app
 
 	name := "Font"
-	core, num := xl.cores.FindAdd(name, wr.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -36,21 +36,21 @@ func (wr *workRange) Font() *workFont {
 			}
 		}
 	}
-	wf.app = xl
-	wf.num = num
-	wf.parent = wr
-	return &wf
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ch *workChar) Font() *workFont {
-	var wf workFont
-	xl := ch.app
+func (Q *workChar) Font() *workFont {
+	var body workFont
+	xl := Q.app
 
 	name := "Font"
-	core, num := xl.cores.FindAdd(name, ch.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ch.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -65,21 +65,21 @@ func (ch *workChar) Font() *workFont {
 			}
 		}
 	}
-	wf.app = xl
-	wf.num = num
-	wf.parent = ch
-	return &wf
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wt *workTitle) Font() *workFont {
-	var wf workFont
-	xl := wt.app
+func (Q *workTitle) Font() *workFont {
+	var body workFont
+	xl := Q.app
 
 	name := "Font"
-	core, num := xl.cores.FindAdd(name, wt.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wt.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -94,21 +94,21 @@ func (wt *workTitle) Font() *workFont {
 			}
 		}
 	}
-	wf.app = xl
-	wf.num = num
-	wf.parent = wt
-	return &wf
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (tr *workTextRange) Font() *workFont {
-	var wf workFont
-	xl := tr.app
+func (Q *workTextRange) Font() *workFont {
+	var body workFont
+	xl := Q.app
 
 	name := "Font"
-	core, num := xl.cores.FindAdd(name, tr.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -123,42 +123,42 @@ func (tr *workTextRange) Font() *workFont {
 			}
 		}
 	}
-	wf.app = xl
-	wf.num = num
-	wf.parent = tr
-	return &wf
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wf *workFont) Release() error {
-	xl := wf.app
-	return xl.cores.Release(wf.num, false)
+func (Q *workFont) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (wf *workFont) Nothing() error {
-	xl := wf.app
-	xl.cores.releaseChild(wf.num)
+func (Q *workFont) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wf.num)
-	err := wf.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wf.num)
-	wf = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wf *workFont) Set() (*workFont, error) {
-	if wf == nil {
+func (Q *workFont) Set() (*workFont, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := wf.app
-	xl.cores.Lock(wf.num)
-	return wf, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (wf *workFont) Name(value ...string) string {
-	xl := wf.app
+func (Q *workFont) Name(value ...string) string {
+	xl := Q.app
 
 	name := "Name"
 	if len(value) > 0 {
@@ -166,14 +166,14 @@ func (wf *workFont) Name(value ...string) string {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -187,8 +187,8 @@ func (wf *workFont) Name(value ...string) string {
 	return ""
 }
 
-func (wf *workFont) Bold(value ...bool) bool {
-	xl := wf.app
+func (Q *workFont) Bold(value ...bool) bool {
+	xl := Q.app
 
 	name := "Bold"
 	if len(value) > 0 {
@@ -196,14 +196,14 @@ func (wf *workFont) Bold(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -217,8 +217,8 @@ func (wf *workFont) Bold(value ...bool) bool {
 	return false
 }
 
-func (wf *workFont) Italic(value ...bool) bool {
-	xl := wf.app
+func (Q *workFont) Italic(value ...bool) bool {
+	xl := Q.app
 
 	name := "Italic"
 	if len(value) > 0 {
@@ -226,14 +226,14 @@ func (wf *workFont) Italic(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -247,8 +247,8 @@ func (wf *workFont) Italic(value ...bool) bool {
 	return false
 }
 
-func (wf *workFont) Size(value ...float64) float64 {
-	xl := wf.app
+func (Q *workFont) Size(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Size"
 	if len(value) > 0 {
@@ -256,14 +256,14 @@ func (wf *workFont) Size(value ...float64) float64 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -277,8 +277,8 @@ func (wf *workFont) Size(value ...float64) float64 {
 	return 0
 }
 
-func (wf *workFont) Strikethrough(value ...bool) bool {
-	xl := wf.app
+func (Q *workFont) Strikethrough(value ...bool) bool {
+	xl := Q.app
 
 	name := "Strikethrough"
 	if len(value) > 0 {
@@ -286,14 +286,14 @@ func (wf *workFont) Strikethrough(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -307,8 +307,8 @@ func (wf *workFont) Strikethrough(value ...bool) bool {
 	return false
 }
 
-func (wf *workFont) Superscript(value ...bool) bool {
-	xl := wf.app
+func (Q *workFont) Superscript(value ...bool) bool {
+	xl := Q.app
 
 	name := "Superscript"
 	if len(value) > 0 {
@@ -316,14 +316,14 @@ func (wf *workFont) Superscript(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -337,8 +337,8 @@ func (wf *workFont) Superscript(value ...bool) bool {
 	return false
 }
 
-func (wf *workFont) Subscript(value ...bool) bool {
-	xl := wf.app
+func (Q *workFont) Subscript(value ...bool) bool {
+	xl := Q.app
 
 	name := "Subscript"
 	if len(value) > 0 {
@@ -346,14 +346,14 @@ func (wf *workFont) Subscript(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -367,8 +367,8 @@ func (wf *workFont) Subscript(value ...bool) bool {
 	return false
 }
 
-func (wf *workFont) OutlineFont(value ...bool) bool {
-	xl := wf.app
+func (Q *workFont) OutlineFont(value ...bool) bool {
+	xl := Q.app
 
 	name := "OutlineFont"
 	if len(value) > 0 {
@@ -376,14 +376,14 @@ func (wf *workFont) OutlineFont(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -397,8 +397,8 @@ func (wf *workFont) OutlineFont(value ...bool) bool {
 	return false
 }
 
-func (wf *workFont) Shadow(value ...bool) bool {
-	xl := wf.app
+func (Q *workFont) Shadow(value ...bool) bool {
+	xl := Q.app
 
 	name := "Shadow"
 	if len(value) > 0 {
@@ -406,14 +406,14 @@ func (wf *workFont) Shadow(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value)
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -427,8 +427,8 @@ func (wf *workFont) Shadow(value ...bool) bool {
 	return false
 }
 
-func (wf *workFont) Underline(value ...any) int32 {
-	xl := wf.app
+func (Q *workFont) Underline(value ...any) int32 {
+	xl := Q.app
 
 	name := "Underline"
 	if len(value) > 0 {
@@ -445,14 +445,14 @@ func (wf *workFont) Underline(value ...any) int32 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0

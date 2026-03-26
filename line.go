@@ -12,15 +12,15 @@ type workLine struct {
 	num    int
 }
 
-func (sp *workShape) Line() *workLine {
-	var wl workLine
-	xl := sp.app
+func (Q *workShape) Line() *workLine {
+	var body workLine
+	xl := Q.app
 
 	name := "Line"
-	core, num := xl.cores.FindAdd(name, sp.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -35,21 +35,21 @@ func (sp *workShape) Line() *workLine {
 			}
 		}
 	}
-	wl.app = xl
-	wl.num = num
-	wl.parent = sp
-	return &wl
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wf *workFormat) Line() *workLine {
-	var wl workLine
-	xl := wf.app
+func (Q *workFormat) Line() *workLine {
+	var body workLine
+	xl := Q.app
 
 	name := "Line"
-	core, num := xl.cores.FindAdd(name, wf.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -64,33 +64,33 @@ func (wf *workFormat) Line() *workLine {
 			}
 		}
 	}
-	wl.app = xl
-	wl.num = num
-	wl.parent = wf
-	return &wl
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wl *workLine) Release() error {
-	xl := wl.app
-	return xl.cores.Release(wl.num, false)
+func (Q *workLine) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (wl *workLine) Nothing() error {
-	xl := wl.app
-	xl.cores.releaseChild(wl.num)
+func (Q *workLine) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wl.num)
-	err := wl.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wl.num)
-	wl = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wl *workLine) Weight(value ...float64) float64 {
-	xl := wl.app
+func (Q *workLine) Weight(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Weight"
 	if len(value) > 0 {
@@ -98,14 +98,14 @@ func (wl *workLine) Weight(value ...float64) float64 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wl.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wl.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -119,8 +119,8 @@ func (wl *workLine) Weight(value ...float64) float64 {
 	return 0
 }
 
-func (wl *workLine) Visible(value ...bool) bool {
-	xl := wl.app
+func (Q *workLine) Visible(value ...bool) bool {
+	xl := Q.app
 
 	name := "Visible"
 	if len(value) > 0 {
@@ -128,14 +128,14 @@ func (wl *workLine) Visible(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wl.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wl.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false

@@ -33,15 +33,15 @@ func getBook(ws *workSheet) *workBook {
 	return wb
 }
 
-func (wb *workBook) Worksheets() *workSheets {
-	var wss workSheets
-	xl := wb.app
+func (Q *workBook) Worksheets() *workSheets {
+	var body workSheets
+	xl := Q.app
 
 	name := "Worksheets"
-	core, num := xl.cores.FindAdd(name, wb.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -56,18 +56,18 @@ func (wb *workBook) Worksheets() *workSheets {
 			}
 		}
 	}
-	wss.app = xl
-	wss.num = num
-	wss.parent = wb
-	return &wss
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wb *workBook) Worksheetz(value any) *workSheet {
-	var ws workSheet
-	xl := wb.app
+func (Q *workBook) Worksheetz(value any) *workSheet {
+	var body workSheet
+	xl := Q.app
 
 	kind := "Worksheet"
-	core, num := xl.cores.FindAdd(kind, wb.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Worksheets"
@@ -85,7 +85,7 @@ func (wb *workBook) Worksheetz(value any) *workSheet {
 			opt = append(opt, x)
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, wb.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -100,14 +100,15 @@ func (wb *workBook) Worksheetz(value any) *workSheet {
 			}
 		}
 	}
-	ws.app = xl
-	ws.num = num
-	ws.parent = wb
-	return &ws
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (xl *Excel) ActiveSheet() *workSheet {
-	var ws workSheet
+func (Q *Excel) ActiveSheet() *workSheet {
+	var body workSheet
+	xl := Q
 	wb := xl.ActiveWorkbook()
 
 	kind := "Worksheet"
@@ -130,54 +131,53 @@ func (xl *Excel) ActiveSheet() *workSheet {
 			}
 		}
 	}
-	ws.app = xl
-	ws.num = num
-	ws.parent = wb
+	body.app = xl
+	body.num = num
+	body.parent = wb
 	wb.Release()
-	return &ws
+	return &body
 }
 
-func (wss *workSheets) Release() error {
-	xl := wss.app
-	return xl.cores.Release(wss.num, false)
+func (Q *workSheets) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (wss *workSheets) Nothing() error {
-	xl := wss.app
-	xl.cores.releaseChild(wss.num)
+func (Q *workSheets) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wss.num)
-	err := wss.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wss.num)
-	wss = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wss *workSheets) Count() int32 {
-	var result int32
-	xl := wss.app
+func (Q *workSheets) Count() int32 {
+	xl := Q.app
 
 	cmd := "Get"
 	name := "Count"
-	ans, err := xl.cores.SendNum(cmd, name, wss.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
-		return result
+		return 0
 	}
 
 	switch x := ans.(type) {
 	case int32:
-		result = x
+		return x
 	}
-	return result
+	return 0
 }
 
-func (wss *workSheets) Add(value ...any) *workSheet {
-	var ws workSheet
-	xl := wss.app
+func (Q *workSheets) Add(value ...any) *workSheet {
+	var body workSheet
+	xl := Q.app
 	wb := xl.ActiveWorkbook()
 
 	kind := "Worksheet"
@@ -202,7 +202,7 @@ func (wss *workSheets) Add(value ...any) *workSheet {
 			opt = append(opt, nil)
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, wss.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -217,52 +217,52 @@ func (wss *workSheets) Add(value ...any) *workSheet {
 			}
 		}
 	}
-	ws.app = xl
-	ws.num = num
-	ws.parent = wb
-	return &ws
+	body.app = xl
+	body.num = num
+	body.parent = wb
+	return &body
 }
 
-func (wss *workSheets) Set() (*workSheets, error) {
-	if wss == nil {
+func (Q *workSheets) Set() (*workSheets, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := wss.app
-	xl.cores.Lock(wss.num)
-	return wss, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (ws *workSheet) Release() error {
-	xl := ws.app
-	xl.cores.Release(ws.num, true)
+func (Q *workSheet) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, true)
 	return nil
 }
 
-func (ws *workSheet) Set() (*workSheet, error) {
-	if ws == nil {
+func (Q *workSheet) Set() (*workSheet, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := ws.app
-	xl.cores.Lock(ws.num)
-	return ws, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (ws *workSheet) Nothing() error {
-	xl := ws.app
-	xl.cores.releaseChild(ws.num)
+func (Q *workSheet) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(ws.num)
-	err := ws.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(ws.num)
-	ws = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (ws *workSheet) Name(value ...any) string {
-	xl := ws.app
+func (Q *workSheet) Name(value ...any) string {
+	xl := Q.app
 
 	name := "Name"
 	if len(value) > 0 {
@@ -273,14 +273,14 @@ func (ws *workSheet) Name(value ...any) string {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -293,41 +293,41 @@ func (ws *workSheet) Name(value ...any) string {
 	return ""
 }
 
-func (ws *workSheet) Activate() error {
-	xl := ws.app
+func (Q *workSheet) Activate() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Activate"
 
-	_, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ws *workSheet) Select() error {
-	xl := ws.app
+func (Q *workSheet) Select() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ws *workSheet) Parent() *workBook {
-	wb := getBook(ws)
-	xl := ws.app
+func (Q *workSheet) Parent() *workBook {
+	wb := getBook(Q)
+	xl := Q.app
 
 	core := xl.cores.getCore(wb.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Parent"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -345,13 +345,13 @@ func (ws *workSheet) Parent() *workBook {
 	return wb
 }
 
-func (ws *workSheet) Copy(value ...any) *workSheet {
-	var xs workSheet
-	xl := ws.app
-	wb := getBook(ws)
+func (Q *workSheet) Copy(value ...any) *workSheet {
+	var body workSheet
+	xl := Q.app
+	wb := getBook(Q)
 	_wb := xl.cores.getCore(wb.num)
 	if _wb.disp == nil {
-		ws.Parent()
+		Q.Parent()
 	}
 
 	kind := "Worksheet"
@@ -375,7 +375,7 @@ func (ws *workSheet) Copy(value ...any) *workSheet {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -390,25 +390,25 @@ func (ws *workSheet) Copy(value ...any) *workSheet {
 			}
 		}
 	}
-	xs.app = xl
-	xs.num = num
+	body.app = xl
+	body.num = num
 	if len(value) > 0 {
-		xs.parent = wb
+		body.parent = wb
 	} else {
 		wb := xl.ActiveWorkbook()
-		xs.parent = wb
+		body.parent = wb
 		core.parent = wb.num
 	}
-	return &xs
+	return &body
 }
 
-func (ws *workSheet) Move(value ...any) *workSheet {
-	var xs workSheet
-	xl := ws.app
-	wb := getBook(ws)
+func (Q *workSheet) Move(value ...any) *workSheet {
+	var body workSheet
+	xl := Q.app
+	wb := getBook(Q)
 	_wb := xl.cores.getCore(wb.num)
 	if _wb.disp == nil {
-		ws.Parent()
+		Q.Parent()
 	}
 
 	kind := "Worksheet"
@@ -432,7 +432,7 @@ func (ws *workSheet) Move(value ...any) *workSheet {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -447,46 +447,46 @@ func (ws *workSheet) Move(value ...any) *workSheet {
 			}
 		}
 	}
-	xs.app = xl
-	xs.num = num
+	body.app = xl
+	body.num = num
 	if len(value) > 0 {
-		xs.parent = wb
+		body.parent = wb
 	} else {
 		wb := xl.ActiveWorkbook()
-		xs.parent = wb
+		body.parent = wb
 		core.parent = wb.num
 	}
-	return &xs
+	return &body
 }
 
-func (ws *workSheet) Delete() error {
-	xl := ws.app
+func (Q *workSheet) Delete() error {
+	xl := Q.app
 	cmd := "Method"
 	name := "Delete"
 
-	_, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) cmd:%v name:%v ", cmd, name)
 	}
 	return nil
 }
 
-func (ws *workSheet) Visible(value bool) error {
-	xl := ws.app
+func (Q *workSheet) Visible(value bool) error {
+	xl := Q.app
 	cmd := "Put"
 	name := "Visible"
 	var opt []any
 	opt = append(opt, value)
 
-	_, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 	}
 	return nil
 }
 
-func (ws *workSheet) Paste(option ...any) bool {
-	xl := ws.app
+func (Q *workSheet) Paste(option ...any) bool {
+	xl := Q.app
 
 	//Destination *workRange, Link bool
 
@@ -512,7 +512,7 @@ func (ws *workSheet) Paste(option ...any) bool {
 		opt = nil
 	}
 
-	ans, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		return false
 	}

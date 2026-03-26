@@ -12,15 +12,15 @@ type workColor struct {
 	num    int
 }
 
-func (wl *workFill) ForeColor() *workColor {
-	var wc workColor
-	xl := wl.app
+func (Q *workFill) ForeColor() *workColor {
+	var body workColor
+	xl := Q.app
 
 	name := "ForeColor"
-	core, num := xl.cores.FindAdd(name, wl.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wl.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -35,21 +35,21 @@ func (wl *workFill) ForeColor() *workColor {
 			}
 		}
 	}
-	wc.app = xl
-	wc.num = num
-	wc.parent = wl
-	return &wc
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wl *workFill) BackColor() *workColor {
-	var wc workColor
-	xl := wl.app
+func (Q *workFill) BackColor() *workColor {
+	var body workColor
+	xl := Q.app
 
 	name := "BackColor"
-	core, num := xl.cores.FindAdd(name, wl.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wl.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -64,21 +64,21 @@ func (wl *workFill) BackColor() *workColor {
 			}
 		}
 	}
-	wc.app = xl
-	wc.num = num
-	wc.parent = wl
-	return &wc
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wl *workLine) ForeColor() *workColor {
-	var wc workColor
-	xl := wl.app
+func (Q *workLine) ForeColor() *workColor {
+	var body workColor
+	xl := Q.app
 
 	name := "ForeColor"
-	core, num := xl.cores.FindAdd(name, wl.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wl.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -93,33 +93,33 @@ func (wl *workLine) ForeColor() *workColor {
 			}
 		}
 	}
-	wc.app = xl
-	wc.num = num
-	wc.parent = wl
-	return &wc
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wc *workColor) Release() error {
-	xl := wc.app
-	return xl.cores.Release(wc.num, false)
+func (Q *workColor) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (wc *workColor) Nothing() error {
-	xl := wc.app
-	xl.cores.releaseChild(wc.num)
+func (Q *workColor) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wc.num)
-	err := wc.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wc.num)
-	wc = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wc *workColor) RGB(value ...any) float64 {
-	xl := wc.app
+func (Q *workColor) RGB(value ...any) float64 {
+	xl := Q.app
 
 	name := "RGB"
 	if len(value) > 0 {
@@ -134,14 +134,14 @@ func (wc *workColor) RGB(value ...any) float64 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, wc.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wc.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -154,8 +154,8 @@ func (wc *workColor) RGB(value ...any) float64 {
 	return 0
 }
 
-func (wc *workColor) Brightness(value ...float64) float64 {
-	xl := wc.app
+func (Q *workColor) Brightness(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Brightness"
 	if len(value) > 0 {
@@ -163,14 +163,14 @@ func (wc *workColor) Brightness(value ...float64) float64 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wc.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wc.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -184,8 +184,8 @@ func (wc *workColor) Brightness(value ...float64) float64 {
 }
 
 // Range().Font().Color()
-func (wf *workFont) ColorIndex(value ...int32) int32 {
-	xl := wf.app
+func (Q *workFont) ColorIndex(value ...int32) int32 {
+	xl := Q.app
 
 	name := "ColorIndex"
 	if len(value) > 0 {
@@ -193,14 +193,14 @@ func (wf *workFont) ColorIndex(value ...int32) int32 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -213,8 +213,8 @@ func (wf *workFont) ColorIndex(value ...int32) int32 {
 	return 0
 }
 
-func (wf *workFont) Color(value ...any) float64 {
-	xl := wf.app
+func (Q *workFont) Color(value ...any) float64 {
+	xl := Q.app
 
 	name := "Color"
 	if len(value) > 0 {
@@ -229,14 +229,14 @@ func (wf *workFont) Color(value ...any) float64 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -250,8 +250,8 @@ func (wf *workFont) Color(value ...any) float64 {
 }
 
 // Range().Interior().Color()
-func (wi *workInterior) ColorIndex(value ...int32) int32 {
-	xl := wi.app
+func (Q *workInterior) ColorIndex(value ...int32) int32 {
+	xl := Q.app
 
 	name := "ColorIndex"
 	if len(value) > 0 {
@@ -259,14 +259,14 @@ func (wi *workInterior) ColorIndex(value ...int32) int32 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wi.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wi.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -279,8 +279,8 @@ func (wi *workInterior) ColorIndex(value ...int32) int32 {
 	return 0
 }
 
-func (wi *workInterior) Color(value ...any) float64 {
-	xl := wi.app
+func (Q *workInterior) Color(value ...any) float64 {
+	xl := Q.app
 
 	name := "Color"
 	if len(value) > 0 {
@@ -295,14 +295,14 @@ func (wi *workInterior) Color(value ...any) float64 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, wi.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wi.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -316,8 +316,8 @@ func (wi *workInterior) Color(value ...any) float64 {
 }
 
 // Range().Border().Color()
-func (br *workBorder) ColorIndex(value ...int32) int32 {
-	xl := br.app
+func (Q *workBorder) ColorIndex(value ...int32) int32 {
+	xl := Q.app
 
 	name := "ColorIndex"
 	if len(value) > 0 {
@@ -325,14 +325,14 @@ func (br *workBorder) ColorIndex(value ...int32) int32 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, br.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, br.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -345,8 +345,8 @@ func (br *workBorder) ColorIndex(value ...int32) int32 {
 	return 0
 }
 
-func (br *workBorder) Color(value ...any) float64 {
-	xl := br.app
+func (Q *workBorder) Color(value ...any) float64 {
+	xl := Q.app
 
 	name := "Color"
 	if len(value) > 0 {
@@ -361,14 +361,14 @@ func (br *workBorder) Color(value ...any) float64 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, br.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, br.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -382,8 +382,8 @@ func (br *workBorder) Color(value ...any) float64 {
 }
 
 // Shape().Color()
-func (sp *workShape) ColorIndex(value ...int32) int32 {
-	xl := sp.app
+func (Q *workShape) ColorIndex(value ...int32) int32 {
+	xl := Q.app
 
 	name := "ColorIndex"
 	if len(value) > 0 {
@@ -391,14 +391,14 @@ func (sp *workShape) ColorIndex(value ...int32) int32 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, sp.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -411,8 +411,8 @@ func (sp *workShape) ColorIndex(value ...int32) int32 {
 	return 0
 }
 
-func (sp *workShape) Color(value ...any) float64 {
-	xl := sp.app
+func (Q *workShape) Color(value ...any) float64 {
+	xl := Q.app
 
 	name := "Color"
 	if len(value) > 0 {
@@ -427,14 +427,14 @@ func (sp *workShape) Color(value ...any) float64 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, sp.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0

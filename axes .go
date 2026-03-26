@@ -13,9 +13,9 @@ type workAxes struct {
 	num    int
 }
 
-func (ct *workChart) HasAxis(AxisType any, AxisGroup any, value ...any) bool {
+func (Q *workChart) HasAxis(AxisType any, AxisGroup any, value ...any) bool {
 	var opt []any
-	xl := ct.app
+	xl := Q.app
 
 	var z int32
 	// set AxisType
@@ -47,13 +47,13 @@ func (ct *workChart) HasAxis(AxisType any, AxisGroup any, value ...any) bool {
 		// HasAxis
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
@@ -66,12 +66,12 @@ func (ct *workChart) HasAxis(AxisType any, AxisGroup any, value ...any) bool {
 	return false
 }
 
-func (ct *workChart) Axes(value ...any) *workAxes {
-	var ax workAxes
-	xl := ct.app
+func (Q *workChart) Axes(value ...any) *workAxes {
+	var body workAxes
+	xl := Q.app
 
 	name := "Axes"
-	core, num := xl.cores.FindAdd(name, ct.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		var opt []any
@@ -102,7 +102,7 @@ func (ct *workChart) Axes(value ...any) *workAxes {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -117,57 +117,57 @@ func (ct *workChart) Axes(value ...any) *workAxes {
 			}
 		}
 	}
-	ax.app = xl
-	ax.num = num
-	ax.parent = ct
-	return &ax
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ax *workAxes) Release() error {
-	xl := ax.app
-	xl.cores.Release(ax.num, false)
+func (Q *workAxes) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, false)
 	return nil
 }
 
-func (ax *workAxes) Nothing() error {
-	xl := ax.app
-	xl.cores.releaseChild(ax.num)
+func (Q *workAxes) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(ax.num)
-	err := ax.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(ax.num)
-	ax = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (ax *workAxes) Set() (*workAxes, error) {
-	if ax == nil {
+func (Q *workAxes) Set() (*workAxes, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := ax.app
-	xl.cores.Lock(ax.num)
-	return ax, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (ax *workAxes) Select() error {
-	xl := ax.app
+func (Q *workAxes) Select() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ax *workAxes) HasMajorGridlines(value ...bool) bool {
+func (Q *workAxes) HasMajorGridlines(value ...bool) bool {
 	var opt []any
-	xl := ax.app
+	xl := Q.app
 
 	name := "HasMajorGridlines"
 	if len(value) > 0 {
@@ -175,13 +175,13 @@ func (ax *workAxes) HasMajorGridlines(value ...bool) bool {
 		cmd := "Put"
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ax.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
@@ -194,9 +194,9 @@ func (ax *workAxes) HasMajorGridlines(value ...bool) bool {
 	return false
 }
 
-func (ax *workAxes) HasMinorGridlines(value ...bool) bool {
+func (Q *workAxes) HasMinorGridlines(value ...bool) bool {
 	var opt []any
-	xl := ax.app
+	xl := Q.app
 
 	name := "HasMinorGridlines"
 	if len(value) > 0 {
@@ -204,13 +204,13 @@ func (ax *workAxes) HasMinorGridlines(value ...bool) bool {
 		cmd := "Put"
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ax.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
@@ -223,9 +223,9 @@ func (ax *workAxes) HasMinorGridlines(value ...bool) bool {
 	return false
 }
 
-func (ax *workAxes) HasTitle(value ...bool) bool {
+func (Q *workAxes) HasTitle(value ...bool) bool {
 	var opt []any
-	xl := ax.app
+	xl := Q.app
 
 	name := "HasTitle"
 	if len(value) > 0 {
@@ -233,13 +233,13 @@ func (ax *workAxes) HasTitle(value ...bool) bool {
 		cmd := "Put"
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ax.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
@@ -252,9 +252,9 @@ func (ax *workAxes) HasTitle(value ...bool) bool {
 	return false
 }
 
-func (ax *workAxes) TickLabelPosition(value ...any) int32 {
+func (Q *workAxes) TickLabelPosition(value ...any) int32 {
 	var opt []any
-	xl := ax.app
+	xl := Q.app
 
 	name := "TickLabelPosition"
 	if len(value) > 0 {
@@ -272,13 +272,13 @@ func (ax *workAxes) TickLabelPosition(value ...any) int32 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, ax.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
@@ -290,16 +290,16 @@ func (ax *workAxes) TickLabelPosition(value ...any) int32 {
 	return 0
 }
 
-func (ax *workAxes) AxisTitle() *workTitle {
-	var wt workTitle
-	xl := ax.app
+func (Q *workAxes) AxisTitle() *workTitle {
+	var body workTitle
+	xl := Q.app
 
 	kind := "AxisTitle"
-	core, num := xl.cores.FindAdd(kind, ax.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "AxisTitle"
-		ans, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -314,28 +314,28 @@ func (ax *workAxes) AxisTitle() *workTitle {
 			}
 		}
 	}
-	wt.app = xl
-	wt.num = num
-	wt.parent = ax
-	return &wt
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ax *workAxes) MinimumScale(value ...float64) float64 {
+func (Q *workAxes) MinimumScale(value ...float64) float64 {
 	var opt []any
-	xl := ax.app
+	xl := Q.app
 
 	name := "MinimumScale"
 	if len(value) > 0 {
 		cmd := "Put"
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ax.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
@@ -348,22 +348,22 @@ func (ax *workAxes) MinimumScale(value ...float64) float64 {
 	return 0
 }
 
-func (ax *workAxes) MaximumScale(value ...float64) float64 {
+func (Q *workAxes) MaximumScale(value ...float64) float64 {
 	var opt []any
-	xl := ax.app
+	xl := Q.app
 
 	name := "MaximumScale"
 	if len(value) > 0 {
 		cmd := "Put"
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ax.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
@@ -376,22 +376,22 @@ func (ax *workAxes) MaximumScale(value ...float64) float64 {
 	return 0
 }
 
-func (ax *workAxes) MinimumScaleIsAuto(value ...bool) bool {
+func (Q *workAxes) MinimumScaleIsAuto(value ...bool) bool {
 	var opt []any
-	xl := ax.app
+	xl := Q.app
 
 	name := "MinimumScaleIsAuto"
 	if len(value) > 0 {
 		cmd := "Put"
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ax.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
@@ -404,22 +404,22 @@ func (ax *workAxes) MinimumScaleIsAuto(value ...bool) bool {
 	return false
 }
 
-func (ax *workAxes) MaximumScaleIsAuto(value ...bool) bool {
+func (Q *workAxes) MaximumScaleIsAuto(value ...bool) bool {
 	var opt []any
-	xl := ax.app
+	xl := Q.app
 
 	name := "MaximumScaleIsAuto"
 	if len(value) > 0 {
 		cmd := "Put"
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ax.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ax.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}

@@ -25,16 +25,16 @@ type workChart struct {
 	num    int
 }
 
-func (co *chartObject) Chart() *workChart {
-	var ct workChart
-	xl := co.app
+func (Q *chartObject) Chart() *workChart {
+	var body workChart
+	xl := Q.app
 
 	kind := "Chart"
-	core, num := xl.cores.FindAdd(kind, co.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Chart"
-		ans, err := xl.cores.SendNum(cmd, name, co.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -49,43 +49,43 @@ func (co *chartObject) Chart() *workChart {
 			}
 		}
 	}
-	ct.app = xl
-	ct.num = num
-	ct.parent = co
-	return &ct
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ct *workChart) Release() error {
-	xl := ct.app
-	xl.cores.Release(ct.num, false)
+func (Q *workChart) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, false)
 	return nil
 }
 
-func (ct *workChart) Nothing() error {
-	xl := ct.app
-	xl.cores.releaseChild(ct.num)
+func (Q *workChart) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(ct.num)
-	err := ct.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(ct.num)
-	ct = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (ct *workChart) Set() (*workChart, error) {
-	if ct == nil {
+func (Q *workChart) Set() (*workChart, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := ct.app
-	xl.cores.Lock(ct.num)
-	return ct, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (ct *workChart) SetSourceData(Source *workRange, RowCol ...any) error {
-	xl := ct.app
+func (Q *workChart) SetSourceData(Source *workRange, RowCol ...any) error {
+	xl := Q.app
 
 	name := "SetSourceData"
 	cmd := "Method"
@@ -109,7 +109,7 @@ func (ct *workChart) SetSourceData(Source *workRange, RowCol ...any) error {
 	}
 	opt = append(opt, z)
 
-	_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return err
@@ -119,7 +119,7 @@ func (ct *workChart) SetSourceData(Source *workRange, RowCol ...any) error {
 }
 
 func (xl *Excel) ActiveChart() *workChart {
-	var ct workChart
+	var body workChart
 	ws := xl.ActiveSheet()
 
 	kind := "Chart"
@@ -142,42 +142,42 @@ func (xl *Excel) ActiveChart() *workChart {
 			}
 		}
 	}
-	ct.app = xl
-	ct.num = num
-	ct.parent = ws
+	body.app = xl
+	body.num = num
+	body.parent = ws
 	ws.Release()
-	return &ct
+	return &body
 }
 
-func (ct *workChart) Select() error {
-	xl := ct.app
+func (Q *workChart) Select() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ct *workChart) HasTitle(value ...bool) bool {
-	xl := ct.app
+func (Q *workChart) HasTitle(value ...bool) bool {
+	xl := Q.app
 
 	name := "HasTitle"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
 		opt = append(opt, value[0])
-		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -190,22 +190,22 @@ func (ct *workChart) HasTitle(value ...bool) bool {
 	return false
 }
 
-func (ct *workChart) HasLegend(value ...bool) bool {
-	xl := ct.app
+func (Q *workChart) HasLegend(value ...bool) bool {
+	xl := Q.app
 
 	name := "HasLegend"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
 		opt = append(opt, value[0])
-		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -218,16 +218,16 @@ func (ct *workChart) HasLegend(value ...bool) bool {
 	return false
 }
 
-func (ct *workChart) Parent() *chartObject {
-	var co chartObject
-	xl := ct.app
+func (Q *workChart) Parent() *chartObject {
+	var body chartObject
+	xl := Q.app
 
 	kind := "Chart"
-	core, num := xl.cores.FindAdd(kind, ct.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Parent"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -242,14 +242,14 @@ func (ct *workChart) Parent() *chartObject {
 			}
 		}
 	}
-	co.app = xl
-	co.num = num
-	co.parent = ct
-	return &co
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ct *workChart) Position(value ...any) int32 {
-	xl := ct.app
+func (Q *workChart) Position(value ...any) int32 {
+	xl := Q.app
 
 	name := "Position"
 	if len(value) > 0 {
@@ -267,14 +267,14 @@ func (ct *workChart) Position(value ...any) int32 {
 		}
 		opt = append(opt, v)
 
-		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -287,8 +287,8 @@ func (ct *workChart) Position(value ...any) int32 {
 	return 0
 }
 
-func (ct *workChart) Name(value ...string) string {
-	xl := ct.app
+func (Q *workChart) Name(value ...string) string {
+	xl := Q.app
 
 	name := "Name"
 	if len(value) > 0 {
@@ -296,14 +296,14 @@ func (ct *workChart) Name(value ...string) string {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -316,8 +316,8 @@ func (ct *workChart) Name(value ...string) string {
 	return ""
 }
 
-func (ct *workChart) SetElement(value any) error {
-	xl := ct.app
+func (Q *workChart) SetElement(value any) error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "SetElement"
@@ -333,22 +333,22 @@ func (ct *workChart) SetElement(value any) error {
 	}
 	opt = append(opt, z)
 
-	_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ct *workChart) ChartGroups() *chartGroups {
-	var cgs chartGroups
-	xl := ct.app
+func (Q *workChart) ChartGroups() *chartGroups {
+	var body chartGroups
+	xl := Q.app
 
 	name := "ChartGroups"
-	core, num := xl.cores.FindAdd(name, ct.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -363,24 +363,24 @@ func (ct *workChart) ChartGroups() *chartGroups {
 			}
 		}
 	}
-	cgs.app = xl
-	cgs.num = num
-	cgs.parent = ct
-	return &cgs
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ct *workChart) ChartGroupz(value int32) *workChartGroup {
-	var cg workChartGroup
-	xl := ct.app
+func (Q *workChart) ChartGroupz(value int32) *workChartGroup {
+	var body workChartGroup
+	xl := Q.app
 
 	name := "ChartGroups"
-	core, num := xl.cores.FindAdd(name, ct.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		var opt []any
 		opt = append(opt, value)
 
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -395,14 +395,14 @@ func (ct *workChart) ChartGroupz(value int32) *workChartGroup {
 			}
 		}
 	}
-	cg.app = xl
-	cg.num = num
-	cg.parent = ct
-	return &cg
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ct *workChart) Location(value any, option ...string) error {
-	xl := ct.app
+func (Q *workChart) Location(value any, option ...string) error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Location"
@@ -422,15 +422,15 @@ func (ct *workChart) Location(value any, option ...string) error {
 		opt = append(opt, option[0])
 	}
 
-	_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ct *workChart) ChartType(value ...any) int32 {
-	xl := ct.app
+func (Q *workChart) ChartType(value ...any) int32 {
+	xl := Q.app
 
 	name := "ChartType"
 	if len(value) > 0 {
@@ -448,14 +448,14 @@ func (ct *workChart) ChartType(value ...any) int32 {
 		}
 		opt = append(opt, v)
 
-		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -468,8 +468,8 @@ func (ct *workChart) ChartType(value ...any) int32 {
 	return 0
 }
 
-func (ct *workChart) PlotBy(value ...any) int32 {
-	xl := ct.app
+func (Q *workChart) PlotBy(value ...any) int32 {
+	xl := Q.app
 
 	name := "PlotBy"
 	if len(value) > 0 {
@@ -487,14 +487,14 @@ func (ct *workChart) PlotBy(value ...any) int32 {
 		}
 		opt = append(opt, v)
 
-		_, err := xl.cores.SendNum(cmd, name, ct.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -507,12 +507,12 @@ func (ct *workChart) PlotBy(value ...any) int32 {
 	return 0
 }
 
-func (cgs *chartGroups) Count() int32 {
-	xl := cgs.app
+func (Q *chartGroups) Count() int32 {
+	xl := Q.app
 
 	name := "Count"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, cgs.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -524,13 +524,14 @@ func (cgs *chartGroups) Count() int32 {
 	return 0
 }
 
-func (cg *chartGroups) AxisGroup(value ...any) int32 {
-	xl := cg.app
+func (Q *chartGroups) AxisGroup(value ...any) int32 {
+	xl := Q.app
 
 	name := "AxisGroup"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
+
 		var z int32
 		switch x := value[0].(type) {
 		case int:
@@ -542,14 +543,14 @@ func (cg *chartGroups) AxisGroup(value ...any) int32 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, cg.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, cg.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0

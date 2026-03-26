@@ -12,12 +12,12 @@ type workChar struct {
 	num    int
 }
 
-func (wf *workFrame) Characterz(value ...any) *workChar {
-	var ch workChar
-	xl := wf.app
+func (Q *workFrame) Characterz(value ...any) *workChar {
+	var body workChar
+	xl := Q.app
 
 	name := "Characters"
-	core, num := xl.cores.FindAdd(name, wf.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		var opt []any
@@ -34,7 +34,7 @@ func (wf *workFrame) Characterz(value ...any) *workChar {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -49,21 +49,21 @@ func (wf *workFrame) Characterz(value ...any) *workChar {
 			}
 		}
 	}
-	ch.app = xl
-	ch.num = num
-	ch.parent = wf
-	return &ch
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wf *workFrame) Characters() *workChar {
-	var ch workChar
-	xl := wf.app
+func (Q *workFrame) Characters() *workChar {
+	var body workChar
+	xl := Q.app
 
 	name := "Characters"
-	core, num := xl.cores.FindAdd(name, wf.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -78,18 +78,18 @@ func (wf *workFrame) Characters() *workChar {
 			}
 		}
 	}
-	ch.app = xl
-	ch.num = num
-	ch.parent = wf
-	return &ch
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (tr *workTextRange) Characterz(value ...any) *workChar {
-	var ch workChar
-	xl := tr.app
+func (Q *workTextRange) Characterz(value ...any) *workChar {
+	var body workChar
+	xl := Q.app
 
 	name := "Characters"
-	core, num := xl.cores.FindAdd(name, tr.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		var opt []any
@@ -106,7 +106,7 @@ func (tr *workTextRange) Characterz(value ...any) *workChar {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, tr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -121,21 +121,21 @@ func (tr *workTextRange) Characterz(value ...any) *workChar {
 			}
 		}
 	}
-	ch.app = xl
-	ch.num = num
-	ch.parent = tr
-	return &ch
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (tr *workTextRange) Characters() *workChar {
-	var ch workChar
-	xl := tr.app
+func (Q *workTextRange) Characters() *workChar {
+	var body workChar
+	xl := Q.app
 
 	name := "Characters"
-	core, num := xl.cores.FindAdd(name, tr.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -150,47 +150,47 @@ func (tr *workTextRange) Characters() *workChar {
 			}
 		}
 	}
-	ch.app = xl
-	ch.num = num
-	ch.parent = tr
-	return &ch
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ch *workChar) Release() error {
-	xl := ch.app
-	return xl.cores.Release(ch.num, false)
+func (Q *workChar) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (ch *workChar) Nothing() error {
-	xl := ch.app
-	xl.cores.releaseChild(ch.num)
+func (Q *workChar) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(ch.num)
-	err := ch.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(ch.num)
-	ch = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (ch *workChar) Text(value ...string) string {
-	xl := ch.app
+func (Q *workChar) Text(value ...string) string {
+	xl := Q.app
 
 	name := "Text"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
 		opt = append(opt, value[0])
-		_, err := xl.cores.SendNum(cmd, name, ch.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ch.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -203,12 +203,12 @@ func (ch *workChar) Text(value ...string) string {
 	return ""
 }
 
-func (ch *workChar) Count() int32 {
-	xl := ch.app
+func (Q *workChar) Count() int32 {
+	xl := Q.app
 
 	name := "Count"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, ch.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -220,14 +220,14 @@ func (ch *workChar) Count() int32 {
 	return 0
 }
 
-func (ch *workChar) Insert(value string) error {
-	xl := ch.app
+func (Q *workChar) Insert(value string) error {
+	xl := Q.app
 
 	name := "Insert"
 	cmd := "Method"
 	var opt []any
 	opt = append(opt, value)
-	_, err := xl.cores.SendNum(cmd, name, ch.num, opt)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return err

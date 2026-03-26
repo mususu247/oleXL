@@ -18,15 +18,15 @@ type workTextRange struct {
 	num    int
 }
 
-func (wf *workFormat) TextFrame2() *workFrame2 {
-	var tf workFrame2
-	xl := wf.app
+func (Q *workFormat) TextFrame2() *workFrame2 {
+	var body workFrame2
+	xl := Q.app
 
 	name := "TextFrame2"
-	core, num := xl.cores.FindAdd(name, wf.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -41,21 +41,21 @@ func (wf *workFormat) TextFrame2() *workFrame2 {
 			}
 		}
 	}
-	tf.app = xl
-	tf.num = num
-	tf.parent = wf
-	return &tf
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (sp *workShape) TextFrame2() *workFrame2 {
-	var tf workFrame2
-	xl := sp.app
+func (Q *workShape) TextFrame2() *workFrame2 {
+	var body workFrame2
+	xl := Q.app
 
 	name := "TextFrame2"
-	core, num := xl.cores.FindAdd(name, sp.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -70,37 +70,37 @@ func (sp *workShape) TextFrame2() *workFrame2 {
 			}
 		}
 	}
-	tf.app = xl
-	tf.num = num
-	tf.parent = sp
-	return &tf
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wf *workFrame2) Release() error {
-	xl := wf.app
-	return xl.cores.Release(wf.num, false)
+func (Q *workFrame2) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (wf *workFrame2) Nothing() error {
-	xl := wf.app
-	xl.cores.releaseChild(wf.num)
+func (Q *workFrame2) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wf.num)
-	err := wf.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wf.num)
-	wf = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wf *workFrame2) HasText() bool {
-	xl := wf.app
+func (Q *workFrame2) HasText() bool {
+	xl := Q.app
 
 	name := "HasText"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return false
@@ -112,12 +112,12 @@ func (wf *workFrame2) HasText() bool {
 	return false
 }
 
-func (wf *workFrame2) DeleteText() bool {
-	xl := wf.app
+func (Q *workFrame2) DeleteText() bool {
+	xl := Q.app
 
 	name := "DeleteText"
 	cmd := "Method"
-	ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return false
@@ -129,22 +129,22 @@ func (wf *workFrame2) DeleteText() bool {
 	return false
 }
 
-func (wf *workFrame2) MarginBottom(value ...int32) int32 {
-	xl := wf.app
+func (Q *workFrame2) MarginBottom(value ...int32) int32 {
+	xl := Q.app
 
 	name := "MarginBottom"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
 		opt = append(opt, value[0])
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -157,22 +157,22 @@ func (wf *workFrame2) MarginBottom(value ...int32) int32 {
 	return 0
 }
 
-func (wf *workFrame2) MarginLeft(value ...int32) int32 {
-	xl := wf.app
+func (Q *workFrame2) MarginLeft(value ...int32) int32 {
+	xl := Q.app
 
 	name := "MarginLeft"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
 		opt = append(opt, value[0])
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -185,22 +185,22 @@ func (wf *workFrame2) MarginLeft(value ...int32) int32 {
 	return 0
 }
 
-func (wf *workFrame2) MarginRight(value ...int32) int32 {
-	xl := wf.app
+func (Q *workFrame2) MarginRight(value ...int32) int32 {
+	xl := Q.app
 
 	name := "MarginRight"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
 		opt = append(opt, value[0])
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -213,22 +213,22 @@ func (wf *workFrame2) MarginRight(value ...int32) int32 {
 	return 0
 }
 
-func (wf *workFrame2) MarginTop(value ...int32) int32 {
-	xl := wf.app
+func (Q *workFrame2) MarginTop(value ...int32) int32 {
+	xl := Q.app
 
 	name := "MarginTop"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
 		opt = append(opt, value[0])
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -242,15 +242,15 @@ func (wf *workFrame2) MarginTop(value ...int32) int32 {
 }
 
 // TextFrame2.TextRane
-func (wf *workFrame2) TextRange() *workTextRange {
-	var tr workTextRange
-	xl := wf.app
+func (Q *workFrame2) TextRange() *workTextRange {
+	var body workTextRange
+	xl := Q.app
 
 	name := "TextRange"
-	core, num := xl.cores.FindAdd(name, wf.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -265,47 +265,47 @@ func (wf *workFrame2) TextRange() *workTextRange {
 			}
 		}
 	}
-	tr.app = xl
-	tr.num = num
-	tr.parent = wf
-	return &tr
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (tr *workTextRange) Release() error {
-	xl := tr.app
-	return xl.cores.Release(tr.num, false)
+func (Q *workTextRange) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (tr *workTextRange) Nothing() error {
-	xl := tr.app
-	xl.cores.releaseChild(tr.num)
+func (Q *workTextRange) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(tr.num)
-	err := tr.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(tr.num)
-	tr = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (tr *workTextRange) Text(value ...string) string {
-	xl := tr.app
+func (Q *workTextRange) Text(value ...string) string {
+	xl := Q.app
 
 	name := "Text"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
 		opt = append(opt, value[0])
-		_, err := xl.cores.SendNum(cmd, name, tr.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""

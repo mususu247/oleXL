@@ -13,15 +13,15 @@ type workInterior struct {
 	num    int
 }
 
-func (wr *workRange) Interior() *workInterior {
-	var wi workInterior
-	xl := wr.app
+func (Q *workRange) Interior() *workInterior {
+	var body workInterior
+	xl := Q.app
 
 	name := "Interior"
-	core, num := xl.cores.FindAdd(name, wr.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -36,36 +36,36 @@ func (wr *workRange) Interior() *workInterior {
 			}
 		}
 	}
-	wi.app = xl
-	wi.num = num
-	wi.parent = wr
-	return &wi
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wi *workInterior) Release() error {
-	xl := wi.app
-	return xl.cores.Release(wi.num, false)
+func (Q *workInterior) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (wi *workInterior) Nothing() error {
-	xl := wi.app
-	xl.cores.releaseChild(wi.num)
+func (Q *workInterior) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wi.num)
-	err := wi.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wi.num)
-	wi = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wi *workInterior) Set() (*workInterior, error) {
-	if wi == nil {
+func (Q *workInterior) Set() (*workInterior, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := wi.app
-	xl.cores.Lock(wi.num)
-	return wi, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }

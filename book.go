@@ -19,8 +19,9 @@ type workBook struct {
 	num    int
 }
 
-func (xl *Excel) Workbooks() *workBooks {
-	var wbs workBooks
+func (Q *Excel) Workbooks() *workBooks {
+	var body workBooks
+	xl := Q
 
 	kind := "Workbooks"
 	core, num := xl.cores.FindAdd(kind, xl.num)
@@ -42,14 +43,15 @@ func (xl *Excel) Workbooks() *workBooks {
 			}
 		}
 	}
-	wbs.app = xl
-	wbs.num = num
-	wbs.parent = xl
-	return &wbs
+	body.app = xl
+	body.num = num
+	body.parent = xl
+	return &body
 }
 
-func (xl *Excel) ActiveWorkbook() *workBook {
-	var wb workBook
+func (Q *Excel) ActiveWorkbook() *workBook {
+	var body workBook
+	xl := Q
 	wbs := xl.Workbooks()
 
 	kind := "Workbook"
@@ -72,14 +74,15 @@ func (xl *Excel) ActiveWorkbook() *workBook {
 			}
 		}
 	}
-	wb.app = xl
-	wb.num = num
-	wb.parent = wbs
-	return &wb
+	body.app = xl
+	body.num = num
+	body.parent = wbs
+	return &body
 }
 
-func (xl *Excel) Workbookz(value any) *workBook {
-	var wb workBook
+func (Q *Excel) Workbookz(value any) *workBook {
+	var body workBook
+	xl := Q
 	wbs := xl.Workbooks()
 
 	kind := "Workbook"
@@ -113,61 +116,60 @@ func (xl *Excel) Workbookz(value any) *workBook {
 			}
 		}
 	}
-	wb.app = xl
-	wb.num = num
-	wb.parent = xl
-	return &wb
+	body.app = xl
+	body.num = num
+	body.parent = xl
+	return &body
 }
 
-func (wbs *workBooks) Release() error {
-	xl := wbs.app
-	xl.cores.Release(wbs.num, true)
+func (Q *workBooks) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, true)
 	return nil
 }
 
-func (wbs *workBooks) Nothing() error {
-	xl := wbs.app
-	xl.cores.releaseChild(wbs.num)
+func (Q *workBooks) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wbs.num)
-	err := wbs.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
 
-	xl.cores.Remove(wbs.num)
-	wbs = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wbs *workBooks) Count() int32 {
-	var result int32
-	xl := wbs.app
+func (Q *workBooks) Count() int32 {
+	xl := Q.app
 
 	cmd := "Get"
 	name := "Count"
-	ans, err := xl.cores.SendNum(cmd, name, wbs.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
-		return result
+		return 0
 	}
 	switch x := ans.(type) {
 	case int32:
-		result = x
+		return x
 	}
-	return result
+	return 0
 }
 
-func (wbs *workBooks) Add() *workBook {
-	var wb workBook
-	xl := wbs.app
+func (Q *workBooks) Add() *workBook {
+	var body workBook
+	xl := Q.app
 
 	kind := "Workbook"
 	core, num := xl.cores.FindAdd(kind, xl.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "Add"
-		ans, err := xl.cores.SendNum(cmd, name, wbs.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -182,53 +184,53 @@ func (wbs *workBooks) Add() *workBook {
 			}
 		}
 	}
-	wb.app = xl
-	wb.num = num
-	wb.parent = wbs
-	return &wb
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wbs *workBooks) Set() (*workBooks, error) {
-	if wbs == nil {
+func (Q *workBooks) Set() (*workBooks, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := wbs.app
-	xl.cores.Lock(wbs.num)
-	return wbs, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (wb *workBook) Release() error {
-	xl := wb.app
-	xl.cores.Release(wb.num, true)
+func (Q *workBook) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, true)
 	return nil
 }
 
-func (wb *workBook) Set() (*workBook, error) {
-	if wb == nil {
+func (Q *workBook) Set() (*workBook, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := wb.app
-	xl.cores.Lock(wb.num)
-	return wb, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (wb *workBook) Nothing() error {
-	xl := wb.app
-	xl.cores.releaseChild(wb.num)
+func (Q *workBook) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wb.num)
-	err := wb.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wb.num)
-	wb = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wb *workBook) Close(SaveChanges ...bool) error {
-	xl := wb.app
-	xl.cores.releaseChild(wb.num)
+func (Q *workBook) Close(SaveChanges ...bool) error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
 	cmd := "Method"
 	name := "Close"
@@ -238,7 +240,7 @@ func (wb *workBook) Close(SaveChanges ...bool) error {
 		opt = append(opt, SaveChanges[0])
 	}
 
-	_, err := xl.cores.SendNum(cmd, name, wb.num, opt)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		return err
 	}
@@ -246,57 +248,55 @@ func (wb *workBook) Close(SaveChanges ...bool) error {
 	return nil
 }
 
-func (wb *workBook) Name() string {
-	var result string
-	xl := wb.app
+func (Q *workBook) Name() string {
+	xl := Q.app
 
 	cmd := "Get"
 	name := "Name"
-	ans, err := xl.cores.SendNum(cmd, name, wb.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
-		return result
+		return ""
 	}
 	switch x := ans.(type) {
 	case string:
-		result = x
+		return x
 	}
-	return result
+	return ""
 }
 
-func (wb *workBook) Path() string {
-	var result string
-	xl := wb.app
+func (Q *workBook) Path() string {
+	xl := Q.app
 
 	cmd := "Get"
 	name := "Path"
-	ans, err := xl.cores.SendNum(cmd, name, wb.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
-		return result
+		return ""
 	}
 	switch x := ans.(type) {
 	case string:
-		result = x
+		return x
 	}
-	return result
+	return ""
 }
 
-func (wb *workBook) RefreshAll() error {
-	xl := wb.app
+func (Q *workBook) RefreshAll() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "RefreshAll"
-	_, err := xl.cores.SendNum(cmd, name, wb.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wbs *workBooks) Open(fileName string, options ...map[string]any) (*workBook, error) {
-	var wb workBook
-	xl := wbs.app
+func (Q *workBooks) Open(fileName string, options ...map[string]any) (*workBook, error) {
+	var body workBook
+	xl := Q.app
 
 	fn, err := GetAbsolutePathName(fileName)
 	if err != nil {
@@ -448,7 +448,7 @@ func (wbs *workBooks) Open(fileName string, options ...map[string]any) (*workBoo
 			}
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, wbs.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			return nil, fmt.Errorf("(Error) %v", err)
 		}
@@ -462,14 +462,14 @@ func (wbs *workBooks) Open(fileName string, options ...map[string]any) (*workBoo
 			}
 		}
 	}
-	wb.app = xl
-	wb.num = num
-	wb.parent = wbs
-	return &wb, nil
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body, nil
 }
 
-func (wb *workBook) SaveAs(fileName string, options ...map[string]any) error {
-	xl := wb.app
+func (Q *workBook) SaveAs(fileName string, options ...map[string]any) error {
+	xl := Q.app
 
 	fn, err := GetAbsolutePathName(fileName)
 	if err != nil {
@@ -577,28 +577,28 @@ func (wb *workBook) SaveAs(fileName string, options ...map[string]any) error {
 		}
 	}
 
-	_, err = xl.cores.SendNum(cmd, name, wb.num, opt)
+	_, err = xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wb *workBook) Save() error {
-	xl := wb.app
+func (Q *workBook) Save() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Save"
 
-	_, err := xl.cores.SendNum(cmd, name, wb.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wb *workBook) SaveCopyAs(fileName string) error {
-	xl := wb.app
+func (Q *workBook) SaveCopyAs(fileName string) error {
+	xl := Q.app
 
 	fn, err := GetAbsolutePathName(fileName)
 	if err != nil {
@@ -614,32 +614,32 @@ func (wb *workBook) SaveCopyAs(fileName string) error {
 	var opt []any
 	opt = append(opt, fn)
 
-	_, err = xl.cores.SendNum(cmd, name, wb.num, opt)
+	_, err = xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wb *workBook) Activate() error {
-	xl := wb.app
+func (Q *workBook) Activate() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Activate"
 
-	_, err := xl.cores.SendNum(cmd, name, wb.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wb *workBook) ReadOnly() bool {
-	xl := wb.app
+func (Q *workBook) ReadOnly() bool {
+	xl := Q.app
 
 	cmd := "Get"
 	name := "ReadOnly"
-	ans, _ := xl.cores.SendNum(cmd, name, wb.num, nil)
+	ans, _ := xl.cores.SendNum(cmd, name, Q.num, nil)
 	switch x := ans.(type) {
 	case bool:
 		return x

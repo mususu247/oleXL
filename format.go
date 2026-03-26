@@ -12,15 +12,15 @@ type workFormat struct {
 	num    int
 }
 
-func (wt *workTitle) Format() *workFormat {
-	var wf workFormat
-	xl := wt.app
+func (Q *workTitle) Format() *workFormat {
+	var body workFormat
+	xl := Q.app
 
 	name := "Format"
-	core, num := xl.cores.FindAdd(name, wt.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wt.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -35,21 +35,21 @@ func (wt *workTitle) Format() *workFormat {
 			}
 		}
 	}
-	wf.app = xl
-	wf.num = num
-	wf.parent = wt
-	return &wf
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (sr *workSeries) Format() *workFormat {
-	var wf workFormat
-	xl := sr.app
+func (Q *workSeries) Format() *workFormat {
+	var body workFormat
+	xl := Q.app
 
 	name := "Format"
-	core, num := xl.cores.FindAdd(name, sr.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, sr.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -64,27 +64,27 @@ func (sr *workSeries) Format() *workFormat {
 			}
 		}
 	}
-	wf.app = xl
-	wf.num = num
-	wf.parent = sr
-	return &wf
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wf *workFormat) Release() error {
-	xl := wf.app
-	return xl.cores.Release(wf.num, false)
+func (Q *workFormat) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (wf *workFormat) Nothing() error {
-	xl := wf.app
-	xl.cores.releaseChild(wf.num)
+func (Q *workFormat) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wf.num)
-	err := wf.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wf.num)
-	wf = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }

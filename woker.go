@@ -27,8 +27,8 @@ type Worker struct {
 	loop   bool
 }
 
-func (w *Worker) Loop() error {
-	if w == nil {
+func (Q *Worker) Loop() error {
+	if Q == nil {
 		return fmt.Errorf("(w *Worker) is NULL\n")
 	}
 	runtime.LockOSThread()
@@ -41,9 +41,9 @@ func (w *Worker) Loop() error {
 	var arg *ole.VARIANT
 
 	for {
-		sendMsg, ok := <-w.sendQ
+		sendMsg, ok := <-Q.sendQ
 		if !ok {
-			if w.parent.debug {
+			if Q.parent.debug {
 				log.Printf("Loop.Exit\n")
 			}
 			break
@@ -61,7 +61,7 @@ func (w *Worker) Loop() error {
 			if err != nil {
 				recvMsg.Name = "CoInitialize"
 				recvMsg.Args = []any{err}
-				w.recvQ <- recvMsg
+				Q.recvQ <- recvMsg
 				continue
 			}
 
@@ -69,7 +69,7 @@ func (w *Worker) Loop() error {
 			if err != nil {
 				recvMsg.Name = "CreateObject"
 				recvMsg.Args = []any{err}
-				w.recvQ <- recvMsg
+				Q.recvQ <- recvMsg
 				continue
 			}
 
@@ -77,19 +77,19 @@ func (w *Worker) Loop() error {
 			if err != nil {
 				recvMsg.Name = "QueryInterface"
 				recvMsg.Args = []any{err}
-				w.recvQ <- recvMsg
+				Q.recvQ <- recvMsg
 				continue
 			}
 
 			recvMsg.Args = []any{app}
-			w.recvQ <- recvMsg
+			Q.recvQ <- recvMsg
 		case "Get":
 			recvMsg = sendMsg
 
 			arg, err = oleutil.GetProperty(sendMsg.Disp, sendMsg.Name, sendMsg.Args...)
 			if err != nil {
 				recvMsg.Args = []any{err}
-				w.recvQ <- recvMsg
+				Q.recvQ <- recvMsg
 				continue
 			}
 
@@ -100,33 +100,33 @@ func (w *Worker) Loop() error {
 				recvMsg.Args = []any{x}
 			}
 
-			w.recvQ <- recvMsg
+			Q.recvQ <- recvMsg
 		case "Put":
 			recvMsg = sendMsg
 
 			arg, err = oleutil.PutProperty(sendMsg.Disp, sendMsg.Name, sendMsg.Args...)
 			if err != nil {
 				recvMsg.Args = []any{err}
-				w.recvQ <- recvMsg
+				Q.recvQ <- recvMsg
 				continue
 			}
 
 			x := arg.Value()
 			recvMsg.Args = []any{x}
-			w.recvQ <- recvMsg
+			Q.recvQ <- recvMsg
 		case "Method":
 			recvMsg = sendMsg
 
 			arg, err := oleutil.CallMethod(sendMsg.Disp, sendMsg.Name, sendMsg.Args...)
 			if err != nil {
 				recvMsg.Args = []any{err}
-				w.recvQ <- recvMsg
+				Q.recvQ <- recvMsg
 				continue
 			}
 
 			x := arg.Value()
 			recvMsg.Args = []any{x}
-			w.recvQ <- recvMsg
+			Q.recvQ <- recvMsg
 		case "Release":
 			recvMsg = sendMsg
 
@@ -142,51 +142,51 @@ func (w *Worker) Loop() error {
 				recvMsg.Args = []any{ans1, ans2}
 			}
 
-			w.recvQ <- recvMsg
+			Q.recvQ <- recvMsg
 		default:
 			recvMsg = sendMsg
 
 			err = fmt.Errorf("not found Cmd: %v", sendMsg.Cmd)
 			recvMsg.Args = []any{err}
-			w.recvQ <- recvMsg
+			Q.recvQ <- recvMsg
 		}
 	}
-	if w.parent.debug {
+	if Q.parent.debug {
 		log.Printf("Loop.Quit\n")
 	}
 	return nil
 }
 
-func (w *Worker) IsOpened() bool {
-	return w.loop
+func (Q *Worker) IsOpened() bool {
+	return Q.loop
 }
 
-func (w *Worker) Start() error {
-	if w == nil {
+func (Q *Worker) Start() error {
+	if Q == nil {
 		return fmt.Errorf("(w *Worker) is NULL\n")
 	}
 
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	if !w.loop {
-		w.loop = true
+	if !Q.loop {
+		Q.loop = true
 
-		if w.parent.debug {
+		if Q.parent.debug {
 			log.Printf("queue.Open.\n")
 		}
-		w.sendQ = make(chan msg)
-		w.recvQ = make(chan msg)
+		Q.sendQ = make(chan msg)
+		Q.recvQ = make(chan msg)
 
 		go func() {
 			runtime.LockOSThread()
 			defer runtime.UnlockOSThread()
 
-			if w.parent.debug {
+			if Q.parent.debug {
 				log.Printf("Loop.Start \n")
 			}
-			w.Loop()
-			if w.parent.debug {
+			Q.Loop()
+			if Q.parent.debug {
 				log.Printf("Loop.Stop \n")
 			}
 		}()
@@ -196,27 +196,27 @@ func (w *Worker) Start() error {
 	return nil
 }
 
-func (w *Worker) Stop() error {
-	if w == nil {
+func (Q *Worker) Stop() error {
+	if Q == nil {
 		return fmt.Errorf("(w *Worker) is NULL\n")
 	}
 
-	if w.loop {
-		w.loop = false
+	if Q.loop {
+		Q.loop = false
 
-		w.mux.Lock()
-		close(w.sendQ)
-		close(w.recvQ)
-		w.mux.Unlock()
-		if w.parent.debug {
+		Q.mux.Lock()
+		close(Q.sendQ)
+		close(Q.recvQ)
+		Q.mux.Unlock()
+		if Q.parent.debug {
 			log.Printf("queue.Close.\n")
 		}
 	}
 	return nil
 }
 
-func (w *Worker) Send(cmd string, disp *ole.IDispatch, name string, args []any) []any {
-	if w == nil {
+func (Q *Worker) Send(cmd string, disp *ole.IDispatch, name string, args []any) []any {
+	if Q == nil {
 		log.Printf("(w *Worker) is NULL\n")
 		return nil
 	}
@@ -238,7 +238,7 @@ func (w *Worker) Send(cmd string, disp *ole.IDispatch, name string, args []any) 
 		return nil
 	}
 
-	if !w.loop {
+	if !Q.loop {
 		log.Printf("queue is not opened\n")
 		return nil
 	}
@@ -256,16 +256,16 @@ func (w *Worker) Send(cmd string, disp *ole.IDispatch, name string, args []any) 
 	sendMsg.Name = name
 	sendMsg.Args = args
 
-	w.mux.Lock()
-	w.sendQ <- sendMsg
+	Q.mux.Lock()
+	Q.sendQ <- sendMsg
 	for {
-		recvMsg = <-w.recvQ
+		recvMsg = <-Q.recvQ
 		if recvMsg.ID == sendMsg.ID {
 			break
 		}
 	}
 	result = recvMsg.Args
-	w.mux.Unlock()
+	Q.mux.Unlock()
 
 	return result
 }

@@ -13,15 +13,15 @@ type workArea struct {
 	num    int
 }
 
-func (ct *workChart) ChartArea() *workArea {
-	var wa workArea
-	xl := ct.app
+func (Q *workChart) ChartArea() *workArea {
+	var body workArea
+	xl := Q.app
 
 	name := "ChartArea"
-	core, num := xl.cores.FindAdd(name, ct.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -36,50 +36,50 @@ func (ct *workChart) ChartArea() *workArea {
 			}
 		}
 	}
-	wa.app = xl
-	wa.num = num
-	wa.parent = ct
-	return &wa
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wa *workArea) Release() error {
-	xl := wa.app
-	return xl.cores.Release(wa.num, false)
+func (Q *workArea) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (wa *workArea) Nothing() error {
-	xl := wa.app
-	xl.cores.releaseChild(wa.num)
+func (Q *workArea) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wa.num)
-	err := wa.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wa.num)
-	wa = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wa *workArea) Set() (*workArea, error) {
-	if wa == nil {
+func (Q *workArea) Set() (*workArea, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := wa.app
-	xl.cores.Lock(wa.num)
-	return wa, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (wa *workArea) Copy() error {
-	xl := wa.app
+func (Q *workArea) Copy() error {
+	xl := Q.app
 
 	kind := "ChartArea"
-	core, _ := xl.cores.FindAdd(kind, wa.num)
+	core, _ := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "Copy"
 
-		_, err := xl.cores.SendNum(cmd, name, wa.num, nil)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -89,25 +89,25 @@ func (wa *workArea) Copy() error {
 	return nil
 }
 
-func (wa *workArea) Select() error {
-	if wa == nil {
+func (Q *workArea) Select() error {
+	if Q == nil {
 		log.Printf("(Error) Object is NULL.")
 		return nil
 	}
-	xl := wa.app
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, wa.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wa *workArea) Name(value ...any) string {
-	xl := wa.app
+func (Q *workArea) Name(value ...any) string {
+	xl := Q.app
 
 	name := "Name"
 	if len(value) > 0 {
@@ -118,14 +118,14 @@ func (wa *workArea) Name(value ...any) string {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, wa.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wa.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -138,8 +138,8 @@ func (wa *workArea) Name(value ...any) string {
 	return ""
 }
 
-func (wa *workArea) Left(value ...float64) float64 {
-	xl := wa.app
+func (Q *workArea) Left(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Left"
 	if len(value) > 0 {
@@ -166,8 +166,8 @@ func (wa *workArea) Left(value ...float64) float64 {
 	return 0
 }
 
-func (wa *workArea) Top(value ...float64) float64 {
-	xl := wa.app
+func (Q *workArea) Top(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Top"
 	if len(value) > 0 {
@@ -194,8 +194,8 @@ func (wa *workArea) Top(value ...float64) float64 {
 	return 0
 }
 
-func (wa *workArea) Width(value ...float64) float64 {
-	xl := wa.app
+func (Q *workArea) Width(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Width"
 	if len(value) > 0 {
@@ -222,8 +222,8 @@ func (wa *workArea) Width(value ...float64) float64 {
 	return 0
 }
 
-func (wa *workArea) Height(value ...float64) float64 {
-	xl := wa.app
+func (Q *workArea) Height(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Height"
 	if len(value) > 0 {

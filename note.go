@@ -18,15 +18,15 @@ type workNote struct {
 	num    int
 }
 
-func (ws *workSheet) Comments() *workNotes {
-	var nts workNotes
-	xl := ws.app
+func (Q *workSheet) Comments() *workNotes {
+	var body workNotes
+	xl := Q.app
 
 	name := "Comments"
-	core, num := xl.cores.FindAdd(name, ws.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -41,18 +41,18 @@ func (ws *workSheet) Comments() *workNotes {
 			}
 		}
 	}
-	nts.app = xl
-	nts.num = num
-	nts.parent = ws
-	return &nts
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ws *workSheet) Commentz(value any) *workNote {
-	var nt workNote
-	xl := ws.app
+func (Q *workSheet) Commentz(value any) *workNote {
+	var body workNote
+	xl := Q.app
 
 	kind := "Comment"
-	core, num := xl.cores.FindAdd(kind, ws.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Comments"
@@ -70,7 +70,7 @@ func (ws *workSheet) Commentz(value any) *workNote {
 			opt = append(opt, x)
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -85,58 +85,57 @@ func (ws *workSheet) Commentz(value any) *workNote {
 			}
 		}
 	}
-	nt.app = xl
-	nt.num = num
-	nt.parent = ws
-	return &nt
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (nts *workNotes) Release() error {
-	xl := nts.app
-	return xl.cores.Release(nts.num, false)
+func (Q *workNotes) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (nts *workNotes) Nothing() error {
-	xl := nts.app
-	xl.cores.releaseChild(nts.num)
+func (Q *workNotes) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(nts.num)
-	err := nts.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(nts.num)
-	nts = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (nts *workNotes) Count() int32 {
-	var result int32
-	xl := nts.app
+func (Q *workNotes) Count() int32 {
+	xl := Q.app
 
 	cmd := "Get"
 	name := "Count"
-	ans, err := xl.cores.SendNum(cmd, name, nts.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
-		return result
+		return 0
 	}
 	switch x := ans.(type) {
 	case int32:
-		result = x
+		return x
 	}
-	return result
+	return 0
 }
 
-func (rg *workRange) Comment() *workNote {
-	var nt workNote
-	xl := rg.app
+func (Q *workRange) Comment() *workNote {
+	var body workNote
+	xl := Q.app
 
 	name := "Comment"
-	core, num := xl.cores.FindAdd(name, rg.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, rg.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -151,24 +150,24 @@ func (rg *workRange) Comment() *workNote {
 			}
 		}
 	}
-	nt.app = xl
-	nt.num = num
-	nt.parent = rg
-	return &nt
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (rg *workRange) AddComment(text string) *workNote {
-	var nt workNote
-	xl := rg.app
+func (Q *workRange) AddComment(text string) *workNote {
+	var body workNote
+	xl := Q.app
 
 	name := "AddComment"
-	core, num := xl.cores.FindAdd(name, rg.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		var opt []any
 		opt = append(opt, text)
 
-		ans, err := xl.cores.SendNum(cmd, name, rg.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -183,52 +182,52 @@ func (rg *workRange) AddComment(text string) *workNote {
 			}
 		}
 	}
-	nt.app = xl
-	nt.num = num
-	nt.parent = rg
-	return &nt
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (nt *workNote) Release() error {
-	xl := nt.app
-	return xl.cores.Release(nt.num, false)
+func (Q *workNote) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (nt *workNote) Nothing() error {
-	xl := nt.app
-	xl.cores.releaseChild(nt.num)
+func (Q *workNote) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(nt.num)
-	err := nt.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(nt.num)
-	nt = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (nt *workNote) Visible(value bool) error {
-	xl := nt.app
+func (Q *workNote) Visible(value bool) error {
+	xl := Q.app
 	cmd := "Put"
 	name := "Visible"
 	var opt []any
 	opt = append(opt, value)
 
-	_, err := xl.cores.SendNum(cmd, name, nt.num, opt)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 	}
 	return nil
 }
 
-func (nt *workNote) Delete() error {
-	xl := nt.app
+func (Q *workNote) Delete() error {
+	xl := Q.app
 
 	name := "Delete"
 	cmd := "Method"
 
-	_, err := xl.cores.SendNum(cmd, name, nt.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
@@ -236,8 +235,8 @@ func (nt *workNote) Delete() error {
 	return nil
 }
 
-func (nt *workNote) Text(value ...any) string {
-	xl := nt.app
+func (Q *workNote) Text(value ...any) string {
+	xl := Q.app
 
 	name := "Text"
 	if len(value) > 0 {
@@ -249,14 +248,14 @@ func (nt *workNote) Text(value ...any) string {
 			}
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, nt.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Method"
-		ans, err := xl.cores.SendNum(cmd, name, nt.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""

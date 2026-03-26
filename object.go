@@ -19,16 +19,16 @@ type chartObject struct {
 	num    int
 }
 
-func (ws *workSheet) ChartObjects() *chartObjects {
-	var cos chartObjects
-	xl := ws.app
+func (Q *workSheet) ChartObjects() *chartObjects {
+	var body chartObjects
+	xl := Q.app
 
 	kind := "ChartObjects"
-	core, num := xl.cores.FindAdd(kind, ws.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "ChartObjects"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -43,64 +43,64 @@ func (ws *workSheet) ChartObjects() *chartObjects {
 			}
 		}
 	}
-	cos.app = xl
-	cos.num = num
-	cos.parent = ws
-	return &cos
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ws *workSheet) ChartObjectz(value any) *chartObject {
-	return ws.ChartObjects().Item(value)
+func (Q *workSheet) ChartObjectz(value any) *chartObject {
+	return Q.ChartObjects().Item(value)
 }
 
-func (cos *chartObjects) Release() error {
-	xl := cos.app
-	xl.cores.Release(cos.num, false)
+func (Q *chartObjects) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, false)
 	return nil
 }
 
-func (cos *chartObjects) Nothing() error {
-	xl := cos.app
-	xl.cores.releaseChild(cos.num)
+func (Q *chartObjects) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(cos.num)
-	err := cos.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(cos.num)
-	cos = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (cos *chartObjects) Set() (*chartObjects, error) {
-	if cos == nil {
+func (Q *chartObjects) Set() (*chartObjects, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := cos.app
-	xl.cores.Lock(cos.num)
-	return cos, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (cos *chartObjects) Select() error {
-	xl := cos.app
+func (Q *chartObjects) Select() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, cos.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (cos *chartObjects) Item(value any) *chartObject {
-	var co chartObject
-	xl := cos.app
+func (Q *chartObjects) Item(value any) *chartObject {
+	var body chartObject
+	xl := Q.app
 
 	kind := "ChartObject"
-	core, num := xl.cores.FindAdd(kind, cos.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "Item"
@@ -118,7 +118,7 @@ func (cos *chartObjects) Item(value any) *chartObject {
 			opt = append(opt, x)
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, cos.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -133,61 +133,61 @@ func (cos *chartObjects) Item(value any) *chartObject {
 			}
 		}
 	}
-	co.app = xl
-	co.num = num
-	co.parent = cos
-	return &co
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (co *chartObject) Release() error {
-	xl := co.app
-	xl.cores.Release(co.num, false)
+func (Q *chartObject) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, false)
 	return nil
 }
 
-func (co *chartObject) Nothing() error {
-	xl := co.app
-	xl.cores.releaseChild(co.num)
+func (Q *chartObject) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(co.num)
-	err := co.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(co.num)
-	co = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (co *chartObject) Set() (*chartObject, error) {
-	if co == nil {
+func (Q *chartObject) Set() (*chartObject, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := co.app
-	xl.cores.Lock(co.num)
-	return co, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (co *chartObject) Select() error {
-	xl := co.app
+func (Q *chartObject) Select() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, co.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (co *chartObject) Activate() error {
-	xl := co.app
+func (Q *chartObject) Activate() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Activate"
 
-	_, err := xl.cores.SendNum(cmd, name, co.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
@@ -211,55 +211,55 @@ func (cos *chartObjects) Count() int32 {
 	return 0
 }
 
-func (co *chartObject) Copy() error {
-	xl := co.app
+func (Q *chartObject) Copy() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Copy"
 
-	_, err := xl.cores.SendNum(cmd, name, co.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (co *chartObject) Cut() error {
-	xl := co.app
+func (Q *chartObject) Cut() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Cut"
 
-	_, err := xl.cores.SendNum(cmd, name, co.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (co *chartObject) Delete() error {
-	xl := co.app
+func (Q *chartObject) Delete() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Delete"
 
-	_, err := xl.cores.SendNum(cmd, name, co.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (co *chartObject) Duplicate() *chartObject {
-	var xo chartObject
-	xl := co.app
+func (Q *chartObject) Duplicate() *chartObject {
+	var body chartObject
+	xl := Q.app
 
 	kind := "ChartObject"
-	core, num := xl.cores.FindAdd(kind, co.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "Duplicate"
-		ans, err := xl.cores.SendNum(cmd, name, co.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -274,14 +274,14 @@ func (co *chartObject) Duplicate() *chartObject {
 			}
 		}
 	}
-	xo.app = xl
-	xo.num = num
-	xo.parent = co.parent
-	return &xo
+	body.app = xl
+	body.num = num
+	body.parent = Q.parent
+	return &body
 }
 
-func (co *chartObject) Name(value ...string) string {
-	xl := co.app
+func (Q *chartObject) Name(value ...string) string {
+	xl := Q.app
 
 	name := "Name"
 	if len(value) > 0 {
@@ -289,14 +289,14 @@ func (co *chartObject) Name(value ...string) string {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, co.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, co.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -309,8 +309,8 @@ func (co *chartObject) Name(value ...string) string {
 	return ""
 }
 
-func (co *chartObject) Left(value ...float64) float64 {
-	xl := co.app
+func (Q *chartObject) Left(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Left"
 	if len(value) > 0 {
@@ -337,8 +337,8 @@ func (co *chartObject) Left(value ...float64) float64 {
 	return 0
 }
 
-func (co *chartObject) Top(value ...float64) float64 {
-	xl := co.app
+func (Q *chartObject) Top(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Top"
 	if len(value) > 0 {
@@ -365,8 +365,8 @@ func (co *chartObject) Top(value ...float64) float64 {
 	return 0
 }
 
-func (co *chartObject) Width(value ...float64) float64 {
-	xl := co.app
+func (Q *chartObject) Width(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Width"
 	if len(value) > 0 {
@@ -393,8 +393,8 @@ func (co *chartObject) Width(value ...float64) float64 {
 	return 0
 }
 
-func (co *chartObject) Height(value ...float64) float64 {
-	xl := co.app
+func (Q *chartObject) Height(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Height"
 	if len(value) > 0 {

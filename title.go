@@ -13,16 +13,16 @@ type workTitle struct {
 	num    int
 }
 
-func (ct *workChart) ChartTitle() *workTitle {
-	var wt workTitle
-	xl := ct.app
+func (Q *workChart) ChartTitle() *workTitle {
+	var body workTitle
+	xl := Q.app
 
 	kind := "ChartTitle"
-	core, num := xl.cores.FindAdd(kind, ct.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "ChartTitle"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -37,83 +37,83 @@ func (ct *workChart) ChartTitle() *workTitle {
 			}
 		}
 	}
-	wt.app = xl
-	wt.num = num
-	wt.parent = ct
-	return &wt
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wt *workTitle) Release() error {
-	xl := wt.app
-	xl.cores.Release(wt.num, false)
+func (Q *workTitle) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, false)
 	return nil
 }
 
-func (wt *workTitle) Nothing() error {
-	xl := wt.app
-	xl.cores.releaseChild(wt.num)
+func (Q *workTitle) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wt.num)
-	err := wt.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wt.num)
-	wt = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wt *workTitle) Set() (*workTitle, error) {
-	if wt == nil {
+func (Q *workTitle) Set() (*workTitle, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := wt.app
-	xl.cores.Lock(wt.num)
-	return wt, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (wt *workTitle) Select() error {
-	xl := wt.app
+func (Q *workTitle) Select() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, wt.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wt *workTitle) Delete() error {
-	xl := wt.app
+func (Q *workTitle) Delete() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Delete"
 
-	_, err := xl.cores.SendNum(cmd, name, wt.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wt *workTitle) Text(value ...string) string {
-	xl := wt.app
+func (Q *workTitle) Text(value ...string) string {
+	xl := Q.app
 
 	name := "Text"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
 		opt = append(opt, value[0])
-		_, err := xl.cores.SendNum(cmd, name, wt.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wt.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""

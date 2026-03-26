@@ -14,8 +14,9 @@ type Excel struct {
 	num   int
 }
 
-func (xl *Excel) Init(debug ...bool) error {
-	xl.getVersion()
+func (Q *Excel) Init(debug ...bool) error {
+	xl := Q
+	Q.getVersion()
 	var cores Cores
 	if len(debug) > 0 {
 		cores.Init(debug[0])
@@ -29,7 +30,8 @@ func (xl *Excel) Init(debug ...bool) error {
 	return nil
 }
 
-func (xl *Excel) CreateObject() error {
+func (Q *Excel) CreateObject() error {
+	xl := Q
 	name := "Excel.Application"
 	cmd := "Create"
 	core, num := xl.cores.Add(name, 0)
@@ -54,7 +56,8 @@ func (xl *Excel) CreateObject() error {
 	return nil
 }
 
-func (xl *Excel) Quit() error {
+func (Q *Excel) Quit() error {
+	xl := Q
 	count := xl.Workbooks().Count()
 	for i := count; i > 0; i-- {
 		xl.Workbookz(i).Close(false)
@@ -78,7 +81,8 @@ func (xl *Excel) Quit() error {
 	return nil
 }
 
-func (xl *Excel) Nothing() error {
+func (Q *Excel) Nothing() error {
+	xl := Q
 	xl.cores.Release(xl.num, true)
 
 	err := xl.cores.worker.Stop()
@@ -102,7 +106,8 @@ func (xl *Excel) Nothing() error {
 	return nil
 }
 
-func (xl *Excel) Hand() int32 {
+func (Q *Excel) Hand() int32 {
+	xl := Q
 	cmd := "Get"
 	name := "hWnd"
 	ans, err := xl.cores.SendNum(cmd, name, xl.num, nil)
@@ -117,7 +122,8 @@ func (xl *Excel) Hand() int32 {
 	return -1 //err
 }
 
-func (xl *Excel) Visible(value bool) error {
+func (Q *Excel) Visible(value bool) error {
+	xl := Q
 	cmd := "Put"
 	name := "Visible"
 	var opt []any
@@ -130,7 +136,8 @@ func (xl *Excel) Visible(value bool) error {
 	return nil
 }
 
-func (xl *Excel) DisplayAlerts(value ...bool) bool {
+func (Q *Excel) DisplayAlerts(value ...bool) bool {
+	xl := Q
 	var opt []any
 
 	name := "DisplayAlerts"
@@ -157,7 +164,8 @@ func (xl *Excel) DisplayAlerts(value ...bool) bool {
 	return false
 }
 
-func (xl *Excel) ScreenUpdating(value ...bool) bool {
+func (Q *Excel) ScreenUpdating(value ...bool) bool {
+	xl := Q
 	var opt []any
 
 	name := "ScreenUpdating"
@@ -184,7 +192,8 @@ func (xl *Excel) ScreenUpdating(value ...bool) bool {
 	return false
 }
 
-func (xl *Excel) Calculation(value ...any) int32 {
+func (Q *Excel) Calculation(value ...any) int32 {
+	xl := Q
 	var opt []any
 
 	name := "Calculation"
@@ -221,7 +230,7 @@ func (xl *Excel) Calculation(value ...any) int32 {
 	return -1
 }
 
-func (xl *Excel) getVersion() {
+func (Q *Excel) getVersion() {
 	info, _ := debug.ReadBuildInfo()
 
 	targetModule := "github.com/go-ole/go-ole"

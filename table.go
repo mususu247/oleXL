@@ -68,15 +68,15 @@ func table2sheet(v any) *workSheet {
 	}
 }
 
-func (ws *workSheet) ListObjects() *workTables {
-	var tbs workTables
-	xl := ws.app
+func (Q *workSheet) ListObjects() *workTables {
+	var body workTables
+	xl := Q.app
 
 	name := "ListObjects"
-	core, num := xl.cores.FindAdd(name, ws.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -91,19 +91,19 @@ func (ws *workSheet) ListObjects() *workTables {
 			}
 		}
 	}
-	tbs.app = xl
-	tbs.num = num
-	tbs.parent = ws
-	return &tbs
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ws *workSheet) ListObjectz(value any) *workTable {
-	var tb workTable
-	xl := ws.app
-	tbs := ws.ListObjects()
+func (Q *workSheet) ListObjectz(value any) *workTable {
+	var body workTable
+	xl := Q.app
+	tbs := Q.ListObjects()
 
 	kind := "ListObject"
-	core, num := xl.cores.FindAdd(kind, ws.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Item"
@@ -137,46 +137,46 @@ func (ws *workSheet) ListObjectz(value any) *workTable {
 			}
 		}
 	}
-	tb.app = xl
-	tb.num = num
-	tb.parent = tbs
-	return &tb
+	body.app = xl
+	body.num = num
+	body.parent = tbs
+	return &body
 }
 
-func (tbs *workTables) Release() error {
-	xl := tbs.app
-	return xl.cores.Release(tbs.num, false)
+func (Q *workTables) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (tbs *workTables) Nothing() error {
-	xl := tbs.app
-	xl.cores.releaseChild(tbs.num)
+func (Q *workTables) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(tbs.num)
-	err := tbs.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(tbs.num)
-	tbs = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (tbs *workTables) Set() (*workTables, error) {
-	if tbs == nil {
+func (Q *workTables) Set() (*workTables, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := tbs.app
-	xl.cores.Lock(tbs.num)
-	return tbs, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (tbs *workTables) Add(SourceType any, Source *workRange, option ...any) *workTable {
-	var tb workTable
-	xl := tbs.app
+func (Q *workTables) Add(SourceType any, Source *workRange, option ...any) *workTable {
+	var body workTable
+	xl := Q.app
 
 	kind := "ListObject"
-	core, num := xl.cores.FindAdd(kind, tbs.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "Add"
@@ -210,7 +210,7 @@ func (tbs *workTables) Add(SourceType any, Source *workRange, option ...any) *wo
 		}
 		opt[3] = z
 
-		ans, err := xl.cores.SendNum(cmd, name, tbs.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -225,18 +225,18 @@ func (tbs *workTables) Add(SourceType any, Source *workRange, option ...any) *wo
 			}
 		}
 	}
-	tb.app = xl
-	tb.num = num
-	tb.parent = tbs
-	return &tb
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (tbs *workTables) Count() int32 {
-	xl := tbs.app
+func (Q *workTables) Count() int32 {
+	xl := Q.app
 
 	name := "Count"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, tbs.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -249,40 +249,40 @@ func (tbs *workTables) Count() int32 {
 	return 0
 }
 
-func (tb *workTable) Release() error {
-	xl := tb.app
-	return xl.cores.Release(tb.num, false)
+func (Q *workTable) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (tb *workTable) Nothing() error {
-	xl := tb.app
-	xl.cores.releaseChild(tb.num)
+func (Q *workTable) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(tb.num)
-	err := tb.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(tb.num)
-	tb = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (tb *workTable) Set() (*workTable, error) {
-	if tb == nil {
+func (Q *workTable) Set() (*workTable, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := tb.app
-	xl.cores.Lock(tb.num)
-	return tb, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (tb *workTable) Range(value ...any) *workRange {
-	var rg workRange
-	xl := tb.app
+func (Q *workTable) Range(value ...any) *workRange {
+	var body workRange
+	xl := Q.app
 
 	kind := "Range"
-	core, num := xl.cores.FindAdd(kind, tb.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Range"
@@ -293,7 +293,7 @@ func (tb *workTable) Range(value ...any) *workRange {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -308,14 +308,14 @@ func (tb *workTable) Range(value ...any) *workRange {
 			}
 		}
 	}
-	rg.app = xl
-	rg.num = num
-	rg.parent = tb
-	return &rg
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (tb *workTable) Name(value ...any) string {
-	xl := tb.app
+func (Q *workTable) Name(value ...any) string {
+	xl := Q.app
 
 	name := "Name"
 	if len(value) > 0 {
@@ -326,14 +326,14 @@ func (tb *workTable) Name(value ...any) string {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, tb.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -347,8 +347,8 @@ func (tb *workTable) Name(value ...any) string {
 	return ""
 }
 
-func (tb *workTable) TableStyle(value ...any) string {
-	xl := tb.app
+func (Q *workTable) TableStyle(value ...any) string {
+	xl := Q.app
 
 	name := "TableStyle"
 	if len(value) > 0 {
@@ -359,14 +359,14 @@ func (tb *workTable) TableStyle(value ...any) string {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, tb.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -380,8 +380,8 @@ func (tb *workTable) TableStyle(value ...any) string {
 	return ""
 }
 
-func (tb *workTable) ShowHeaders(value ...any) bool {
-	xl := tb.app
+func (Q *workTable) ShowHeaders(value ...any) bool {
+	xl := Q.app
 
 	name := "ShowHeaders"
 	if len(value) > 0 {
@@ -392,14 +392,14 @@ func (tb *workTable) ShowHeaders(value ...any) bool {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, tb.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -413,8 +413,8 @@ func (tb *workTable) ShowHeaders(value ...any) bool {
 	return false
 }
 
-func (tb *workTable) ShowTableStyleRowStripes(value ...any) bool {
-	xl := tb.app
+func (Q *workTable) ShowTableStyleRowStripes(value ...any) bool {
+	xl := Q.app
 
 	name := "ShowTableStyleRowStripes"
 	if len(value) > 0 {
@@ -425,14 +425,14 @@ func (tb *workTable) ShowTableStyleRowStripes(value ...any) bool {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, tb.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -446,8 +446,8 @@ func (tb *workTable) ShowTableStyleRowStripes(value ...any) bool {
 	return false
 }
 
-func (tb *workTable) ShowTotals(value ...any) bool {
-	xl := tb.app
+func (Q *workTable) ShowTotals(value ...any) bool {
+	xl := Q.app
 
 	name := "ShowTotals"
 	if len(value) > 0 {
@@ -458,14 +458,14 @@ func (tb *workTable) ShowTotals(value ...any) bool {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, tb.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -479,8 +479,8 @@ func (tb *workTable) ShowTotals(value ...any) bool {
 	return false
 }
 
-func (tb *workTable) ShowTableStyleColumnStripes(value ...any) bool {
-	xl := tb.app
+func (Q *workTable) ShowTableStyleColumnStripes(value ...any) bool {
+	xl := Q.app
 
 	name := "ShowTableStyleColumnStripes"
 	if len(value) > 0 {
@@ -491,14 +491,14 @@ func (tb *workTable) ShowTableStyleColumnStripes(value ...any) bool {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, tb.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -512,8 +512,8 @@ func (tb *workTable) ShowTableStyleColumnStripes(value ...any) bool {
 	return false
 }
 
-func (tb *workTable) ShowTableStyleLastColumn(value ...any) bool {
-	xl := tb.app
+func (Q *workTable) ShowTableStyleLastColumn(value ...any) bool {
+	xl := Q.app
 
 	name := "ShowTableStyleLastColumn"
 	if len(value) > 0 {
@@ -524,14 +524,14 @@ func (tb *workTable) ShowTableStyleLastColumn(value ...any) bool {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, tb.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -545,8 +545,8 @@ func (tb *workTable) ShowTableStyleLastColumn(value ...any) bool {
 	return false
 }
 
-func (tb *workTable) ShowTableStyleFirstColumn(value ...any) bool {
-	xl := tb.app
+func (Q *workTable) ShowTableStyleFirstColumn(value ...any) bool {
+	xl := Q.app
 
 	name := "ShowTableStyleFirstColumn"
 	if len(value) > 0 {
@@ -557,14 +557,14 @@ func (tb *workTable) ShowTableStyleFirstColumn(value ...any) bool {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, tb.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -578,8 +578,8 @@ func (tb *workTable) ShowTableStyleFirstColumn(value ...any) bool {
 	return false
 }
 
-func (tb *workTable) ShowAutoFilterDropDown(value ...any) bool {
-	xl := tb.app
+func (Q *workTable) ShowAutoFilterDropDown(value ...any) bool {
+	xl := Q.app
 
 	name := "ShowAutoFilterDropDown"
 	if len(value) > 0 {
@@ -590,14 +590,14 @@ func (tb *workTable) ShowAutoFilterDropDown(value ...any) bool {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, tb.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -611,16 +611,16 @@ func (tb *workTable) ShowAutoFilterDropDown(value ...any) bool {
 	return false
 }
 
-func (tb *workTable) HeaderRowRange() *workRange {
-	var wr workRange
-	xl := tb.app
+func (Q *workTable) HeaderRowRange() *workRange {
+	var body workRange
+	xl := Q.app
 
 	kind := "Range"
-	core, num := xl.cores.FindAdd(kind, tb.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "HeaderRowRange"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -635,22 +635,22 @@ func (tb *workTable) HeaderRowRange() *workRange {
 			}
 		}
 	}
-	wr.app = xl
-	wr.num = num
-	wr.parent = tb
-	return &wr
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (tb *workTable) DataBodyRange() *workRange {
-	var wr workRange
-	xl := tb.app
+func (Q *workTable) DataBodyRange() *workRange {
+	var body workRange
+	xl := Q.app
 
 	kind := "Range"
-	core, num := xl.cores.FindAdd(kind, tb.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "DataBodyRange"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -665,21 +665,21 @@ func (tb *workTable) DataBodyRange() *workRange {
 			}
 		}
 	}
-	wr.app = xl
-	wr.num = num
-	wr.parent = tb
-	return &wr
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (tb *workTable) ListRows() *listRows {
-	var lr listRows
-	xl := tb.app
+func (Q *workTable) ListRows() *listRows {
+	var body listRows
+	xl := Q.app
 
 	name := "ListRows"
-	core, num := xl.cores.FindAdd(name, tb.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -694,16 +694,16 @@ func (tb *workTable) ListRows() *listRows {
 			}
 		}
 	}
-	lr.app = xl
-	lr.num = num
-	lr.parent = tb
-	return &lr
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (tb *workTable) ListRowz(value any) *listRow {
-	var lr listRow
-	xl := tb.app
-	lrs := tb.ListRows()
+func (Q *workTable) ListRowz(value any) *listRow {
+	var body listRow
+	xl := Q.app
+	lrs := Q.ListRows()
 
 	kind := "ListColumn"
 	core, num := xl.cores.FindAdd(kind, lrs.num)
@@ -735,18 +735,18 @@ func (tb *workTable) ListRowz(value any) *listRow {
 			}
 		}
 	}
-	lr.app = xl
-	lr.num = num
-	lr.parent = lrs
-	return &lr
+	body.app = xl
+	body.num = num
+	body.parent = lrs
+	return &body
 }
 
-func (lr *listRow) Range(value ...any) *workRange {
-	var rg workRange
-	xl := lr.app
+func (Q *listRow) Range(value ...any) *workRange {
+	var body workRange
+	xl := Q.app
 
 	kind := "Range"
-	core, num := xl.cores.FindAdd(kind, lr.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Range"
@@ -757,7 +757,7 @@ func (lr *listRow) Range(value ...any) *workRange {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, lr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -772,18 +772,18 @@ func (lr *listRow) Range(value ...any) *workRange {
 			}
 		}
 	}
-	rg.app = xl
-	rg.num = num
-	rg.parent = lr
-	return &rg
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (lrs *listRows) Count() int32 {
-	xl := lrs.app
+func (Q *listRows) Count() int32 {
+	xl := Q.app
 
 	name := "Count"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, lrs.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -796,33 +796,32 @@ func (lrs *listRows) Count() int32 {
 	return 0
 }
 
-func (lr *listRow) Index() int32 {
-	var result int32
-	xl := lr.app
+func (Q *listRow) Index() int32 {
+	xl := Q.app
 
 	cmd := "Get"
 	name := "Index"
-	ans, err := xl.cores.SendNum(cmd, name, lr.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
-		return result
+		return 0
 	}
 	switch x := ans.(type) {
 	case int32:
-		result = x
+		return x
 	}
-	return result
+	return 0
 }
 
-func (tb *workTable) ListColumns() *listColumns {
-	var lcs listColumns
-	xl := tb.app
+func (Q *workTable) ListColumns() *listColumns {
+	var body listColumns
+	xl := Q.app
 
 	name := "ListColumns"
-	core, num := xl.cores.FindAdd(name, tb.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, tb.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -837,16 +836,16 @@ func (tb *workTable) ListColumns() *listColumns {
 			}
 		}
 	}
-	lcs.app = xl
-	lcs.num = num
-	lcs.parent = tb
-	return &lcs
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (tb *workTable) ListColumnz(value any) *listColumn {
-	var lc listColumn
-	xl := tb.app
-	lcs := tb.ListColumns()
+func (Q *workTable) ListColumnz(value any) *listColumn {
+	var body listColumn
+	xl := Q.app
+	lcs := Q.ListColumns()
 
 	kind := "ListColumn"
 	core, num := xl.cores.FindAdd(kind, lcs.num)
@@ -878,18 +877,18 @@ func (tb *workTable) ListColumnz(value any) *listColumn {
 			}
 		}
 	}
-	lc.app = xl
-	lc.num = num
-	lc.parent = lcs
-	return &lc
+	body.app = xl
+	body.num = num
+	body.parent = lcs
+	return &body
 }
 
-func (lc *listColumn) Range(value ...any) *workRange {
-	var rg workRange
-	xl := lc.app
+func (Q *listColumn) Range(value ...any) *workRange {
+	var body workRange
+	xl := Q.app
 
 	kind := "Range"
-	core, num := xl.cores.FindAdd(kind, lc.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Range"
@@ -900,7 +899,7 @@ func (lc *listColumn) Range(value ...any) *workRange {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, lc.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -915,18 +914,18 @@ func (lc *listColumn) Range(value ...any) *workRange {
 			}
 		}
 	}
-	rg.app = xl
-	rg.num = num
-	rg.parent = lc
-	return &rg
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (lcs *listColumns) Count() int32 {
-	xl := lcs.app
+func (Q *listColumns) Count() int32 {
+	xl := Q.app
 
 	name := "Count"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, lcs.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -939,20 +938,19 @@ func (lcs *listColumns) Count() int32 {
 	return 0
 }
 
-func (lc *listColumn) Name() string {
-	var result string
-	xl := lc.app
+func (Q *listColumn) Name() string {
+	xl := Q.app
 
 	cmd := "Get"
 	name := "Name"
-	ans, err := xl.cores.SendNum(cmd, name, lc.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
-		return result
+		return ""
 	}
 	switch x := ans.(type) {
 	case string:
-		result = x
+		return x
 	}
-	return result
+	return ""
 }

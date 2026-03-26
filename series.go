@@ -19,15 +19,15 @@ type seriesCollection struct {
 	num    int
 }
 
-func (ct *workChart) SeriesCollection() *seriesCollection {
-	var sc seriesCollection
-	xl := ct.app
+func (Q *workChart) SeriesCollection() *seriesCollection {
+	var body seriesCollection
+	xl := Q.app
 
 	name := "SeriesCollection"
-	core, num := xl.cores.FindAdd(name, ct.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -42,21 +42,21 @@ func (ct *workChart) SeriesCollection() *seriesCollection {
 			}
 		}
 	}
-	sc.app = xl
-	sc.num = num
-	sc.parent = ct
-	return &sc
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ct *workChart) FullSeriesCollection() *seriesCollection {
-	var sc seriesCollection
-	xl := ct.app
+func (Q *workChart) FullSeriesCollection() *seriesCollection {
+	var body seriesCollection
+	xl := Q.app
 
 	name := "FullSeriesCollection"
-	core, num := xl.cores.FindAdd(name, ct.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -71,46 +71,46 @@ func (ct *workChart) FullSeriesCollection() *seriesCollection {
 			}
 		}
 	}
-	sc.app = xl
-	sc.num = num
-	sc.parent = ct
-	return &sc
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (sc *seriesCollection) Release() error {
-	xl := sc.app
-	xl.cores.Release(sc.num, false)
+func (Q *seriesCollection) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, false)
 	return nil
 }
 
-func (sc *seriesCollection) Nothing() error {
-	xl := sc.app
-	xl.cores.releaseChild(sc.num)
+func (Q *seriesCollection) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(sc.num)
-	err := sc.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(sc.num)
-	sc = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (sc *seriesCollection) Set() (*seriesCollection, error) {
-	if sc == nil {
+func (Q *seriesCollection) Set() (*seriesCollection, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := sc.app
-	xl.cores.Lock(sc.num)
-	return sc, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (sc *seriesCollection) Count() int32 {
-	xl := sc.app
+func (Q *seriesCollection) Count() int32 {
+	xl := Q.app
 	name := "Count"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, sc.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -122,12 +122,12 @@ func (sc *seriesCollection) Count() int32 {
 	return 0
 }
 
-func (sc *seriesCollection) Item(value any) *workSeries {
-	var ws workSeries
-	xl := sc.app
+func (Q *seriesCollection) Item(value any) *workSeries {
+	var body workSeries
+	xl := Q.app
 
 	kind := "Series"
-	core, num := xl.cores.FindAdd(kind, sc.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "Item"
@@ -145,7 +145,7 @@ func (sc *seriesCollection) Item(value any) *workSeries {
 			opt = append(opt, x)
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, sc.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -160,23 +160,23 @@ func (sc *seriesCollection) Item(value any) *workSeries {
 			}
 		}
 	}
-	ws.app = xl
-	ws.num = num
-	ws.parent = sc.parent //wrokChart
-	return &ws
+	body.app = xl
+	body.num = num
+	body.parent = Q.parent //wrokChart
+	return &body
 }
 
-func (sc *seriesCollection) Extend(value *workRange, option ...any) *workSeries {
-	var ws workSeries
-	xl := sc.app
+func (Q *seriesCollection) Extend(value *workRange, option ...any) *workSeries {
+	var body workSeries
+	xl := Q.app
 
 	kind := "Series"
-	core, num := xl.cores.FindAdd(kind, sc.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "Extend"
 		var opt []any
-		core := xl.cores.getCore(sc.num)
+		core := xl.cores.getCore(Q.num)
 		opt = append(opt, core.disp)
 
 		if len(option) > 0 {
@@ -200,7 +200,7 @@ func (sc *seriesCollection) Extend(value *workRange, option ...any) *workSeries 
 			}
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, sc.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -215,22 +215,22 @@ func (sc *seriesCollection) Extend(value *workRange, option ...any) *workSeries 
 			}
 		}
 	}
-	ws.app = xl
-	ws.num = num
-	ws.parent = sc.parent //wrokChart
-	return &ws
+	body.app = xl
+	body.num = num
+	body.parent = Q.parent //wrokChart
+	return &body
 }
 
-func (sc *seriesCollection) NewSeries() *workSeries {
-	var ws workSeries
-	xl := sc.app
+func (Q *seriesCollection) NewSeries() *workSeries {
+	var body workSeries
+	xl := Q.app
 
 	kind := "Series"
-	core, num := xl.cores.FindAdd(kind, sc.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "NewSeries"
-		ans, err := xl.cores.SendNum(cmd, name, sc.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -245,18 +245,18 @@ func (sc *seriesCollection) NewSeries() *workSeries {
 			}
 		}
 	}
-	ws.app = xl
-	ws.num = num
-	ws.parent = sc.parent //wrokChart
-	return &ws
+	body.app = xl
+	body.num = num
+	body.parent = Q.parent //wrokChart
+	return &body
 }
 
-func (sc *seriesCollection) Add(Source *workRange, option ...any) *workSeries {
-	var ws workSeries
-	xl := sc.app
+func (Q *seriesCollection) Add(Source *workRange, option ...any) *workSeries {
+	var body workSeries
+	xl := Q.app
 
 	kind := "Series"
-	core, num := xl.cores.FindAdd(kind, sc.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "Add"
@@ -289,7 +289,7 @@ func (sc *seriesCollection) Add(Source *workRange, option ...any) *workSeries {
 			}
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, sc.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -304,60 +304,60 @@ func (sc *seriesCollection) Add(Source *workRange, option ...any) *workSeries {
 			}
 		}
 	}
-	ws.app = xl
-	ws.num = num
-	ws.parent = sc.parent //wrokChart
-	return &ws
+	body.app = xl
+	body.num = num
+	body.parent = Q.parent //wrokChart
+	return &body
 }
 
-func (ws *workSeries) Release() error {
-	xl := ws.app
-	xl.cores.Release(ws.num, false)
+func (Q *workSeries) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, false)
 	return nil
 }
 
-func (ws *workSeries) Nothing() error {
-	xl := ws.app
-	xl.cores.releaseChild(ws.num)
+func (Q *workSeries) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(ws.num)
-	err := ws.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(ws.num)
-	ws = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (ws *workSeries) Set() (*workSeries, error) {
-	if ws == nil {
+func (Q *workSeries) Set() (*workSeries, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := ws.app
-	xl.cores.Lock(ws.num)
-	return ws, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (ws *workSeries) Select() error {
-	if ws == nil {
+func (Q *workSeries) Select() error {
+	if Q == nil {
 		log.Printf("(Error) Object is NULL.")
 		return nil
 	}
-	xl := ws.app
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ws *workSeries) AxisGroup(value ...any) int32 {
-	xl := ws.app
+func (Q *workSeries) AxisGroup(value ...any) int32 {
+	xl := Q.app
 
 	name := "AxisGroup"
 	if len(value) > 0 {
@@ -374,14 +374,14 @@ func (ws *workSeries) AxisGroup(value ...any) int32 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -394,12 +394,12 @@ func (ws *workSeries) AxisGroup(value ...any) int32 {
 	return 0
 }
 
-func (ws *workSeries) Delete() error {
-	xl := ws.app
+func (Q *workSeries) Delete() error {
+	xl := Q.app
 
 	name := "Delete"
 	cmd := "Method"
-	_, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return err
@@ -407,8 +407,8 @@ func (ws *workSeries) Delete() error {
 	return nil
 }
 
-func (ws *workSeries) Name(value ...any) string {
-	xl := ws.app
+func (Q *workSeries) Name(value ...any) string {
+	xl := Q.app
 
 	name := "Name"
 	if len(value) > 0 {
@@ -419,14 +419,14 @@ func (ws *workSeries) Name(value ...any) string {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -439,8 +439,8 @@ func (ws *workSeries) Name(value ...any) string {
 	return ""
 }
 
-func (ws *workSeries) MarkerStyle(value ...any) string {
-	xl := ws.app
+func (Q *workSeries) MarkerStyle(value ...any) string {
+	xl := Q.app
 
 	name := "MarkerStyle"
 	if len(value) > 0 {
@@ -457,14 +457,14 @@ func (ws *workSeries) MarkerStyle(value ...any) string {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -477,8 +477,8 @@ func (ws *workSeries) MarkerStyle(value ...any) string {
 	return ""
 }
 
-func (ws *workSeries) MarkerSize(value ...int32) int32 {
-	xl := ws.app
+func (Q *workSeries) MarkerSize(value ...int32) int32 {
+	xl := Q.app
 
 	name := "MarkerSize"
 	if len(value) > 0 {
@@ -486,14 +486,14 @@ func (ws *workSeries) MarkerSize(value ...int32) int32 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ws.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0

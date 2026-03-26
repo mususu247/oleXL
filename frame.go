@@ -12,15 +12,15 @@ type workFrame struct {
 	num    int
 }
 
-func (sp *workShape) TextFrame() *workFrame {
-	var wf workFrame
-	xl := sp.app
+func (Q *workShape) TextFrame() *workFrame {
+	var body workFrame
+	xl := Q.app
 
 	name := "TextFrame"
-	core, num := xl.cores.FindAdd(name, sp.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -35,27 +35,27 @@ func (sp *workShape) TextFrame() *workFrame {
 			}
 		}
 	}
-	wf.app = xl
-	wf.num = num
-	wf.parent = sp
-	return &wf
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wf *workFrame) Release() error {
-	xl := wf.app
-	return xl.cores.Release(wf.num, false)
+func (Q *workFrame) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (wf *workFrame) Nothing() error {
-	xl := wf.app
-	xl.cores.releaseChild(wf.num)
+func (Q *workFrame) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wf.num)
-	err := wf.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wf.num)
-	wf = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }

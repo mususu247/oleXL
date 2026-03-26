@@ -19,18 +19,19 @@ type workWindow struct {
 	num    int
 }
 
-func (xl *Excel) Application() *workApp {
-	var wa workApp
+func (Q *Excel) Application() *workApp {
+	var body workApp
+	xl := Q
 
 	kind := "Application"
 	_, num := xl.cores.FindAdd(kind, xl.num)
-	wa.app = xl
-	wa.num = num
-	return &wa
+	body.app = xl
+	body.num = num
+	return &body
 }
 
-func (wa *workApp) Left(value ...float64) float64 {
-	xl := wa.app
+func (Q *workApp) Left(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Left"
 	if len(value) > 0 {
@@ -57,8 +58,8 @@ func (wa *workApp) Left(value ...float64) float64 {
 	return 0
 }
 
-func (wa *workApp) Top(value ...float64) float64 {
-	xl := wa.app
+func (Q *workApp) Top(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Top"
 	if len(value) > 0 {
@@ -85,8 +86,8 @@ func (wa *workApp) Top(value ...float64) float64 {
 	return 0
 }
 
-func (wa *workApp) Width(value ...float64) float64 {
-	xl := wa.app
+func (Q *workApp) Width(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Width"
 	if len(value) > 0 {
@@ -113,8 +114,8 @@ func (wa *workApp) Width(value ...float64) float64 {
 	return 0
 }
 
-func (wa *workApp) Height(value ...float64) float64 {
-	xl := wa.app
+func (Q *workApp) Height(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Height"
 	if len(value) > 0 {
@@ -142,8 +143,8 @@ func (wa *workApp) Height(value ...float64) float64 {
 	return 0
 }
 
-func (wa *workApp) WindowState(value ...any) int32 {
-	xl := wa.app
+func (Q *workApp) WindowState(value ...any) int32 {
+	xl := Q.app
 
 	name := "WindowState"
 	if len(value) > 0 {
@@ -169,7 +170,7 @@ func (wa *workApp) WindowState(value ...any) int32 {
 	} else {
 		cmd := "Get"
 
-		ans, err := xl.cores.SendNum(cmd, name, wa.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -182,22 +183,22 @@ func (wa *workApp) WindowState(value ...any) int32 {
 	return 0
 }
 
-func (wa *workApp) SetWindowRect(left, top, height, width float64) error {
-	xl := wa.app
-	wa.WindowState("xlNormal")
-	wa.Left(left)
-	wa.Top(top)
-	wa.Height(height)
-	wa.Width(width)
+func (Q *workApp) SetWindowRect(left, top, height, width float64) error {
+	xl := Q.app
+	Q.WindowState("xlNormal")
+	Q.Left(left)
+	Q.Top(top)
+	Q.Height(height)
+	Q.Width(width)
 
 	if xl.cores.debug {
-		log.Printf(".WindowRect(%v,%v,%v,%v)", wa.Left(), wa.Top(), wa.Height(), wa.Width())
+		log.Printf(".WindowRect(%v,%v,%v,%v)", Q.Left(), Q.Top(), Q.Height(), Q.Width())
 	}
 	return nil
 }
 
-func (wa *workApp) Run(Macro string, Args ...any) any {
-	xl := wa.app
+func (Q *workApp) Run(Macro string, Args ...any) any {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Run"
@@ -268,8 +269,9 @@ func (wa *workApp) Run(Macro string, Args ...any) any {
 	}
 }
 
-func (xl *Excel) ActiveWindow() *workWindow {
-	var ww workWindow
+func (Q *Excel) ActiveWindow() *workWindow {
+	var body workWindow
+	xl := Q
 
 	kind := "Window"
 	core, num := xl.cores.FindAdd(kind, xl.num)
@@ -291,14 +293,14 @@ func (xl *Excel) ActiveWindow() *workWindow {
 			}
 		}
 	}
-	ww.app = xl
-	ww.num = num
-	ww.parent = xl
-	return &ww
+	body.app = xl
+	body.num = num
+	body.parent = xl
+	return &body
 }
 
-func (ww *workWindow) FreezePanes(value ...bool) bool {
-	xl := ww.app
+func (Q *workWindow) FreezePanes(value ...bool) bool {
+	xl := Q.app
 
 	name := "FreezePanes"
 	if len(value) > 0 {
@@ -306,14 +308,14 @@ func (ww *workWindow) FreezePanes(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ww.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ww.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -326,8 +328,8 @@ func (ww *workWindow) FreezePanes(value ...bool) bool {
 	return false
 }
 
-func (ww *workWindow) Zoom(value ...float64) float64 {
-	xl := ww.app
+func (Q *workWindow) Zoom(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Zoom"
 	if len(value) > 0 {
@@ -335,14 +337,14 @@ func (ww *workWindow) Zoom(value ...float64) float64 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, ww.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ww.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -355,8 +357,8 @@ func (ww *workWindow) Zoom(value ...float64) float64 {
 	return 0
 }
 
-func (wa *workApp) CutCopyMode(value ...bool) bool {
-	xl := wa.app
+func (Q *workApp) CutCopyMode(value ...bool) bool {
+	xl := Q.app
 
 	name := "CutCopyMode"
 	if len(value) > 0 {
@@ -364,14 +366,14 @@ func (wa *workApp) CutCopyMode(value ...bool) bool {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wa.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wa.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return false
@@ -384,8 +386,8 @@ func (wa *workApp) CutCopyMode(value ...bool) bool {
 	return false
 }
 
-func (wa *workApp) StatusBar(value string) bool {
-	xl := wa.app
+func (Q *workApp) StatusBar(value string) bool {
+	xl := Q.app
 
 	name := "StatusBar"
 	cmd := "Put"
@@ -403,46 +405,42 @@ func (wa *workApp) StatusBar(value string) bool {
 	return false
 }
 
-func (wa *workApp) Union(rag ...any) *workRange {
-	var wr workRange
-	xl := wa.app
-	ws := xl.ActiveSheet()
+func (Q *workApp) ReferenceStyle(value ...any) int32 {
+	xl := Q.app
 
-	kind := "Range"
-	core, num := xl.cores.FindAdd(kind, wa.num)
-	if core.disp == nil {
-		cmd := "Method"
-		name := "Union"
+	name := "ReferenceStyle"
+	if len(value) > 0 {
+		cmd := "Put"
 		var opt []any
-		for i := range rag {
-			switch x := rag[i].(type) {
-			case string:
-				opt = append(opt, x)
-			case *workRange:
-				disp := xl.cores.getCore(x.num).disp
-				opt = append(opt, disp)
-			}
-		}
 
-		ans, err := xl.cores.SendNum(cmd, name, xl.num, opt)
+		var v int32
+		switch x := value[0].(type) {
+		case int:
+			v = SetEnumReferenceStyle(int32(x))
+		case int32:
+			v = SetEnumReferenceStyle(x)
+		case string:
+			v = GetEnumReferenceStyleNum(x)
+		}
+		opt = append(opt, v)
+
+		_, err := xl.cores.SendNum(cmd, name, xl.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
-			return nil
+			return 0
+		}
+	} else {
+		cmd := "Get"
+
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
 		}
 		switch x := ans.(type) {
-		case *ole.IDispatch:
-			if x != nil {
-				core.disp = x
-				core.lock = 0
-			} else {
-				return nil
-			}
-		default:
-			log.Printf("%T %v", ans, ans)
+		case int32:
+			return x
 		}
 	}
-	wr.app = xl
-	wr.num = num
-	wr.parent = ws
-	return &wr
+	return 0
 }

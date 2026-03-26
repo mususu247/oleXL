@@ -19,16 +19,16 @@ type workShape struct {
 	num    int
 }
 
-func (nt *workNote) Shape() *workShape {
-	var sp workShape
-	xl := nt.app
+func (Q *workNote) Shape() *workShape {
+	var body workShape
+	xl := Q.app
 
 	kind := "Shape"
-	core, num := xl.cores.FindAdd(kind, nt.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Shape"
-		ans, err := xl.cores.SendNum(cmd, name, nt.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -43,22 +43,22 @@ func (nt *workNote) Shape() *workShape {
 			}
 		}
 	}
-	sp.app = xl
-	sp.num = num
-	sp.parent = nt
-	return &sp
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ws *workSheet) Shapes() *workShapes {
-	var sps workShapes
-	xl := ws.app
+func (Q *workSheet) Shapes() *workShapes {
+	var body workShapes
+	xl := Q.app
 
 	kind := "Shapes"
-	core, num := xl.cores.FindAdd(kind, ws.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Shapes"
-		ans, err := xl.cores.SendNum(cmd, name, ws.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -73,19 +73,19 @@ func (ws *workSheet) Shapes() *workShapes {
 			}
 		}
 	}
-	sps.app = xl
-	sps.num = num
-	sps.parent = ws
-	return &sps
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (ws *workSheet) Shapez(value any) *workShape {
-	var sp workShape
-	xl := ws.app
-	sps := ws.Shapes()
+func (Q *workSheet) Shapez(value any) *workShape {
+	var body workShape
+	xl := Q.app
+	sps := Q.Shapes()
 
 	kind := "Shape"
-	core, num := xl.cores.FindAdd(kind, ws.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "Item"
@@ -118,36 +118,36 @@ func (ws *workSheet) Shapez(value any) *workShape {
 			}
 		}
 	}
-	sp.app = xl
-	sp.num = num
-	sp.parent = ws
-	return &sp
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (sps *workShapes) Release() error {
-	xl := sps.app
-	return xl.cores.Release(sps.num, false)
+func (Q *workShapes) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (sps *workShapes) Nothing() error {
-	xl := sps.app
-	xl.cores.releaseChild(sps.num)
+func (Q *workShapes) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(sps.num)
-	err := sps.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(sps.num)
-	sps = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (sps *workShapes) Count() int32 {
-	xl := sps.app
+func (Q *workShapes) Count() int32 {
+	xl := Q.app
 	name := "Count"
 	cmd := "Get"
-	ans, err := xl.cores.SendNum(cmd, name, sps.num, nil)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return 0
@@ -159,12 +159,12 @@ func (sps *workShapes) Count() int32 {
 	return 0
 }
 
-func (sps *workShapes) AddShape(Type any, left, top, width, height float64) *workShape {
-	var sp workShape
-	xl := sps.app
+func (Q *workShapes) AddShape(Type any, left, top, width, height float64) *workShape {
+	var body workShape
+	xl := Q.app
 
 	kind := "Shape"
-	core, num := xl.cores.FindAdd(kind, sps.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "AddShape"
@@ -185,7 +185,7 @@ func (sps *workShapes) AddShape(Type any, left, top, width, height float64) *wor
 		opt = append(opt, width)
 		opt = append(opt, height)
 
-		ans, err := xl.cores.SendNum(cmd, name, sps.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -200,56 +200,56 @@ func (sps *workShapes) AddShape(Type any, left, top, width, height float64) *wor
 			}
 		}
 	}
-	sp.app = xl
-	sp.num = num
-	sp.parent = sps.parent
-	return &sp
+	body.app = xl
+	body.num = num
+	body.parent = Q.parent
+	return &body
 }
 
-func (sp *workShape) Release() error {
-	xl := sp.app
-	xl.cores.Release(sp.num, false)
+func (Q *workShape) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, false)
 	return nil
 }
 
-func (sp *workShape) Nothing() error {
-	xl := sp.app
-	xl.cores.releaseChild(sp.num)
+func (Q *workShape) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(sp.num)
-	err := sp.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(sp.num)
-	sp = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (sp *workShape) Set() (*workShape, error) {
-	if sp == nil {
+func (Q *workShape) Set() (*workShape, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := sp.app
-	xl.cores.Lock(sp.num)
-	return sp, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (sp *workShape) Select() error {
-	xl := sp.app
+func (Q *workShape) Select() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (sp *workShape) Name(value ...any) string {
-	xl := sp.app
+func (Q *workShape) Name(value ...any) string {
+	xl := Q.app
 
 	name := "Name"
 	if len(value) > 0 {
@@ -260,14 +260,14 @@ func (sp *workShape) Name(value ...any) string {
 			opt = append(opt, x)
 		}
 
-		_, err := xl.cores.SendNum(cmd, name, sp.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return ""
@@ -281,12 +281,12 @@ func (sp *workShape) Name(value ...any) string {
 	return ""
 }
 
-func (sp *workShape) Delete() error {
-	xl := sp.app
+func (Q *workShape) Delete() error {
+	xl := Q.app
 
 	name := "Delete"
 	cmd := "Method"
-	_, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return err
@@ -294,14 +294,14 @@ func (sp *workShape) Delete() error {
 	return nil
 }
 
-func (sps *workShapes) AddChart2(style int32, ChartType any, option ...any) *workShape {
-	var sp workShape
-	xl := sps.app
+func (Q *workShapes) AddChart2(style int32, ChartType any, option ...any) *workShape {
+	var body workShape
+	xl := Q.app
 
 	//style int32, ChartType any, left, top, width, height float64, newLayout bool
 
 	kind := "Shape"
-	core, num := xl.cores.FindAdd(kind, sps.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "AddChart2"
@@ -334,7 +334,7 @@ func (sps *workShapes) AddChart2(style int32, ChartType any, option ...any) *wor
 			}
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, sps.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -349,15 +349,15 @@ func (sps *workShapes) AddChart2(style int32, ChartType any, option ...any) *wor
 			}
 		}
 	}
-	sp.app = xl
-	sp.num = num
-	sp.parent = sps
-	return &sp
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (sps *workShapes) AddPicture(fileName string, LinkToFile bool, SaveWithDocument bool, left, top, width, height float64) *workShape {
-	var sp workShape
-	xl := sps.app
+func (Q *workShapes) AddPicture(fileName string, LinkToFile bool, SaveWithDocument bool, left, top, width, height float64) *workShape {
+	var body workShape
+	xl := Q.app
 
 	if !FileExists(fileName) {
 		log.Printf("(Error) not found: %v", fileName)
@@ -365,7 +365,7 @@ func (sps *workShapes) AddPicture(fileName string, LinkToFile bool, SaveWithDocu
 	}
 
 	kind := "Shape"
-	core, num := xl.cores.FindAdd(kind, sps.num)
+	core, num := xl.cores.FindAdd(kind, Q.num)
 	if core.disp == nil {
 		cmd := "Method"
 		name := "AddPicture"
@@ -390,7 +390,7 @@ func (sps *workShapes) AddPicture(fileName string, LinkToFile bool, SaveWithDocu
 		opt = append(opt, width)
 		opt = append(opt, height)
 
-		ans, err := xl.cores.SendNum(cmd, name, sps.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -405,8 +405,8 @@ func (sps *workShapes) AddPicture(fileName string, LinkToFile bool, SaveWithDocu
 			}
 		}
 	}
-	sp.app = xl
-	sp.num = num
-	sp.parent = sps.parent
-	return &sp
+	body.app = xl
+	body.num = num
+	body.parent = Q.parent
+	return &body
 }

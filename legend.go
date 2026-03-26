@@ -13,15 +13,15 @@ type workLegend struct {
 	num    int
 }
 
-func (ct *workChart) Legend() *workLegend {
-	var lg workLegend
-	xl := ct.app
+func (Q *workChart) Legend() *workLegend {
+	var body workLegend
+	xl := Q.app
 
 	name := "Legend"
-	core, num := xl.cores.FindAdd(name, ct.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, ct.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -36,83 +36,83 @@ func (ct *workChart) Legend() *workLegend {
 			}
 		}
 	}
-	lg.app = xl
-	lg.num = num
-	lg.parent = ct
-	return &lg
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (lg *workLegend) Release() error {
-	xl := lg.app
-	xl.cores.Release(lg.num, false)
+func (Q *workLegend) Release() error {
+	xl := Q.app
+	xl.cores.Release(Q.num, false)
 	return nil
 }
 
-func (lg *workLegend) Nothing() error {
-	xl := lg.app
-	xl.cores.releaseChild(lg.num)
+func (Q *workLegend) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(lg.num)
-	err := lg.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(lg.num)
-	lg = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (lg *workLegend) Set() (*workLegend, error) {
-	if lg == nil {
+func (Q *workLegend) Set() (*workLegend, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := lg.app
-	xl.cores.Lock(lg.num)
-	return lg, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (lg *workLegend) Select() error {
-	xl := lg.app
+func (Q *workLegend) Select() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Select"
 
-	_, err := xl.cores.SendNum(cmd, name, lg.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (lg *workLegend) Delete() error {
-	xl := lg.app
+func (Q *workLegend) Delete() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Delete"
 
-	_, err := xl.cores.SendNum(cmd, name, lg.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (lg *workLegend) Clear() error {
-	xl := lg.app
+func (Q *workLegend) Clear() error {
+	xl := Q.app
 
 	cmd := "Method"
 	name := "Clear"
 
-	_, err := xl.cores.SendNum(cmd, name, lg.num, nil)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (lg *workLegend) Position(value ...any) int32 {
+func (Q *workLegend) Position(value ...any) int32 {
 	var opt []any
-	xl := lg.app
+	xl := Q.app
 
 	name := "Position"
 	if len(value) > 0 {
@@ -129,13 +129,13 @@ func (lg *workLegend) Position(value ...any) int32 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, lg.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, lg.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 		}

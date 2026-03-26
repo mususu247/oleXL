@@ -13,12 +13,12 @@ type workBorder struct {
 	num    int
 }
 
-func (wr *workRange) Borders(value ...any) *workBorder {
-	var br workBorder
-	xl := wr.app
+func (Q *workRange) Borders(value ...any) *workBorder {
+	var body workBorder
+	xl := Q.app
 
 	name := "Borders"
-	core, num := xl.cores.FindAdd(name, wr.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
 		var opt []any
@@ -38,7 +38,7 @@ func (wr *workRange) Borders(value ...any) *workBorder {
 			opt = nil
 		}
 
-		ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -53,14 +53,14 @@ func (wr *workRange) Borders(value ...any) *workBorder {
 			}
 		}
 	}
-	br.app = xl
-	br.num = num
-	br.parent = wr
-	return &br
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wr *workRange) BorderAround(LineStyle any, Weight any, ColorIndex any, Color any, ThemeColor any) bool {
-	xl := wr.app
+func (Q *workRange) BorderAround(LineStyle any, Weight any, ColorIndex any, Color any, ThemeColor any) bool {
+	xl := Q.app
 
 	name := "BorderAround"
 	cmd := "Method"
@@ -128,7 +128,7 @@ func (wr *workRange) BorderAround(LineStyle any, Weight any, ColorIndex any, Col
 		opt = append(opt, nil)
 	}
 
-	ans, err := xl.cores.SendNum(cmd, name, wr.num, opt)
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		log.Printf("(Error) %v", err)
 		return false
@@ -140,36 +140,36 @@ func (wr *workRange) BorderAround(LineStyle any, Weight any, ColorIndex any, Col
 	return false
 }
 
-func (br *workBorder) Release() error {
-	xl := br.app
-	return xl.cores.Release(br.num, false)
+func (Q *workBorder) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (br *workBorder) Nothing() error {
-	xl := br.app
-	xl.cores.releaseChild(br.num)
+func (Q *workBorder) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(br.num)
-	err := br.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(br.num)
-	br = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (br *workBorder) Set() (*workBorder, error) {
-	if br == nil {
+func (Q *workBorder) Set() (*workBorder, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := br.app
-	xl.cores.Lock(br.num)
-	return br, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (br *workBorder) LineStyle(value ...any) int32 {
-	xl := br.app
+func (Q *workBorder) LineStyle(value ...any) int32 {
+	xl := Q.app
 
 	name := "LineStyle"
 	if len(value) > 0 {
@@ -186,14 +186,14 @@ func (br *workBorder) LineStyle(value ...any) int32 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, br.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, br.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
@@ -207,8 +207,8 @@ func (br *workBorder) LineStyle(value ...any) int32 {
 	return 0
 }
 
-func (br *workBorder) Weight(value ...any) int32 {
-	xl := br.app
+func (Q *workBorder) Weight(value ...any) int32 {
+	xl := Q.app
 
 	name := "Weight"
 	if len(value) > 0 {
@@ -225,14 +225,14 @@ func (br *workBorder) Weight(value ...any) int32 {
 		}
 		opt = append(opt, z)
 
-		_, err := xl.cores.SendNum(cmd, name, br.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, br.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0

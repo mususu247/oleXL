@@ -13,15 +13,15 @@ type workFill struct {
 	num    int
 }
 
-func (sp *workShape) Fill() *workFill {
-	var wl workFill
-	xl := sp.app
+func (Q *workShape) Fill() *workFill {
+	var body workFill
+	xl := Q.app
 
 	name := "Fill"
-	core, num := xl.cores.FindAdd(name, sp.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, sp.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -36,21 +36,21 @@ func (sp *workShape) Fill() *workFill {
 			}
 		}
 	}
-	wl.app = xl
-	wl.num = num
-	wl.parent = sp
-	return &wl
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wf *workFont) Fill() *workFill {
-	var wl workFill
-	xl := wf.app
+func (Q *workFont) Fill() *workFill {
+	var body workFill
+	xl := Q.app
 
 	name := "Fill"
-	core, num := xl.cores.FindAdd(name, wf.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -65,21 +65,21 @@ func (wf *workFont) Fill() *workFill {
 			}
 		}
 	}
-	wl.app = xl
-	wl.num = num
-	wl.parent = wf
-	return &wl
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wf *workFormat) Fill() *workFill {
-	var wl workFill
-	xl := wf.app
+func (Q *workFormat) Fill() *workFill {
+	var body workFill
+	xl := Q.app
 
 	name := "Fill"
-	core, num := xl.cores.FindAdd(name, wf.num)
+	core, num := xl.cores.FindAdd(name, Q.num)
 	if core.disp == nil {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return nil
@@ -94,56 +94,56 @@ func (wf *workFormat) Fill() *workFill {
 			}
 		}
 	}
-	wl.app = xl
-	wl.num = num
-	wl.parent = wf
-	return &wl
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
 }
 
-func (wl *workFill) Release() error {
-	xl := wl.app
-	return xl.cores.Release(wl.num, false)
+func (Q *workFill) Release() error {
+	xl := Q.app
+	return xl.cores.Release(Q.num, false)
 }
 
-func (wl *workFill) Nothing() error {
-	xl := wl.app
-	xl.cores.releaseChild(wl.num)
+func (Q *workFill) Nothing() error {
+	xl := Q.app
+	xl.cores.releaseChild(Q.num)
 
-	xl.cores.Unlock(wl.num)
-	err := wl.Release()
+	xl.cores.Unlock(Q.num)
+	err := Q.Release()
 	if err != nil {
 		return err
 	}
-	xl.cores.Remove(wl.num)
-	wl = nil
+	xl.cores.Remove(Q.num)
+	Q = nil
 	return nil
 }
 
-func (wl *workFill) Set() (*workFill, error) {
-	if wl == nil {
+func (Q *workFill) Set() (*workFill, error) {
+	if Q == nil {
 		return nil, fmt.Errorf("(Error) Object is NULL.")
 	}
-	xl := wl.app
-	xl.cores.Lock(wl.num)
-	return wl, nil
+	xl := Q.app
+	xl.cores.Lock(Q.num)
+	return Q, nil
 }
 
-func (wl *workFill) Visible(value bool) error {
-	xl := wl.app
+func (Q *workFill) Visible(value bool) error {
+	xl := Q.app
 	cmd := "Put"
 	name := "Visible"
 	var opt []any
 	opt = append(opt, value)
 
-	_, err := xl.cores.SendNum(cmd, name, wl.num, opt)
+	_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 	if err != nil {
 		log.Printf("(Error) cmd:%v name:%v %v", cmd, name, value)
 	}
 	return nil
 }
 
-func (wf *workFill) Transparency(value ...float64) float64 {
-	xl := wf.app
+func (Q *workFill) Transparency(value ...float64) float64 {
+	xl := Q.app
 
 	name := "Transparency"
 	if len(value) > 0 {
@@ -151,14 +151,14 @@ func (wf *workFill) Transparency(value ...float64) float64 {
 		var opt []any
 		opt = append(opt, value[0])
 
-		_, err := xl.cores.SendNum(cmd, name, wf.num, opt)
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
 		}
 	} else {
 		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, wf.num, nil)
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
 			return 0
