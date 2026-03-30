@@ -3,8 +3,11 @@ package oleXL
 import (
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
+	"github.com/atotto/clipboard"
 	"github.com/go-ole/go-ole"
 )
 
@@ -168,7 +171,7 @@ func (Q *workRange) Cells(cell ...any) *workRange {
 	return &body
 }
 
-func (ws *workSheet) Rows(cell any) *workRange {
+func (ws *workSheet) Rows(cell ...any) *workRange {
 	var body workRange
 	xl := ws.app
 
@@ -178,7 +181,11 @@ func (ws *workSheet) Rows(cell any) *workRange {
 	if core.disp == nil {
 		cmd := "Get"
 		var opt []any
-		opt = append(opt, cell)
+		if len(cell) > 0 {
+			opt = append(opt, cell[0])
+		} else {
+			opt = nil
+		}
 
 		ans, err := xl.cores.SendNum(cmd, name, ws.num, opt)
 		if err != nil {
@@ -201,7 +208,7 @@ func (ws *workSheet) Rows(cell any) *workRange {
 	return &body
 }
 
-func (Q *workRange) Rows(cell any) *workRange {
+func (Q *workRange) Rows(cell ...any) *workRange {
 	var body workRange
 	xl := Q.app
 	ws := getSheet(Q)
@@ -212,7 +219,11 @@ func (Q *workRange) Rows(cell any) *workRange {
 	if core.disp == nil {
 		cmd := "Get"
 		var opt []any
-		opt = append(opt, cell)
+		if len(cell) > 0 {
+			opt = append(opt, cell[0])
+		} else {
+			opt = nil
+		}
 
 		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
@@ -235,7 +246,7 @@ func (Q *workRange) Rows(cell any) *workRange {
 	return &body
 }
 
-func (ws *workSheet) Columns(cell any) *workRange {
+func (ws *workSheet) Columns(cell ...any) *workRange {
 	var body workRange
 	xl := ws.app
 
@@ -245,7 +256,11 @@ func (ws *workSheet) Columns(cell any) *workRange {
 	if core.disp == nil {
 		cmd := "Get"
 		var opt []any
-		opt = append(opt, cell)
+		if len(cell) > 0 {
+			opt = append(opt, cell[0])
+		} else {
+			opt = nil
+		}
 
 		ans, err := xl.cores.SendNum(cmd, name, ws.num, opt)
 		if err != nil {
@@ -268,7 +283,7 @@ func (ws *workSheet) Columns(cell any) *workRange {
 	return &body
 }
 
-func (Q *workRange) Columns(cell any) *workRange {
+func (Q *workRange) Columns(cell ...any) *workRange {
 	var body workRange
 	xl := Q.app
 	ws := getSheet(Q)
@@ -279,7 +294,11 @@ func (Q *workRange) Columns(cell any) *workRange {
 	if core.disp == nil {
 		cmd := "Get"
 		var opt []any
-		opt = append(opt, cell)
+		if len(cell) > 0 {
+			opt = append(opt, cell[0])
+		} else {
+			opt = nil
+		}
 
 		ans, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
@@ -942,6 +961,68 @@ func (Q *workRange) Value2(value ...any) any {
 		}
 	}
 	return nil
+}
+
+func (Q *workRange) Values() [][]any {
+	var result [][]any
+	//xl := Q.app
+
+	rows := int(Q.Rows().Count())
+
+	var nfs []string
+	for c := range Q.Columns().Count() {
+		v := Q.Columns(c + 1).NumberFormatLocal()
+		v = NumberFoarmat2Layout(v)
+		nfs = append(nfs, v)
+	}
+
+	Q.Copy()
+	text, _ := clipboard.ReadAll()
+	clipboard.WriteAll("") //clipboard.Claer
+
+	line := strings.Split(text, "\r\n")
+	for r := range line {
+		cell := strings.Split(line[r], "\t")
+		var record []any
+		for c := range cell {
+			//value null
+			if len(cell[c]) == 0 {
+				record = append(record, nil)
+				continue
+			}
+
+			//value number
+			f64, err := strconv.ParseFloat(cell[c], 64)
+			if err == nil {
+				record = append(record, f64)
+				continue
+			}
+
+			//value bool
+			bl, err := strconv.ParseBool(cell[c])
+			if err == nil {
+				record = append(record, bl)
+				continue
+			}
+
+			//value time
+			dt, err := time.Parse(nfs[c], cell[c])
+			if err == nil {
+				record = append(record, dt)
+				continue
+			}
+
+			//value string
+			record = append(record, cell[c])
+		}
+
+		if r < rows {
+			result = append(result, record)
+			//log.Printf("[%v] %v\n", r, record)
+		}
+	}
+
+	return result
 }
 
 func (Q *workRange) Formula(value ...string) string {
