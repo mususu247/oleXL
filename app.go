@@ -159,6 +159,8 @@ func (Q *workApp) WindowState(value ...any) int32 {
 			v = SetEnumWindowState(x)
 		case string:
 			v = GetEnumWindowStateNum(x)
+		default:
+			v = SetEnumWindowState(0)
 		}
 		opt = append(opt, v)
 
@@ -421,6 +423,8 @@ func (Q *workApp) ReferenceStyle(value ...any) int32 {
 			v = SetEnumReferenceStyle(x)
 		case string:
 			v = GetEnumReferenceStyleNum(x)
+		default:
+			v = SetEnumReferenceStyle(0)
 		}
 		opt = append(opt, v)
 

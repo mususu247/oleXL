@@ -26,6 +26,8 @@ func (Q *workChart) HasAxis(AxisType any, AxisGroup any, value ...any) bool {
 		z = SetEnumAxisType(x)
 	case string:
 		z = GetEnumAxisTypeNum(x)
+	default:
+		z = SetEnumAxisType(0)
 	}
 	opt = append(opt, z)
 
@@ -37,6 +39,8 @@ func (Q *workChart) HasAxis(AxisType any, AxisGroup any, value ...any) bool {
 		z = SetEnumAxisGroup(x)
 	case string:
 		z = GetEnumAxisGroupNum(x)
+	default:
+		z = SetEnumAxisGroup(0)
 	}
 	opt = append(opt, z)
 
@@ -84,6 +88,8 @@ func (Q *workChart) Axes(value ...any) *workAxes {
 				z = SetEnumAxisType(x)
 			case string:
 				z = GetEnumAxisTypeNum(x)
+			default:
+				z = SetEnumAxisType(0)
 			}
 			opt = append(opt, z)
 		}
@@ -96,6 +102,8 @@ func (Q *workChart) Axes(value ...any) *workAxes {
 				z = SetEnumAxisGroup(x)
 			case string:
 				z = GetEnumAxisGroupNum(x)
+			default:
+				z = SetEnumAxisGroup(0)
 			}
 			opt = append(opt, z)
 		} else {
@@ -269,6 +277,8 @@ func (Q *workAxes) TickLabelPosition(value ...any) int32 {
 			z = SetEnumTickLabelPosition(x)
 		case string:
 			z = GetEnumTickLabelPositionNum(x)
+		default:
+			z = SetEnumTickLabelPosition(0)
 		}
 		opt = append(opt, z)
 

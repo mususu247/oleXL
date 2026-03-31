@@ -388,6 +388,8 @@ func (Q *workBooks) Open(fileName string, options ...map[string]any) (*workBook,
 						z = SetEnumPlatform(int32(x))
 					case string:
 						z = GetEnumPlatformNum(x)
+					default:
+						z = SetEnumPlatform(0)
 					}
 					opt[7] = z
 				case "Delimiter":
@@ -501,6 +503,8 @@ func (Q *workBook) SaveAs(fileName string, options ...map[string]any) error {
 					z = SetEnumFileFormat(x)
 				case string:
 					z = GetEnumFileFormatNum(x)
+				default:
+					z = SetEnumFileFormat(0)
 				}
 				opt[1] = z
 			case "Password":

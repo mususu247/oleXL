@@ -209,6 +209,8 @@ func (Q *Excel) Calculation(value ...any) int32 {
 			z = SetEnumCalculation(x)
 		case string:
 			z = GetEnumCalculationNum(x)
+		default:
+			z = SetEnumCalculation(0)
 		}
 		opt = append(opt, z)
 

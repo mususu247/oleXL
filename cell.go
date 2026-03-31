@@ -341,6 +341,8 @@ func (Q *workRange) End(shift any) *workRange {
 			z = SetEnumDirection(x)
 		case string:
 			z = GetEnumDirectionNum(x)
+		default:
+			z = SetEnumDirection(0)
 		}
 		opt = append(opt, z)
 
@@ -386,6 +388,8 @@ func (Q *workRange) Delete(shift ...any) *workRange {
 				z = SetEnumDirection(x)
 			case string:
 				z = GetEnumDirectionNum(x)
+			default:
+				z = SetEnumDirection(0)
 			}
 			opt = append(opt, z)
 		} else {
@@ -434,6 +438,8 @@ func (Q *workRange) Insert(shift ...any) *workRange {
 				z = SetEnumDirection(x)
 			case string:
 				z = GetEnumDirectionNum(x)
+			default:
+				z = SetEnumDirection(0)
 			}
 			opt = append(opt, z)
 		} else {
@@ -1447,6 +1453,8 @@ func (Q *workRange) HorizontalAlignment(value ...any) int32 {
 			z = SetEnumHAlign(x)
 		case string:
 			z = GetEnumHAlignNum(x)
+		default:
+			z = SetEnumHAlign(0)
 		}
 		opt = append(opt, z)
 
@@ -1482,6 +1490,8 @@ func (Q *workRange) VerticalAlignment(value ...any) int32 {
 			z = SetEnumVAlign(x)
 		case string:
 			z = GetEnumVAlignNum(x)
+		default:
+			z = SetEnumVAlign(0)
 		}
 		opt = append(opt, z)
 
@@ -1667,6 +1677,8 @@ func (Q *workRange) ReadingOrder(value ...any) int32 {
 			z = SetEnumReadingOrder(x)
 		case string:
 			z = GetEnumReadingOrderNum(x)
+		default:
+			z = SetEnumReadingOrder(0)
 		}
 		opt = append(opt, z)
 

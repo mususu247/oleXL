@@ -442,6 +442,8 @@ func (Q *workFont) Underline(value ...any) int32 {
 			z = SetEnumUnderlineStyle(x)
 		case string:
 			z = GetEnumUnderlineStyleNum(x)
+		default:
+			z = SetEnumUnderlineStyle(0)
 		}
 		opt = append(opt, z)
 

@@ -126,6 +126,8 @@ func (Q *workLegend) Position(value ...any) int32 {
 			z = SetEnumLegendPosition(x)
 		case string:
 			z = GetEnumLegendPositionNum(x)
+		default:
+			z = SetEnumLegendPosition(0)
 		}
 		opt = append(opt, z)
 

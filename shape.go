@@ -178,6 +178,8 @@ func (Q *workShapes) AddShape(Type any, left, top, width, height float64) *workS
 			z = SetEnumShapeType(x)
 		case string:
 			z = GetEnumShapeTypeNum(x)
+		default:
+			z = SetEnumShapeType(0)
 		}
 		opt = append(opt, z)
 		opt = append(opt, left)
@@ -320,6 +322,8 @@ func (Q *workShapes) AddChart2(style int32, ChartType any, option ...any) *workS
 			z = SetEnumChartType(x)
 		case string:
 			z = GetEnumChartTypeNum(x)
+		default:
+			z = SetEnumChartType(0)
 		}
 		opt[1] = z
 

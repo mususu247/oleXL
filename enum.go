@@ -2643,3 +2643,57 @@ func SetEnumYesNoGuess(enumType int32) int32 {
 	}
 	return result
 }
+
+// XlAutoFilterOperator
+func EnumAutoFilterOperator() map[string]int32 {
+	enum := make(map[string]int32)
+	enum["xlAnd"] = 1 //Def
+	enum["xlBottom10Items"] = 4
+	enum["xlBottom10Percent"] = 6
+	enum["xlFilterCellColor"] = 8
+	enum["xlFilterDynamic"] = 11
+	enum["xlFilterFontColor"] = 9
+	enum["xlFilterIcon"] = 10
+	enum["xlFilterValues"] = 7
+	enum["xlOr"] = 2
+	enum["xlTop10Items"] = 3
+	enum["xlTop10Percent"] = 5
+	return enum
+}
+
+func GetEnumAutoFilterOperatorNum(enumType string) int32 {
+	var result int32
+	enum := EnumAutoFilterOperator()
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlAnd"]
+	}
+	return result
+}
+
+func GetEnumAutoFilterOperatorStr(enumType int32) string {
+	var result string
+	enum := EnumAutoFilterOperator()
+	result = "xlAnd"
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumAutoFilterOperator(enumType int32) int32 {
+	var result int32
+	enum := EnumAutoFilterOperator()
+	result = enum["xlAnd"]
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}

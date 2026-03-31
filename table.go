@@ -193,6 +193,8 @@ func (Q *workTables) Add(SourceType any, Source *workRange, option ...any) *work
 			z = SetEnumListObjectSourceType(x)
 		case string:
 			z = GetEnumListObjectSourceTypeNum(x)
+		default:
+			z = SetEnumListObjectSourceType(0)
 		}
 		opt[0] = z
 
@@ -207,6 +209,8 @@ func (Q *workTables) Add(SourceType any, Source *workRange, option ...any) *work
 			z = SetEnumYesNoGuess(x)
 		case string:
 			z = GetEnumYesNoGuessNum(x)
+		default:
+			z = SetEnumYesNoGuess(0)
 		}
 		opt[3] = z
 
@@ -741,6 +745,19 @@ func (Q *workTable) ListRowz(value any) *listRow {
 	return &body
 }
 
+func (Q *workTable) Activate() error {
+	xl := Q.app
+
+	cmd := "Method"
+	name := "Activate"
+
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (Q *listRow) Range(value ...any) *workRange {
 	var body workRange
 	xl := Q.app
@@ -952,5 +969,39 @@ func (Q *listColumn) Name() string {
 	case string:
 		return x
 	}
+	return ""
+}
+
+func (Q *workTable) Comment(value ...any) string {
+	xl := Q.app
+
+	name := "Comment"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		if len(value) > 0 {
+			for _, v := range value {
+				opt = append(opt, v)
+			}
+		}
+
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+		switch x := ans.(type) {
+		case string:
+			return x
+		}
+	}
+
 	return ""
 }

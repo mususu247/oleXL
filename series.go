@@ -188,6 +188,8 @@ func (Q *seriesCollection) Extend(value *workRange, option ...any) *workSeries {
 				z = SetEnumRowCol(x)
 			case string:
 				z = GetEnumRowColNum(x)
+			default:
+				z = SetEnumRowCol(0)
 			}
 			opt = append(opt, z)
 			opt = append(opt, true)
@@ -279,6 +281,8 @@ func (Q *seriesCollection) Add(Source *workRange, option ...any) *workSeries {
 					z = SetEnumRowCol(x)
 				case string:
 					z = GetEnumRowColNum(x)
+				default:
+					z = SetEnumRowCol(0)
 				}
 				opt[1] = z
 			default:
@@ -371,6 +375,8 @@ func (Q *workSeries) AxisGroup(value ...any) int32 {
 			z = SetEnumAxisGroup(x)
 		case string:
 			z = GetEnumAlignCmdNum(x)
+		default:
+			z = SetEnumAxisGroup(0)
 		}
 		opt = append(opt, z)
 
@@ -454,6 +460,8 @@ func (Q *workSeries) MarkerStyle(value ...any) string {
 			z = SetEnumMarkerStyle(x)
 		case string:
 			z = GetEnumMarkerStyleNum(x)
+		default:
+			z = SetEnumMarkerStyle(0)
 		}
 		opt = append(opt, z)
 

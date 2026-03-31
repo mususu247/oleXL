@@ -103,6 +103,8 @@ func (Q *workChart) SetSourceData(Source *workRange, RowCol ...any) error {
 			z = SetEnumRowCol(x)
 		case string:
 			z = GetEnumRowColNum(x)
+		default:
+			z = SetEnumRowCol(0)
 		}
 	} else {
 		z = GetEnumRowColNum("xlRows")
@@ -264,6 +266,8 @@ func (Q *workChart) Position(value ...any) int32 {
 			v = SetEnumLegendPosition(x)
 		case string:
 			v = GetEnumLegendPositionNum(x)
+		default:
+			v = SetEnumLegendPosition(0)
 		}
 		opt = append(opt, v)
 
@@ -330,6 +334,8 @@ func (Q *workChart) SetElement(value any) error {
 		z = SetEnumChartElementType(x)
 	case string:
 		z = GetEnumChartElementTypeNum(x)
+	default:
+		z = SetEnumChartElementType(0)
 	}
 	opt = append(opt, z)
 
@@ -415,6 +421,8 @@ func (Q *workChart) Location(value any, option ...string) error {
 		z = SetEnumChartLocation(x)
 	case string:
 		z = GetEnumChartLocationNum(x)
+	default:
+		z = SetEnumChartLocation(0)
 	}
 	opt = append(opt, z)
 
@@ -445,6 +453,8 @@ func (Q *workChart) ChartType(value ...any) int32 {
 			v = SetEnumChartType(x)
 		case string:
 			v = GetEnumChartTypeNum(x)
+		default:
+			v = SetEnumChartType(0)
 		}
 		opt = append(opt, v)
 
@@ -484,6 +494,8 @@ func (Q *workChart) PlotBy(value ...any) int32 {
 			v = SetEnumRowCol(x)
 		case string:
 			v = GetEnumRowColNum(x)
+		default:
+			v = SetEnumRowCol(0)
 		}
 		opt = append(opt, v)
 
@@ -540,6 +552,8 @@ func (Q *chartGroups) AxisGroup(value ...any) int32 {
 			z = SetEnumAxisGroup(x)
 		case string:
 			z = GetEnumAlignCmdNum(x)
+		default:
+			z = SetEnumAxisGroup(0)
 		}
 		opt = append(opt, z)
 

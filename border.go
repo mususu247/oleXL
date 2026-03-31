@@ -32,6 +32,8 @@ func (Q *workRange) Borders(value ...any) *workBorder {
 				z = SetEnumBorders(x)
 			case string:
 				z = GetEnumBordersNum(x)
+			default:
+				z = SetEnumBorders(0)
 			}
 			opt = append(opt, z)
 		} else {
@@ -183,6 +185,8 @@ func (Q *workBorder) LineStyle(value ...any) int32 {
 			z = SetEnumLineStyle(x)
 		case string:
 			z = GetEnumLineStyleNum(x)
+		default:
+			z = SetEnumLineStyle(0)
 		}
 		opt = append(opt, z)
 
@@ -222,6 +226,8 @@ func (Q *workBorder) Weight(value ...any) int32 {
 			z = SetEnumWeight(x)
 		case string:
 			z = GetEnumWeightNum(x)
+		default:
+			z = SetEnumWeight(0)
 		}
 		opt = append(opt, z)
 
