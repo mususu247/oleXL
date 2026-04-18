@@ -13,12 +13,6 @@ type workApp struct {
 	num    int
 }
 
-type workWindow struct {
-	app    *Excel
-	parent any
-	num    int
-}
-
 func (Q *Excel) Application() *workApp {
 	var body workApp
 	xl := Q
@@ -301,10 +295,10 @@ func (Q *Excel) ActiveWindow() *workWindow {
 	return &body
 }
 
-func (Q *workWindow) FreezePanes(value ...bool) bool {
+func (Q *workApp) CutCopyMode(value ...bool) bool {
 	xl := Q.app
 
-	name := "FreezePanes"
+	name := "CutCopyMode"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
@@ -330,39 +324,10 @@ func (Q *workWindow) FreezePanes(value ...bool) bool {
 	return false
 }
 
-func (Q *workWindow) Zoom(value ...float64) float64 {
+func (Q *workApp) EnableEvents(value ...bool) bool {
 	xl := Q.app
 
-	name := "Zoom"
-	if len(value) > 0 {
-		cmd := "Put"
-		var opt []any
-		opt = append(opt, value[0])
-
-		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
-		if err != nil {
-			log.Printf("(Error) %v", err)
-			return 0
-		}
-	} else {
-		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
-		if err != nil {
-			log.Printf("(Error) %v", err)
-			return 0
-		}
-		switch x := ans.(type) {
-		case float64:
-			return x
-		}
-	}
-	return 0
-}
-
-func (Q *workApp) CutCopyMode(value ...bool) bool {
-	xl := Q.app
-
-	name := "CutCopyMode"
+	name := "EnableEvents"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
@@ -447,4 +412,32 @@ func (Q *workApp) ReferenceStyle(value ...any) int32 {
 		}
 	}
 	return 0
+}
+
+func (Q *workApp) Undo() any {
+	xl := Q.app
+
+	cmd := "Method"
+	name := "Undo"
+
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return nil
+	}
+	return ans
+}
+
+func (Q *workApp) Redo() any {
+	xl := Q.app
+
+	cmd := "Method"
+	name := "Redo"
+
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return nil
+	}
+	return ans
 }

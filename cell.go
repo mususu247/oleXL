@@ -973,58 +973,39 @@ func (Q *workRange) Values() [][]any {
 	var result [][]any
 	//xl := Q.app
 
-	rows := int(Q.Rows().Count())
-
-	var nfs []string
-	for c := range Q.Columns().Count() {
-		v := Q.Columns(c + 1).NumberFormatLocal()
-		v = NumberFoarmat2Layout(v)
-		nfs = append(nfs, v)
+	Q.Set()
+	rc := Q.Rows().Count()
+	cc := Q.Columns().Count()
+	result = make([][]any, rc)
+	for i := range result {
+		result[i] = make([]any, cc)
 	}
 
 	Q.Copy()
-	text, _ := clipboard.ReadAll()
-	clipboard.WriteAll("") //clipboard.Claer
+	text, err := clipboard.ReadAll()
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return nil
+	}
+	clipboard.WriteAll("")
 
-	line := strings.Split(text, "\r\n")
-	for r := range line {
-		cell := strings.Split(line[r], "\t")
-		var record []any
-		for c := range cell {
-			//value null
-			if len(cell[c]) == 0 {
-				record = append(record, nil)
-				continue
+	rows := strings.Split(text, "\r\n")
+	for i := range rows {
+		cells := strings.Split(rows[i], "\t")
+		for j := range cells {
+			if len(cells[j]) > 0 {
+				f64, err := strconv.ParseFloat(cells[j], 64)
+				if err == nil {
+					result[i][j] = f64
+				} else {
+					v, err := strconv.ParseBool(cells[j])
+					if err == nil {
+						result[i][j] = v
+					} else {
+						result[i][j] = cells[j]
+					}
+				}
 			}
-
-			//value number
-			f64, err := strconv.ParseFloat(cell[c], 64)
-			if err == nil {
-				record = append(record, f64)
-				continue
-			}
-
-			//value bool
-			bl, err := strconv.ParseBool(cell[c])
-			if err == nil {
-				record = append(record, bl)
-				continue
-			}
-
-			//value time
-			dt, err := time.Parse(nfs[c], cell[c])
-			if err == nil {
-				record = append(record, dt)
-				continue
-			}
-
-			//value string
-			record = append(record, cell[c])
-		}
-
-		if r < rows {
-			result = append(result, record)
-			//log.Printf("[%v] %v\n", r, record)
 		}
 	}
 
@@ -1407,6 +1388,35 @@ func (Q *workRange) Column() int32 {
 		result = x
 	}
 	return result
+}
+
+func (Q *workRange) NumberFormat(value ...string) string {
+	xl := Q.app
+
+	name := "NumberFormat"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+		switch x := ans.(type) {
+		case string:
+			return x
+		}
+	}
+	return ""
 }
 
 func (Q *workRange) NumberFormatLocal(value ...string) string {

@@ -2697,3 +2697,50 @@ func SetEnumAutoFilterOperator(enumType int32) int32 {
 	}
 	return result
 }
+
+// XlArrangeStyle
+func EnumArrangeStyle() map[string]int32 {
+	enum := make(map[string]int32)
+	enum["xlArrangeStyleCascade"] = 7
+	enum["xlArrangeStyleHorizontal"] = -4128
+	enum["xlArrangeStyleTiled"] = 1 //def
+	enum["xlArrangeStyleVertical"] = -4166
+	return enum
+}
+
+func GetEnumArrangeStyleNum(enumType string) int32 {
+	var result int32
+	enum := EnumArrangeStyle()
+	if v, ok := enum[enumType]; ok {
+		result = v
+	} else {
+		result = enum["xlArrangeStyleTiled"]
+	}
+	return result
+}
+
+func GetEnumArrangeStyleStr(enumType int32) string {
+	var result string
+	enum := EnumArrangeStyle()
+	result = "xlArrangeStyleTiled"
+	for k, v := range enum {
+		if v == enumType {
+			result = k
+			break
+		}
+	}
+	return result
+}
+
+func SetEnumArrangeStyle(enumType int32) int32 {
+	var result int32
+	enum := EnumArrangeStyle()
+	result = enum["xlArrangeStyleTiled"]
+	for _, v := range enum {
+		if v == enumType {
+			result = v
+			break
+		}
+	}
+	return result
+}

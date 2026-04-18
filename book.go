@@ -487,7 +487,10 @@ func (Q *workBook) SaveAs(fileName string, options ...map[string]any) error {
 	var opt []any
 	opt = append(opt, fn)
 
-	if len(options) > 0 {
+	if len(options) == 0 {
+		z := SetEnumFileFormat(0)
+		opt = append(opt, z)
+	} else {
 		for range 11 {
 			opt = append(opt, nil)
 		}

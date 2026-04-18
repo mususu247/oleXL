@@ -1,66 +1,25 @@
 package oleXL
 
 import (
-	"strings"
+	"fmt"
+	"math"
+	"time"
 )
 
-func NumberFoarmat2Layout(format string) string {
-	layout := format
+func FromOADate(value float64) (time.Time, error) {
+	var result time.Time
 
-	if strings.Contains(layout, "yyyy") {
-		layout = strings.ReplaceAll(layout, "yyyy", "2006")
+	if value <= 0 {
+		return result, fmt.Errorf("invalid OLE date value: %f", value)
 	}
-	if strings.Contains(layout, "yy") {
-		layout = strings.ReplaceAll(layout, "yyyy", "06")
-	}
+	days := math.Floor(value)
+	hns := (value - days) * 24
+	hh := math.Floor(hns)
+	hns = (hns - hh) * 60
+	nn := math.Floor(hns)
+	hns = (hns - nn) * 60
+	ss := math.Floor(hns)
 
-	if strings.Contains(layout, "/mm") {
-		layout = strings.ReplaceAll(layout, "/mm", "/01")
-	}
-	if strings.Contains(layout, "/m") {
-		layout = strings.ReplaceAll(layout, "/m", "/1")
-	}
-
-	if strings.Contains(layout, "mm/") {
-		layout = strings.ReplaceAll(layout, "mm/", "01/")
-	}
-	if strings.Contains(layout, "m/") {
-		layout = strings.ReplaceAll(layout, "m/", "1/")
-	}
-
-	if strings.Contains(layout, "dd") {
-		layout = strings.ReplaceAll(layout, "dd", "02")
-	}
-	if strings.Contains(layout, "d") {
-		layout = strings.ReplaceAll(layout, "d", "2")
-	}
-
-	if strings.Contains(layout, "hh") {
-		layout = strings.ReplaceAll(layout, "hh", "15")
-	}
-	if strings.Contains(layout, "h") {
-		layout = strings.ReplaceAll(layout, "h", "15")
-	}
-
-	if strings.Contains(layout, ":mm") {
-		layout = strings.ReplaceAll(layout, ":mm", ":04")
-	}
-	if strings.Contains(layout, ":m") {
-		layout = strings.ReplaceAll(layout, ":m", ":4")
-	}
-
-	if strings.Contains(layout, "mm:") {
-		layout = strings.ReplaceAll(layout, "mm:", "04:")
-	}
-	if strings.Contains(layout, "m:") {
-		layout = strings.ReplaceAll(layout, "m:", "4:")
-	}
-
-	if strings.Contains(layout, "ss") {
-		layout = strings.ReplaceAll(layout, "ss", "05")
-	}
-	if strings.Contains(layout, "s") {
-		layout = strings.ReplaceAll(layout, "s", "5")
-	}
-	return layout
+	result = time.Date(1900, 1, int(days)-1, int(hh), int(nn), int(ss), 0, time.UTC)
+	return result, nil
 }
