@@ -43,31 +43,6 @@ type listColumns struct {
 	num    int
 }
 
-func table2sheet(v any) *workSheet {
-	var ws *workSheet
-
-	w := v
-	for {
-		switch x := w.(type) {
-		case *workTable:
-			w = x.parent
-		case *workTables:
-			w = x.parent
-		case *listColumn:
-			w = x.parent
-		case *listColumns:
-			w = x.parent
-		case *listRow:
-			w = x.parent
-		case *listRows:
-			w = x.parent
-		case *workSheet:
-			ws = x
-			return ws
-		}
-	}
-}
-
 func (Q *workSheet) ListObjects() *workTables {
 	var body workTables
 	xl := Q.app
