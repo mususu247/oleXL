@@ -23,3 +23,11 @@ func FromOADate(value float64) (time.Time, error) {
 	result = time.Date(1900, 1, int(days)-1, int(hh), int(nn), int(ss), 0, time.UTC)
 	return result, nil
 }
+
+func ToOADate(t time.Time) (float64, error) {
+	if t.Before(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)) {
+		return 0, fmt.Errorf("date is before OLE automation epoch")
+	}
+	days := t.Sub(time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)).Hours() / 24
+	return days + 2, nil
+}
