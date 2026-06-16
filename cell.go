@@ -3,11 +3,8 @@ package oleXL
 import (
 	"fmt"
 	"log"
-	"strconv"
-	"strings"
 	"time"
 
-	"github.com/atotto/clipboard"
 	"github.com/go-ole/go-ole"
 )
 
@@ -967,49 +964,6 @@ func (Q *workRange) Value2(value ...any) any {
 		}
 	}
 	return nil
-}
-
-func (Q *workRange) Values() [][]any {
-	var result [][]any
-	//xl := Q.app
-
-	Q.Set()
-	rc := Q.Rows().Count()
-	cc := Q.Columns().Count()
-	result = make([][]any, rc)
-	for i := range result {
-		result[i] = make([]any, cc)
-	}
-
-	Q.Copy()
-	text, err := clipboard.ReadAll()
-	if err != nil {
-		log.Printf("(Error) %v", err)
-		return nil
-	}
-	clipboard.WriteAll("")
-
-	rows := strings.Split(text, "\r\n")
-	for i := range rows {
-		cells := strings.Split(rows[i], "\t")
-		for j := range cells {
-			if len(cells[j]) > 0 {
-				f64, err := strconv.ParseFloat(cells[j], 64)
-				if err == nil {
-					result[i][j] = f64
-				} else {
-					v, err := strconv.ParseBool(cells[j])
-					if err == nil {
-						result[i][j] = v
-					} else {
-						result[i][j] = cells[j]
-					}
-				}
-			}
-		}
-	}
-
-	return result
 }
 
 func (Q *workRange) Formula(value ...string) string {
