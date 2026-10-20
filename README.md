@@ -4,22 +4,23 @@
 package main
 
 import (
-	"fmt"
+  "fmt"
 
-	"github.com/mususu247/oleXL"
+  "github.com/mususu247/oleXL"
 )
 
 func main() {
-	var xl oleXL.Excel
-	xl.Init()
-	err := xl.CreateObject()
-	if err != nil {
-		fmt.Printf("(Error) %v", err)
-		return
-	}
-	xl.Visible(true)
-	xl.Workbooks().Add()
-	xl.Quit()
-	xl.Nothing()
+  var xl oleXL.Excel
+  xl.Init()
+  err := xl.CreateObject()
+  if err != nil {
+    fmt.Printf("(Error) %v", err)
+    return
+  }
+
+  xl.Visible(true)
+  xl.Workbooks().Add()
+  xl.Quit()
+  xl.Nothing()
 }
 ```
