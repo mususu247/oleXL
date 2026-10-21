@@ -414,3 +414,34 @@ func (Q *workShapes) AddPicture(fileName string, LinkToFile bool, SaveWithDocume
 	body.parent = Q.parent
 	return &body
 }
+
+func (Q *workShape) Chart() *workChart {
+	var body workChart
+	xl := Q.app
+
+	cmd := "Get"
+	name := "Chart"
+
+	kind := "Chart"
+	core, num := xl.cores.FindAdd(kind, Q.num)
+	if core.disp == nil {
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
+		}
+	}
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
+}

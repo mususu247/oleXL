@@ -9,7 +9,6 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
-
 type any = interface{}
 
 type Excel struct {

@@ -90,8 +90,8 @@ func (Q *Excel) Workbookz(value any) *workBook {
 	if core.disp == nil {
 		cmd := "Get"
 		name := "Workbooks"
-		var opt []any
 
+		var opt []any
 		switch x := value.(type) {
 		case int:
 			opt = append(opt, int32(x))
@@ -294,6 +294,27 @@ func (Q *workBook) RefreshAll() error {
 	return nil
 }
 
+func (Q *workBooks) GetOpenOptions() map[string]any {
+	var m map[string]any
+	m = make(map[string]any)
+	m["FileName"] = nil
+	m["UpdateLinks"] = nil
+	m["ReadOnly"] = nil
+	m["Format"] = nil
+	m["Password"] = nil
+	m["WriteResPassword"] = nil
+	m["IgnoreReadOnlyRecommended"] = nil
+	m["Origin"] = nil
+	m["Delimiter"] = nil
+	m["Editable"] = nil
+	m["Notify"] = nil
+	m["Converter"] = nil
+	m["AddToMru"] = nil
+	m["Local"] = nil
+	m["CorruptLoad"] = nil
+	return m
+}
+
 func (Q *workBooks) Open(fileName string, options ...map[string]any) (*workBook, error) {
 	var body workBook
 	xl := Q.app
@@ -468,6 +489,24 @@ func (Q *workBooks) Open(fileName string, options ...map[string]any) (*workBook,
 	body.num = num
 	body.parent = Q
 	return &body, nil
+}
+
+func (Q *workBooks) GetSaveAsOptions() map[string]any {
+	var m map[string]any
+	m = make(map[string]any)
+	m["FileName"] = nil
+	m["FileFormat"] = nil
+	m["Password"] = nil
+	m["WriteResPassword"] = nil
+	m["ReadOnlyRecommended"] = nil
+	m["CreateBackup"] = nil
+	m["AccessMode"] = nil
+	m["ConflictResolution"] = nil
+	m["AddToMru"] = nil
+	m["TextCodepage"] = nil
+	m[" extVisualLayout"] = nil
+	m["Local"] = nil
+	return m
 }
 
 func (Q *workBook) SaveAs(fileName string, options ...map[string]any) error {
