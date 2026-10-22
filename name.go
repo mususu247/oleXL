@@ -81,16 +81,26 @@ func (Q *workNames) GetAddOptions() map[string]any {
 	m = make(map[string]any)
 	m["Name"] = nil
 	m["RefersTo"] = nil
-	m["Visible"] = nil
-	m["MacroType"] = nil
-	m["ShortcutKey"] = nil
-	m["Category"] = nil
-	m["NameLocal"] = nil
-	m["RefersToLocal"] = nil
-	m["CategoryLocal"] = nil
-	m["RefersToR1C1"] = nil
-	m["RefersToR1C1Local"] = nil
+	m["Visible"] = true
+	m["MacroType"] = int32(-4142)
 	return m
+}
+
+func (Q *workNames) Count() int32 {
+	xl := Q.app
+
+	cmd := "Get"
+	name := "Count"
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return 0
+	}
+	switch x := ans.(type) {
+	case int32:
+		return x
+	}
+	return 0
 }
 
 func (Q *workNames) Add(value map[string]any) *workName {
@@ -103,7 +113,7 @@ func (Q *workNames) Add(value map[string]any) *workName {
 		cmd := "Method"
 
 		var opt []any
-		for range 2 {
+		for range 4 {
 			opt = append(opt, nil)
 		}
 
@@ -119,15 +129,16 @@ func (Q *workNames) Add(value map[string]any) *workName {
 				case string:
 					opt[1] = x
 				}
-				//case "Visible":
-				//case "MacroType":
-				//case "ShortcutKey":
-				//case "Category":
-				//case "NameLocal":
-				//case "RefersToLocal":
-				//case "CategoryLocal":
-				//case "RefersToR1C1":
-				//case "RefersToR1C1Local":
+			case "Visible":
+				switch x := v.(type) {
+				case bool:
+					opt[2] = x
+				}
+			case "MacroType":
+				switch x := v.(type) {
+				case int32:
+					opt[3] = x
+				}
 			}
 		}
 
@@ -180,14 +191,15 @@ func (Q *workName) Set() (*workName, error) {
 	return Q, nil
 }
 
-func (Q *workNames) Namez(value any) *workName {
+func (Q *workBook) Namez(value any) *workName {
 	var body workName
 	xl := Q.app
+	parent := Q.Names()
 
-	name := "Names"
-	core, num := xl.cores.FindAdd(name, Q.num)
+	name := "Item"
+	core, num := xl.cores.FindAdd(name, parent.num)
 	if core.disp == nil {
-		cmd := "Get"
+		cmd := "Method"
 
 		var opt []any
 		switch x := value.(type) {
@@ -198,6 +210,196 @@ func (Q *workNames) Namez(value any) *workName {
 		case string:
 			opt = append(opt, x)
 		}
+
+		ans, err := xl.cores.SendNum(cmd, name, parent.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return nil
+		}
+		switch x := ans.(type) {
+		case *ole.IDispatch:
+			if x != nil {
+				core.disp = x
+				core.lock = 0
+			} else {
+				return nil
+			}
+		}
+	}
+	body.app = xl
+	body.num = num
+	body.parent = Q
+	return &body
+}
+
+func (Q *workName) Name(value ...string) string {
+	xl := Q.app
+
+	name := "Name"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+		switch x := ans.(type) {
+		case string:
+			return x
+		}
+	}
+	return ""
+}
+
+func (Q *workName) RefersTo(value ...string) string {
+	xl := Q.app
+
+	name := "RefersTo"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+		switch x := ans.(type) {
+		case string:
+			return x
+		}
+	}
+	return ""
+}
+
+func (Q *workName) Visible(value ...bool) bool {
+	xl := Q.app
+
+	name := "Visible"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return false
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return false
+		}
+		switch x := ans.(type) {
+		case bool:
+			return x
+		}
+	}
+	return false
+}
+
+func (Q *workName) MacroType(value ...any) int32 {
+	xl := Q.app
+
+	name := "MacroType"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		switch x := value[0].(type) {
+		case bool:
+			opt = append(opt, x)
+		}
+
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return 0
+		}
+		switch x := ans.(type) {
+		case int32:
+			return x
+		}
+	}
+	return 0
+}
+
+func (Q *workName) Value(value ...string) string {
+	xl := Q.app
+
+	name := "Value"
+	if len(value) > 0 {
+		cmd := "Put"
+		var opt []any
+		opt = append(opt, value[0])
+
+		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+	} else {
+		cmd := "Get"
+		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+		if err != nil {
+			log.Printf("(Error) %v", err)
+			return ""
+		}
+		switch x := ans.(type) {
+		case string:
+			return x
+		}
+	}
+	return ""
+}
+
+func (Q *workName) Delete() error {
+	xl := Q.app
+	cmd := "Method"
+	name := "Delete"
+
+	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+	if err != nil {
+		log.Printf("(Error) cmd:%v name:%v ", cmd, name)
+	}
+	return nil
+}
+
+func (Q *workName) RefersToRange() *workRange {
+	var body workRange
+	xl := Q.app
+
+	name := "RefersToRange"
+	core, num := xl.cores.FindAdd(name, Q.num)
+	if core.disp == nil {
+		cmd := "Get"
 
 		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
@@ -220,159 +422,82 @@ func (Q *workNames) Namez(value any) *workName {
 	return &body
 }
 
-func (Q *workName) Name(value ...any) string {
+func (Q *workName) Index() int32 {
 	xl := Q.app
 
-	name := "Name"
-	if len(value) > 0 {
-		cmd := "Put"
-		var opt []any
-		switch x := value[0].(type) {
-		case string:
-			opt = append(opt, x)
-		}
-
-		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
-		if err != nil {
-			log.Printf("(Error) %v", err)
-			return ""
-		}
-	} else {
-		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
-		if err != nil {
-			log.Printf("(Error) %v", err)
-			return ""
-		}
-		switch x := ans.(type) {
-		case string:
-			return x
-		}
-	}
-	return ""
-}
-
-func (Q *workName) RefersTo(value ...any) string {
-	xl := Q.app
-
-	name := "RefersTo"
-	if len(value) > 0 {
-		cmd := "Put"
-		var opt []any
-		switch x := value[0].(type) {
-		case string:
-			opt = append(opt, x)
-		}
-
-		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
-		if err != nil {
-			log.Printf("(Error) %v", err)
-			return ""
-		}
-	} else {
-		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
-		if err != nil {
-			log.Printf("(Error) %v", err)
-			return ""
-		}
-		switch x := ans.(type) {
-		case string:
-			return x
-		}
-	}
-	return ""
-}
-
-func (Q *workName) RefersToR1C1(value ...any) string {
-	xl := Q.app
-
-	name := "RefersToR1C1"
-	if len(value) > 0 {
-		cmd := "Put"
-		var opt []any
-		switch x := value[0].(type) {
-		case string:
-			opt = append(opt, x)
-		}
-
-		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
-		if err != nil {
-			log.Printf("(Error) %v", err)
-			return ""
-		}
-	} else {
-		cmd := "Get"
-		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
-		if err != nil {
-			log.Printf("(Error) %v", err)
-			return ""
-		}
-		switch x := ans.(type) {
-		case string:
-			return x
-		}
-	}
-	return ""
-}
-
-func (Q *workName) Value() string {
-	xl := Q.app
-
+	name := "Index"
 	cmd := "Get"
-	name := "Value"
 	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
 		log.Printf("(Error) %v", err)
-		return ""
+		return 0
 	}
 	switch x := ans.(type) {
-	case string:
+	case int32:
 		return x
 	}
-	return ""
+	return 0
 }
 
-func (Q *workName) Visible(value ...any) bool {
+func (Q *workName) Comment(value ...string) string {
 	xl := Q.app
 
-	name := "Visible"
+	name := "Comment"
 	if len(value) > 0 {
 		cmd := "Put"
 		var opt []any
-		switch x := value[0].(type) {
-		case bool:
-			opt = append(opt, x)
-		}
+		opt = append(opt, value[0])
 
 		_, err := xl.cores.SendNum(cmd, name, Q.num, opt)
 		if err != nil {
 			log.Printf("(Error) %v", err)
-			return false
+			return ""
 		}
 	} else {
 		cmd := "Get"
 		ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 		if err != nil {
 			log.Printf("(Error) %v", err)
-			return false
+			return ""
 		}
 		switch x := ans.(type) {
-		case bool:
+		case string:
 			return x
 		}
+	}
+	return ""
+}
+
+func (Q *workName) WorkbookParameter() bool {
+	xl := Q.app
+
+	name := "WorkbookParameter"
+	cmd := "Get"
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+	if err != nil {
+		log.Printf("(Error) %v", err)
+		return false
+	}
+	switch x := ans.(type) {
+	case bool:
+		return x
 	}
 	return false
 }
 
-func (Q *workName) Delete() error {
+func (Q *workName) ValidWorkbookParameter() bool {
 	xl := Q.app
-	cmd := "Method"
-	name := "Delete"
 
-	_, err := xl.cores.SendNum(cmd, name, Q.num, nil)
+	name := "ValidWorkbookParameter"
+	cmd := "Get"
+	ans, err := xl.cores.SendNum(cmd, name, Q.num, nil)
 	if err != nil {
-		log.Printf("(Error) cmd:%v name:%v ", cmd, name)
+		log.Printf("(Error) %v", err)
+		return false
 	}
-	return nil
+	switch x := ans.(type) {
+	case bool:
+		return x
+	}
+	return false
 }
